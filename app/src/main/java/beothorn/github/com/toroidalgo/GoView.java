@@ -21,7 +21,6 @@ public class GoView extends View{
     private float mLastBoardX;
     private float mLastBoardY;
 
-
     private int blockSize = 30;
     private int moveTolerance = 10;
     private int boardSize = 9;
@@ -161,6 +160,7 @@ public class GoView extends View{
         for(int line = 0; line < boardSize; line++){
             for(int column = 0; column < boardSize; column++){
                 if(controller.getPieceAt(line, column) == null) continue;
+
                 if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
                     paint.setColor(Color.BLACK);
                 }else{
@@ -181,7 +181,6 @@ public class GoView extends View{
             int lineTop = onBoardY + start;
             int lineRight = onBoardX + rowSize;
             int lineBottom = lineTop + blockSize;
-
 
             int columnLeft = onBoardX + start;
             int columnTop = onBoardY ;

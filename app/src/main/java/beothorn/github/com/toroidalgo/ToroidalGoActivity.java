@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class ToroidalGoActivity extends Activity {
 
@@ -15,7 +17,20 @@ public class ToroidalGoActivity extends Activity {
         setContentView(R.layout.activity_toroidal_go);
 
         final GoView goView = (GoView) findViewById(R.id.goView);
-        goView.setController(new GoGameController());
+        GoGameController controller = new GoGameController();
+        goView.setController(controller);
+
+        TextView gameStateLabel = (TextView) findViewById(R.id.gameState);
+        controller.setStateLabel(gameStateLabel);
+
+        Button passButton =  (Button) findViewById(R.id.passButton);
+        controller.setPassButton(passButton);
+
+        TextView blackScore =  (TextView) findViewById(R.id.blackScore);
+        controller.setBlackScore(blackScore);
+
+        TextView whiteScore =  (TextView) findViewById(R.id.whiteScore);
+        controller.setWhiteScore(whiteScore);
 
     }
 

@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ToroidalGoActivity">
+    tools:context=".ToroidalGoActivity"
+    android:id="@+id/activity_toroidal_go">
 
     <view
         class="beothorn.github.com.toroidalgo.GoView"
@@ -43,4 +44,24 @@
         android:layout_alignBottom="@+id/passButton"
         android:layout_toRightOf="@+id/passButton"
         android:layout_toEndOf="@+id/passButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/blackScore"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/resignButton"
+        android:layout_toEndOf="@+id/resignButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/whiteScore"
+        android:layout_alignTop="@+id/resignButton"
+        android:layout_toRightOf="@+id/blackScore"
+        android:layout_toEndOf="@+id/blackScore" />
 </RelativeLayout>
