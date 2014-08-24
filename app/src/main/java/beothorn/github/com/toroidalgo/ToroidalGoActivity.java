@@ -15,14 +15,9 @@ public class ToroidalGoActivity extends Activity {
         setContentView(R.layout.activity_toroidal_go);
 
         final GoView goView = (GoView) findViewById(R.id.goView);
+        goView.setController(new GoGameController());
 
-        goView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                goView.invalidate();
-                return false;
-            }
-        });
+
 
     }
 
