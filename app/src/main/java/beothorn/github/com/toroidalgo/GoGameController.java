@@ -1,6 +1,7 @@
 package beothorn.github.com.toroidalgo;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoBoard;
 
 public class GoGameController {
 
@@ -8,11 +9,12 @@ public class GoGameController {
     private int size = 9;
 
     public GoGameController(){
-        goBoard = new GoBoard(size);
+        goBoard = new ToroidalGoBoard(size);
     }
 
     public void play(GoBoard.StoneColor player, int line, int column){
-        goBoard.playStone(column, line);
+        if(goBoard.canPlayStone(column, line))
+            goBoard.playStone(column, line);
     }
 
     public GoBoard.StoneColor getPieceAt(int line, int column){

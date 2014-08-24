@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -14,8 +14,19 @@ import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 public class GoView extends View{
 
     private final Paint paint = new Paint();
+
+    private float mLastTouchX;
+    private float mLastTouchY;
+
+    private float mLastBoardX;
+    private float mLastBoardY;
+
+
     private int blockSize = 30;
+    private int moveTolerance = 10;
     private int boardSize = 9;
+    private int boardX = 10;
+    private int boardY = 10;
     private int rowSize = blockSize * boardSize;
     private GoGameController controller;
 
@@ -23,18 +34,70 @@ public class GoView extends View{
         super(context, attrs);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(3);
+    }
 
-        setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                int column = Math.round(motionEvent.getX()/ blockSize)-1;
-                int line = Math.round(motionEvent.getY()/ blockSize)-1;
-                if(column < 0 || column >= boardSize || line < 0 || line >= boardSize) return false;
-                controller.play(GoBoard.StoneColor.BLACK, line, column);
-                invalidate();
-                return false;
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        final int action = ev.getAction();
+        switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN: {
+                final float x = ev.getX();
+                final float y = ev.getY();
+
+                mLastTouchX = x;
+                mLastTouchY = y;
+
+                mLastBoardX = boardX;
+                mLastBoardY = boardY;
+
+                break;
             }
-        });
+
+            case MotionEvent.ACTION_MOVE: {
+                final float x = ev.getX();
+                final float y = ev.getY();
+
+                final float dx = x - mLastTouchX;
+                final float dy = y - mLastTouchY;
+
+                boardX += dx;
+                boardY += dy;
+
+                boardX = boardX % getMeasuredWidth();
+                boardY = boardY % getMeasuredHeight();
+
+                mLastTouchX = x;
+                mLastTouchY = y;
+
+                invalidate();
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                mLastTouchX = ev.getX();
+                mLastTouchY = ev.getY();
+
+                float boardDeltaX = Math.abs(mLastBoardX - boardX);
+                float boardDeltaY = Math.abs(mLastBoardY - boardY);
+
+                if(boardDeltaX < moveTolerance && boardDeltaY < moveTolerance){
+                    int column = Math.round((mLastTouchX - boardX) / blockSize) % boardSize;
+                    if(column < 0){
+                        column = boardSize + column;
+                    }
+                    int line = Math.round((mLastTouchY - boardY) / blockSize) % boardSize;
+                    if(line < 0){
+                        line = boardSize + line;
+                    }
+                    controller.play(GoBoard.StoneColor.BLACK, line, column);
+                }
+                invalidate();
+
+                break;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -45,36 +108,48 @@ public class GoView extends View{
 
         int min = Math.min(getMeasuredWidth(),getMeasuredHeight());
 
-        blockSize = min / (boardSize + 2);
-        rowSize = blockSize * boardSize;
-        int boardX = blockSize;
-        int boardY = blockSize;
+        int newBlockSize = min / (boardSize + 2);
+        if(blockSize != newBlockSize){
+            blockSize = newBlockSize;
+            rowSize = blockSize * (boardSize);
+        }
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.rgb(240, 182, 98));
-        canvas.drawRect(boardX-blockSize, boardY-blockSize, boardX + (blockSize * boardSize)+blockSize, boardY + (blockSize * boardSize)+blockSize, paint);
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.BLACK);
-
-        for(int i = 0; i < boardSize; i++){
-            int start = i * blockSize;
-
-            int lineLeft = boardX;
-            int lineTop = boardY + start;
-            int lineRight = boardX + rowSize;
-            int lineBottom = lineTop + blockSize;
+        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
 
 
-            int columnLeft = boardX + start;
-            int columnTop = boardY ;
-            int columnRight = columnLeft + blockSize;
-            int columnBottom = boardY + rowSize;
+        int onBoardX = boardX;
+        int onBoardY = boardY;
 
-            canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, paint);
-            canvas.drawRect(columnLeft, columnTop, columnRight, columnBottom, paint);
+        int color = Color.BLACK;
+
+        int startDrawingX = onBoardX;
+        while(startDrawingX > 0){
+            startDrawingX -= (blockSize*(boardSize));
         }
 
+        int startDrawingY = onBoardY;
+        while(startDrawingY > 0){
+            startDrawingY -= (blockSize*(boardSize));
+        }
+
+        int currentBoardX = startDrawingX;
+        int currentBoardY = startDrawingY;
+        while(currentBoardX < getMeasuredWidth() && currentBoardY < getMeasuredHeight() ){
+            while(currentBoardX < getMeasuredWidth()){
+                drawGrid(currentBoardX, currentBoardY, canvas, color);
+                drawPieces(currentBoardX, currentBoardY, canvas);
+
+                currentBoardX += (blockSize*(boardSize));
+            }
+
+            currentBoardX = startDrawingX;
+            currentBoardY += (blockSize*(boardSize));
+        }
+    }
+
+    private void drawPieces(int onBoardX, int onBoardY, Canvas canvas) {
         paint.setStyle(Paint.Style.FILL);
         for(int line = 0; line < boardSize; line++){
             for(int column = 0; column < boardSize; column++){
@@ -84,10 +159,31 @@ public class GoView extends View{
                 }else{
                     paint.setColor(Color.WHITE);
                 }
-                canvas.drawCircle((column*blockSize)+boardX,(line*blockSize)+boardY, blockSize/2, paint);
+                canvas.drawCircle((column*blockSize)+onBoardX,(line*blockSize)+onBoardY, blockSize/2, paint);
             }
         }
+    }
 
+    private void drawGrid(int onBoardX, int onBoardY, Canvas canvas, int color) {
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(color);
+        for(int i = 0; i < boardSize ; i++){
+            int start = i * blockSize;
+
+            int lineLeft = onBoardX;
+            int lineTop = onBoardY + start;
+            int lineRight = onBoardX + rowSize;
+            int lineBottom = lineTop + blockSize;
+
+
+            int columnLeft = onBoardX + start;
+            int columnTop = onBoardY ;
+            int columnRight = columnLeft + blockSize;
+            int columnBottom = onBoardY + rowSize;
+
+            canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, paint);
+            canvas.drawRect(columnLeft, columnTop, columnRight, columnBottom, paint);
+        }
     }
 
     public void setController(GoGameController controller) {

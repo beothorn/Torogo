@@ -17,8 +17,6 @@ public class ToroidalGoActivity extends Activity {
         final GoView goView = (GoView) findViewById(R.id.goView);
         goView.setController(new GoGameController());
 
-
-
     }
 
     @Override
