@@ -9,7 +9,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/goView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/gameState"
+        android:layout_above="@+id/passButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Player turn"
+        android:id="@+id/gameState"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pass"
+        android:id="@+id/passButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resign"
+        android:id="@+id/resignButton"
+        android:layout_alignBottom="@+id/passButton"
+        android:layout_toRightOf="@+id/passButton"
+        android:layout_toEndOf="@+id/passButton" />
 </RelativeLayout>
