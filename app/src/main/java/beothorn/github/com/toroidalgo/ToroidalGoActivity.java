@@ -14,11 +14,12 @@ public class ToroidalGoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toroidal_go);
 
-        GoView goView = (GoView) findViewById(R.id.goView);
+        final GoView goView = (GoView) findViewById(R.id.goView);
 
         goView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                goView.invalidate();
                 return false;
             }
         });
