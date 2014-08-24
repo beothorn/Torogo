@@ -63,8 +63,17 @@ public class GoView extends View{
                 boardX += dx;
                 boardY += dy;
 
-                boardX = boardX % getMeasuredWidth();
-                boardY = boardY % getMeasuredHeight();
+                if(boardX < 0){
+                    boardX = boardX + (boardSize * blockSize);
+                }else if(boardX > getMeasuredWidth()){
+                    boardX = boardX - (boardSize * blockSize);
+                }
+
+                if(boardY < 0){
+                    boardY = boardY + (boardSize * blockSize);
+                }else if(boardY > getMeasuredHeight()){
+                    boardY = boardY - (boardSize * blockSize);
+                }
 
                 mLastTouchX = x;
                 mLastTouchY = y;
@@ -122,8 +131,6 @@ public class GoView extends View{
         int onBoardX = boardX;
         int onBoardY = boardY;
 
-        int color = Color.BLACK;
-
         int startDrawingX = onBoardX;
         while(startDrawingX > 0){
             startDrawingX -= (blockSize*(boardSize));
@@ -138,7 +145,7 @@ public class GoView extends View{
         int currentBoardY = startDrawingY;
         while(currentBoardX < getMeasuredWidth() && currentBoardY < getMeasuredHeight() ){
             while(currentBoardX < getMeasuredWidth()){
-                drawGrid(currentBoardX, currentBoardY, canvas, color);
+                drawGrid(currentBoardX, currentBoardY, canvas, Color.BLACK);
                 drawPieces(currentBoardX, currentBoardY, canvas);
 
                 currentBoardX += (blockSize*(boardSize));
