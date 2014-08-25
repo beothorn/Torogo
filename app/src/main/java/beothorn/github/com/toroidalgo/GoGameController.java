@@ -24,6 +24,9 @@ public class GoGameController implements BoardListener{
     public void play(GoBoard.StoneColor player, int line, int column){
         if(goBoard.canPlayStone(column, line))
             goBoard.playStone(column, line);
+        if(goBoard.gameHasEnded()){
+            goBoard.toggleDeadStone(column, line);
+        }
     }
 
     public GoBoard.StoneColor getPieceAt(int line, int column){
@@ -51,6 +54,15 @@ public class GoGameController implements BoardListener{
         });
     }
 
+    public void setResignButton(Button resignButton) {
+        resignButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBoard.resign();
+            }
+        });
+    }
+
     @Override
     public void updateScore(int _blackScore, int _whiteScore) {
         blackScore.setText("Black: "+_blackScore);
@@ -60,7 +72,7 @@ public class GoGameController implements BoardListener{
     @Override
     public void nextToPlay(GoBoard.StoneColor _nextToPlay) {
         if(_nextToPlay == null){
-            stateLabel.setText("Game ended");
+            stateLabel.setText("Game ended, please mark the dead stones");
         }else{
             if(_nextToPlay.equals(GoBoard.StoneColor.BLACK)){
                 stateLabel.setText("Black's turn");

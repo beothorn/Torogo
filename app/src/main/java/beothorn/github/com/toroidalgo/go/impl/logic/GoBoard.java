@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class GoBoard {
 
-	public static enum StoneColor { BLACK, WHITE;}
-	
+    public static enum StoneColor { BLACK, WHITE;}
+
 	public GoBoard(int size) {
 		_intersections = createIntersections(size);
 		_previousSituation = createIntersections(size);
@@ -20,39 +20,37 @@ public class GoBoard {
 		IntersectionUtils.setup(_intersections,setup);
 	}
 
-	
 	private StoneColor _nextToPlay = StoneColor.BLACK;
-	private int _blackScore = 0;
-	private int _whiteScore = 0;
-	private StoneColor _winner = null;
-	
-	
+
+
+    private int _whiteScore = 0;
+    private StoneColor _winner = null;
 	protected Intersection[][] _intersections;
-	private Intersection[][] _previousSituation;
-	private boolean _previousWasPass = false;
-	private int _capturedStonesBlack;
-	private int _capturedStonesWhite;
-	private BoardListener _boardListener;
-	private Point _lastPlayedPiece;
-	
-		
+
+
+    private Intersection[][] _previousSituation;
+    private boolean _previousWasPass = false;
+    private int _capturedStonesBlack;
+    private int _capturedStonesWhite;
+    private BoardListener _boardListener;
+    private Point _lastPlayedPiece;
 	protected Intersection intersection(int x, int y) {
 		return _intersections[x][y];
 	}
-	
-	
+
+
 	public String printOut(){
 		return IntersectionUtils.print(_intersections);
 	}
 
+
 	public int size() {
 		return _intersections.length;
 	}
-	
-	
+
 	public boolean canPlayStone(int x, int y) {
 		if (nextToPlay() == null) return false;
-		
+
 		Intersection[][] situation = copy(_intersections);
 		try {
 			tryToPlayStone(x, y);
@@ -61,14 +59,14 @@ public class GoBoard {
 		} finally {
 			restoreSituation(situation);
 		}
-		
+
 		return true;
 	}
-	
-	
+
+
 	public void playStone(int x, int y) {
 		Intersection[][] situationFound = copy(_intersections);
-		
+
 		try {
 			tryToPlayStone(x, y);
 		} catch (IllegalMove e) {
@@ -80,8 +78,7 @@ public class GoBoard {
 		countDeadStones();
 		next();
 	}
-	
-	
+
 	public void toggleDeadStone(int x, int y) {
 		if (_intersections[x][y]._stone == null)
 			unmarkDeadStones(x, y);
@@ -91,33 +88,38 @@ public class GoBoard {
 		updateScore();
 	}
 
+    private int _blackScore = 0;
+
+    public boolean gameHasEnded() {
+        return nextToPlay() == null;
+    }
 
 	public void passTurn() {
 		next();
-		
+
 		if (_previousWasPass)
 			stopAcceptingMoves();
-		
+
 		_previousWasPass = true;
 	}
-	
-	
+
+
 	public void resign() {
 		StoneColor loser = nextToPlay();
 		_winner = other(loser);
 		stopAcceptingMoves();
 	}
-	
-	
+
+
 	public int blackScore() {
 		return _blackScore;
 	}
-	
-	
+
+
 	public int whiteScore() {
 		return _whiteScore;
 	}
-	
+
 	
 	public StoneColor other(StoneColor color) {
 		return (color == StoneColor.BLACK) ? StoneColor.WHITE: StoneColor.BLACK;
@@ -135,12 +137,10 @@ public class GoBoard {
 	public StoneColor getPrevColor(int x, int y) {
 		return _previousSituation[x][y]._stone;
 	}
-	
-	
+
 	public StoneColor winner() {
 		return _winner; 
 	}
-
 
 	public void setBoardListener(BoardListener boardListener) {
 		_boardListener = boardListener;

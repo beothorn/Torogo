@@ -26,6 +26,9 @@ public class ToroidalGoActivity extends Activity {
         Button passButton =  (Button) findViewById(R.id.passButton);
         controller.setPassButton(passButton);
 
+        Button resignButton =  (Button) findViewById(R.id.resignButton);
+        controller.setResignButton(resignButton);
+
         TextView blackScore =  (TextView) findViewById(R.id.blackScore);
         controller.setBlackScore(blackScore);
 
