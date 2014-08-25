@@ -49,19 +49,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
         android:id="@+id/blackScore"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/resignButton"
-        android:layout_toEndOf="@+id/resignButton" />
+        android:layout_toEndOf="@+id/resignButton"
+        android:layout_alignRight="@+id/whiteScore"
+        android:layout_alignEnd="@+id/whiteScore" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
         android:id="@+id/whiteScore"
         android:layout_alignTop="@+id/resignButton"
-        android:layout_toRightOf="@+id/blackScore"
-        android:layout_toEndOf="@+id/blackScore" />
+        android:layout_toEndOf="@+id/resignButton"
+        android:layout_above="@+id/blackScore"
+        android:layout_toRightOf="@+id/resignButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

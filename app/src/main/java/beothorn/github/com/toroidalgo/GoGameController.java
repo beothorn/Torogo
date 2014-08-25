@@ -30,15 +30,12 @@ public class GoGameController implements BoardListener{
         return goBoard.stoneAt(column, line);
     }
 
-    public int getSize() {
-        return size;
+    public boolean stoneAtPositionIsLastPlayedStone(int line, int column){
+        return goBoard.stoneAtPositionIsLastPlayedStone(column, line);
     }
 
-    private String nextToPlay(){
-        if(goBoard.nextToPlay() == null){
-            return "game ended";
-        }
-        return goBoard.nextToPlay().toString();
+    public int getSize() {
+        return size;
     }
 
     public void setStateLabel(TextView stateLabel) {
@@ -50,15 +47,14 @@ public class GoGameController implements BoardListener{
             @Override
             public void onClick(View view) {
                 goBoard.passTurn();
-                stateLabel.setText(nextToPlay());
             }
         });
     }
 
     @Override
     public void updateScore(int _blackScore, int _whiteScore) {
-        blackScore.setText("black "+_blackScore);
-        whiteScore.setText("white "+_whiteScore);
+        blackScore.setText("Black: "+_blackScore);
+        whiteScore.setText("White: "+_whiteScore);
     }
 
     @Override
@@ -66,7 +62,11 @@ public class GoGameController implements BoardListener{
         if(_nextToPlay == null){
             stateLabel.setText("Game ended");
         }else{
-            stateLabel.setText(_nextToPlay.toString());
+            if(_nextToPlay.equals(GoBoard.StoneColor.BLACK)){
+                stateLabel.setText("Black's turn");
+            }else{
+                stateLabel.setText("White's turn");
+            }
         }
     }
 

@@ -166,7 +166,18 @@ public class GoView extends View{
                 }else{
                     paint.setColor(Color.WHITE);
                 }
+                paint.setStyle(Paint.Style.FILL);
                 canvas.drawCircle((column*blockSize)+onBoardX,(line*blockSize)+onBoardY, blockSize/2, paint);
+
+                if(controller.stoneAtPositionIsLastPlayedStone(line, column)){
+                    paint.setStyle(Paint.Style.FILL);
+                    if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
+                        paint.setColor(Color.WHITE);
+                    }else{
+                        paint.setColor(Color.BLACK);
+                    }
+                    canvas.drawCircle((column*blockSize)+onBoardX,(line*blockSize)+onBoardY, blockSize/4, paint);
+                }
             }
         }
     }
