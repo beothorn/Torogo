@@ -97,7 +97,7 @@ public class GoView extends View{
                     if(line < 0){
                         line = boardSize + line;
                     }
-                    controller.play(GoBoard.StoneColor.BLACK, line, column);
+                    play(column, line);
                 }
                 invalidate();
 
@@ -106,6 +106,10 @@ public class GoView extends View{
         }
 
         return true;
+    }
+
+    public void play(int column, int line) {
+        controller.play(line, column);
     }
 
     @Override

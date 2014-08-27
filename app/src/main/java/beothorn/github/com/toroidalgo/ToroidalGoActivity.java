@@ -9,16 +9,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Map;
+
+import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import sneer.android.ui.SessionActivity;
+
+//public class ToroidalGoActivity extends SessionActivity {
 public class ToroidalGoActivity extends Activity {
+
+    private GoGameController controller;
+
+    private GoView goView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toroidal_go);
 
-        final GoView goView = (GoView) findViewById(R.id.goView);
-        GoGameController controller = new GoGameController();
+        GoView goView = (GoView) findViewById(R.id.goView);
+        Publisher publisher = new Publisher();
+        controller = new GoGameController(publisher, GoBoard.StoneColor.BLACK);
         goView.setController(controller);
+
+        publisher.setPublishListener(this);
 
         TextView gameStateLabel = (TextView) findViewById(R.id.gameState);
         controller.setStateLabel(gameStateLabel);
@@ -34,6 +47,54 @@ public class ToroidalGoActivity extends Activity {
 
         TextView whiteScore =  (TextView) findViewById(R.id.whiteScore);
         controller.setWhiteScore(whiteScore);
+    }
+
+    public void doPlay(Map<String, Integer> play){
+        switch (play.get("TYPE")){
+            case Publisher.TOGGLE_DEAD_STONE:
+                controller.toggleDeadStone(play.get("line"), play.get("column"));
+                break;
+            case Publisher.PLAY:
+                controller.playStone(play.get("line"), play.get("column"));
+                break;
+            case Publisher.PASS:
+                controller.pass();
+                break;
+            case Publisher.RESIGN:
+                controller.resign();
+                break;
+        }
+    }
+
+//    @Override
+    protected void onPeerName(String oponnent) {
+
+    }
+
+//    @Override
+    protected void messageSent(Object newMessage) {
+        doPlay((Map<String, Integer>) newMessage);
+        goView.invalidate();
+    }
+
+//    @Override
+    protected void messageReceived(Object newMessage) {
+        doPlay((Map<String, Integer>) newMessage);
+        goView.invalidate();
+    }
+
+//    @Override
+    protected void replayMessageSent(Object oldMessage) {
+        doPlay((Map<String, Integer>) oldMessage);
+    }
+
+//    @Override
+    protected void replayMessageReceived(Object oldMessage) {
+        doPlay((Map<String, Integer>) oldMessage);
+    }
+
+//    @Override
+    protected void onReplayCompleted() {
 
     }
 

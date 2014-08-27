@@ -15,17 +15,25 @@ public class GoGameController implements BoardListener{
     private TextView stateLabel;
     private TextView blackScore;
     private TextView whiteScore;
+    private Publisher publisher;
 
-    public GoGameController(){
+    private GoBoard.StoneColor myColor;
+    private GoBoard.StoneColor turn = GoBoard.StoneColor.BLACK;
+
+    public GoGameController(Publisher publisher, GoBoard.StoneColor myColor){
+        this.publisher = publisher;
+        this.myColor = myColor;
         goBoard = new ToroidalGoBoard(size);
         goBoard.setBoardListener(this);
     }
 
-    public void play(GoBoard.StoneColor player, int line, int column){
+    public void play(int line, int column){
+        if(!isMyTurn()) return;
+
         if(goBoard.canPlayStone(column, line))
-            goBoard.playStone(column, line);
+            publishPlayStone(line, column);
         if(goBoard.gameHasEnded()){
-            goBoard.toggleDeadStone(column, line);
+            publishToogleDeadStone(line, column);
         }
     }
 
@@ -49,16 +57,21 @@ public class GoGameController implements BoardListener{
         passButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goBoard.passTurn();
+                if(isMyTurn())
+                    publishPass();
             }
         });
+    }
+
+    private boolean isMyTurn() {
+        return turn.equals(myColor);
     }
 
     public void setResignButton(Button resignButton) {
         resignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goBoard.resign();
+                publishResign();
             }
         });
     }
@@ -88,5 +101,47 @@ public class GoGameController implements BoardListener{
 
     public void setWhiteScore(TextView whiteScore) {
         this.whiteScore = whiteScore;
+    }
+
+    public void toggleDeadStone(int line, int column) {
+        goBoard.toggleDeadStone(column, line);
+    }
+
+    public void playStone(int line, int column) {
+        goBoard.playStone(column, line);
+        changePlayingColor();
+    }
+
+    public void pass(){
+        goBoard.passTurn();
+        changePlayingColor();
+    }
+
+    private void changePlayingColor() {
+        if(turn.equals(GoBoard.StoneColor.BLACK)){
+            turn = GoBoard.StoneColor.WHITE;
+        }else{
+            turn = GoBoard.StoneColor.BLACK;
+        }
+    }
+
+    public void resign(){
+        goBoard.resign();
+    }
+
+    private void publishToogleDeadStone(int line, int column) {
+        publisher.toggleDeadStone(line, column);
+    }
+
+    private void publishPlayStone(int line, int column) {
+        publisher.playStone(line, column);
+    }
+
+    private void publishPass() {
+        publisher.pass();
+    }
+
+    private void publishResign() {
+        publisher.resign();
     }
 }
