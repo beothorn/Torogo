@@ -123,6 +123,9 @@ public class GoGameController implements BoardListener{
         }else{
             turn = GoBoard.StoneColor.BLACK;
         }
+
+        //awlays my play
+        //myColor = turn;
     }
 
     public void resign(){
