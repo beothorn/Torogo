@@ -26,7 +26,7 @@ public class ToroidalGoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toroidal_go);
 
-        GoView goView = (GoView) findViewById(R.id.goView);
+        goView = (GoView) findViewById(R.id.goView);
         Publisher publisher = new Publisher();
         controller = new GoGameController(publisher, GoBoard.StoneColor.BLACK);
         goView.setController(controller);
