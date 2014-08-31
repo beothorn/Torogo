@@ -1,6 +1,8 @@
 package beothorn.github.com.toroidalgo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,8 +16,7 @@ import java.util.Map;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import sneer.android.ui.SessionActivity;
 
-//public class ToroidalGoActivity extends SessionActivity {
-public class ToroidalGoActivity extends Activity {
+public class ToroidalGoActivity extends SessionActivity {
 
     private GoGameController controller;
 
@@ -23,7 +24,20 @@ public class ToroidalGoActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
+        }catch (NullPointerException e){
+            new AlertDialog.Builder(this)
+                    .setTitle("Torogo")
+                    .setMessage("You need start torogo from the sneer chat")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        };
         setContentView(R.layout.activity_toroidal_go);
 
         goView = (GoView) findViewById(R.id.goView);
@@ -66,36 +80,35 @@ public class ToroidalGoActivity extends Activity {
         }
     }
 
-//    @Override
-    protected void onPeerName(String oponnent) {
-
-    }
-
-//    @Override
-    protected void messageSent(Object newMessage) {
+    @Override
+    protected void newMessageSent(Object newMessage) {
         doPlay((Map<String, Integer>) newMessage);
         goView.invalidate();
     }
 
-//    @Override
-    protected void messageReceived(Object newMessage) {
+    @Override
+    protected void newMessageReceived(Object newMessage) {
         doPlay((Map<String, Integer>) newMessage);
         goView.invalidate();
     }
 
-//    @Override
-    protected void replayMessageSent(Object oldMessage) {
-        doPlay((Map<String, Integer>) oldMessage);
+    @Override
+    protected void onMessageReplayCompleted() {
+        goView.invalidate();
     }
 
-//    @Override
-    protected void replayMessageReceived(Object oldMessage) {
-        doPlay((Map<String, Integer>) oldMessage);
+    @Override
+    protected void onPeerName(String s) {
     }
 
-//    @Override
-    protected void onReplayCompleted() {
+    @Override
+    protected void replayMessageSent(Object newMessage) {
+        doPlay((Map<String, Integer>) newMessage);
+    }
 
+    @Override
+    protected void replayMessageReceived(Object newMessage) {
+        doPlay((Map<String, Integer>) newMessage);
     }
 
     @Override
