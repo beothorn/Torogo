@@ -1,22 +1,20 @@
 package beothorn.github.com.toroidalgo;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-import sneer.android.ui.SessionActivity;
+import sneer.android.Message;
+import sneer.android.PartnerSession;
 
-public class ToroidalGoActivity extends SessionActivity {
+public class ToroidalGoActivity extends Activity { // implements Listener {
 
     private GoGameController controller;
 
@@ -24,31 +22,49 @@ public class ToroidalGoActivity extends SessionActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-        }catch (NullPointerException e){
-            new AlertDialog.Builder(this)
-                    .setTitle("Torogo")
-                    .setMessage("You need start torogo from the sneer chat")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        };
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_toroidal_go);
 
         goView = (GoView) findViewById(R.id.goView);
         Publisher publisher = new Publisher();
-        controller = new GoGameController(publisher, GoBoard.StoneColor.BLACK);
-        goView.setController(controller);
 
-        publisher.setPublishListener(this);
+        final PartnerSession session = PartnerSession.join(this, new PartnerSession.Listener() {      /////////////Sneer API
+            @Override
+            public void onUpToDate() {      /////////////Sneer API
+                goView.invalidate();
+            }
+
+            @Override
+            public void onMessage(Message message) {      /////////////Sneer API
+                Object payload = message.payload();
+                Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
+                doPlay(torogoMove);
+                goView.invalidate();
+            }
+
+            private Map<String, Integer> convertFromSneerToTorogoMove(Map<String, Long> payload) {
+                Map<String, Integer> casted = new LinkedHashMap<String, Integer>();
+                for (Map.Entry<String, Long> stringLongEntry : payload.entrySet()) {
+                    casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().intValue());
+                }
+                return casted;
+            }
+        });
+
+        GoBoard.StoneColor myColor = GoBoard.StoneColor.BLACK;
+        if(session.wasStartedByMe()){
+            myColor = GoBoard.StoneColor.WHITE;
+        }
+
+        controller = new GoGameController(publisher, myColor);
+        goView.setController(controller);
 
         TextView gameStateLabel = (TextView) findViewById(R.id.gameState);
         controller.setStateLabel(gameStateLabel);
+
+        Button continueButton =  (Button) findViewById(R.id.continueButton);
+        controller.setContinueButton(continueButton);
 
         Button passButton =  (Button) findViewById(R.id.passButton);
         controller.setPassButton(passButton);
@@ -61,6 +77,18 @@ public class ToroidalGoActivity extends SessionActivity {
 
         TextView whiteScore =  (TextView) findViewById(R.id.whiteScore);
         controller.setWhiteScore(whiteScore);
+
+        publisher.setPublishListener(new ToroidalGoListener(){
+            @Override
+            public void doPlay(Map<String, Integer> play) {
+                Map<String, Long> casted = new LinkedHashMap<String, Long>();
+                for (Map.Entry<String, Integer> stringLongEntry : play.entrySet()) {
+                    casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());
+                }
+
+                session.send(casted);
+            }
+        });
     }
 
     public void doPlay(Map<String, Integer> play){
@@ -76,39 +104,10 @@ public class ToroidalGoActivity extends SessionActivity {
                 break;
             case Publisher.RESIGN:
                 controller.resign();
+            case Publisher.CONTINUE:
+                controller.continueGame(play.get("turn"));
                 break;
         }
-    }
-
-    @Override
-    protected void newMessageSent(Object newMessage) {
-        doPlay((Map<String, Integer>) newMessage);
-        goView.invalidate();
-    }
-
-    @Override
-    protected void newMessageReceived(Object newMessage) {
-        doPlay((Map<String, Integer>) newMessage);
-        goView.invalidate();
-    }
-
-    @Override
-    protected void onMessageReplayCompleted() {
-        goView.invalidate();
-    }
-
-    @Override
-    protected void onPeerName(String s) {
-    }
-
-    @Override
-    protected void replayMessageSent(Object newMessage) {
-        doPlay((Map<String, Integer>) newMessage);
-    }
-
-    @Override
-    protected void replayMessageReceived(Object newMessage) {
-        doPlay((Map<String, Integer>) newMessage);
     }
 
     @Override

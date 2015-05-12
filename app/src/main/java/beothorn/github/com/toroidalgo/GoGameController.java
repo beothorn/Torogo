@@ -57,8 +57,8 @@ public class GoGameController implements BoardListener{
         passButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isMyTurn())
-                    publishPass();
+                if(!isMyTurn()) return;
+                publishPass();
             }
         });
     }
@@ -76,10 +76,19 @@ public class GoGameController implements BoardListener{
         });
     }
 
+    public void setContinueButton(Button continueButton) {
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                publishContinue();
+            }
+        });
+    }
+
     @Override
     public void updateScore(int _blackScore, int _whiteScore) {
         blackScore.setText("Black: "+_blackScore);
-        whiteScore.setText("White: "+_whiteScore);
+        whiteScore.setText("White: " + _whiteScore);
     }
 
     @Override
@@ -117,15 +126,20 @@ public class GoGameController implements BoardListener{
         changePlayingColor();
     }
 
+    public void continueGame(int turn) {
+        goBoard.continueGame(turn);
+    }
+
+    public void setColor(GoBoard.StoneColor color){
+        myColor = color;
+    }
+
     private void changePlayingColor() {
         if(turn.equals(GoBoard.StoneColor.BLACK)){
             turn = GoBoard.StoneColor.WHITE;
         }else{
             turn = GoBoard.StoneColor.BLACK;
         }
-
-        //awlays my play
-        //myColor = turn;
     }
 
     public void resign(){
@@ -144,7 +158,12 @@ public class GoGameController implements BoardListener{
         publisher.pass();
     }
 
+    private void publishContinue() {
+        publisher.continueGame(turn == GoBoard.StoneColor.BLACK ? Publisher.BLACK_TURN : Publisher.WHITE_TURN);
+    }
+
     private void publishResign() {
         publisher.resign();
     }
+
 }

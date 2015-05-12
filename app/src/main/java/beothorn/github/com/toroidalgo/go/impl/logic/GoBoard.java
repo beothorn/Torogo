@@ -5,6 +5,8 @@ import android.graphics.Point;
 import java.util.HashSet;
 import java.util.Set;
 
+import beothorn.github.com.toroidalgo.Publisher;
+
 
 public class GoBoard {
 
@@ -103,6 +105,9 @@ public class GoBoard {
 		_previousWasPass = true;
 	}
 
+    public void continueGame(int turn) {
+        returnToAcceptingMoves(turn);
+    }
 
 	public void resign() {
 		StoneColor loser = nextToPlay();
@@ -196,23 +201,36 @@ public class GoBoard {
 		if(IntersectionUtils.sameSituation(_previousSituation, _intersections))
 			throw new IllegalMove();
 	}
-	
-	
-	private void stopAcceptingMoves() {
-		_previousSituation = copy(_intersections);
-		_nextToPlay = null;
-		if(_boardListener != null){
-			_boardListener.nextToPlay(_nextToPlay);
-		}
-		
-		_capturedStonesBlack = _blackScore;
-		_capturedStonesWhite = _whiteScore;
-		
-		updateScore();
-	}
-	
-	
-	private void updateScore() {
+
+
+    private void stopAcceptingMoves() {
+        _previousSituation = copy(_intersections);
+        _nextToPlay = null;
+        if(_boardListener != null){
+            _boardListener.nextToPlay(_nextToPlay);
+        }
+
+        _capturedStonesBlack = _blackScore;
+        _capturedStonesWhite = _whiteScore;
+
+        updateScore();
+    }
+
+    private void returnToAcceptingMoves(int turn) {
+        _previousSituation = copy(_intersections);
+        _nextToPlay = turn == Publisher.BLACK_TURN ? StoneColor.BLACK : StoneColor.WHITE;
+        if(_boardListener != null){
+            _boardListener.nextToPlay(_nextToPlay);
+        }
+
+        _capturedStonesBlack = 0;
+        _capturedStonesWhite = 0;
+
+        updateScore();
+    }
+
+
+    private void updateScore() {
 		_blackScore = _capturedStonesBlack;
 		_whiteScore = _capturedStonesWhite;
 		countDeadStones();
