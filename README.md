@@ -1,3 +1,3 @@
 # Torogo
 
-![screenshot](http://i.imgur.com/ea1ZKmG.png "Torogo")
+![screenshot](http://i.imgur.com/UgQY35a.png "Torogo")
