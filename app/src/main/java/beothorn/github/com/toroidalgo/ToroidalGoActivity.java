@@ -1,6 +1,7 @@
 package beothorn.github.com.toroidalgo;
 
 import android.app.Activity;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.graphs.MyGLSurfaceView;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
@@ -19,11 +21,16 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
     private GoGameController controller;
 
     private GoView goView;
+    private GLSurfaceView mGLView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mGLView = new MyGLSurfaceView(this);
+        setContentView(mGLView);
+
+        /**
         setContentView(R.layout.activity_toroidal_go);
 
         goView = (GoView) findViewById(R.id.goView);
@@ -97,6 +104,7 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
                 session.send(casted);
             }
         });
+         **/
     }
 
     public void playLocally(Map<String, Integer> play){
