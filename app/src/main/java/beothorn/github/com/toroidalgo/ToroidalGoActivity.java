@@ -29,17 +29,18 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
         goView = (GoView) findViewById(R.id.goView);
         Publisher publisher = new Publisher();
 
-        final PartnerSession session = PartnerSession.join(this, new PartnerSession.Listener() {      /////////////Sneer API
+        final PartnerSession session = PartnerSession.join(this, new PartnerSession.Listener() {
             @Override
             public void onUpToDate() {      /////////////Sneer API
                 goView.invalidate();
             }
 
             @Override
-            public void onMessage(Message message) {      /////////////Sneer API
+            public void onMessage(Message message) {
+                if(message.wasSentByMe()) return;
                 Object payload = message.payload();
                 Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
-                doPlay(torogoMove);
+                playLocally(torogoMove);
                 goView.invalidate();
             }
 
@@ -52,9 +53,11 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
             }
         });
 
-        GoBoard.StoneColor myColor = GoBoard.StoneColor.BLACK;
+        final GoBoard.StoneColor myColor;
         if(session.wasStartedByMe()){
             myColor = GoBoard.StoneColor.WHITE;
+        }else{
+            myColor = GoBoard.StoneColor.BLACK;
         }
 
         controller = new GoGameController(publisher, myColor);
@@ -80,10 +83,15 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
 
         publisher.setPublishListener(new ToroidalGoListener(){
             @Override
-            public void doPlay(Map<String, Integer> play) {
+            public void doPlay(Map<String, Integer> play, GoBoard.StoneColor playingColor) {
                 Map<String, Long> casted = new LinkedHashMap<String, Long>();
                 for (Map.Entry<String, Integer> stringLongEntry : play.entrySet()) {
                     casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());
+                }
+
+                if(playingColor == myColor) {
+                    playLocally(play);
+                    goView.invalidate();
                 }
 
                 session.send(casted);
@@ -91,7 +99,7 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
         });
     }
 
-    public void doPlay(Map<String, Integer> play){
+    public void playLocally(Map<String, Integer> play){
         switch (play.get("TYPE")){
             case Publisher.TOGGLE_DEAD_STONE:
                 controller.toggleDeadStone(play.get("line"), play.get("column"));

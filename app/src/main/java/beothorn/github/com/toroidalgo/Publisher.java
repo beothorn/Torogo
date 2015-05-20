@@ -3,6 +3,7 @@ package beothorn.github.com.toroidalgo;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import sneer.android.PartnerSession;
 
 public class Publisher {
@@ -22,38 +23,38 @@ public class Publisher {
         this.listener = listener;
     }
 
-    public void toggleDeadStone(int line, int column) {
+    public void toggleDeadStone(int line, int column, GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, TOGGLE_DEAD_STONE);
         play.put("line", line);
         play.put("column", column);
-        listener.doPlay(play);
+        listener.doPlay(play, currentPlaying);
     }
 
-    public void playStone(int line, int column) {
+    public void playStone(int line, int column, GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, PLAY);
         play.put("line", line);
         play.put("column", column);
-        listener.doPlay(play);
+        listener.doPlay(play, currentPlaying);
     }
 
-    public void pass() {
+    public void pass(GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, PASS);
-        listener.doPlay(play);
+        listener.doPlay(play, currentPlaying);
     }
 
-    public void continueGame(int turn) {
+    public void continueGame(int turn, GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, CONTINUE);
         play.put("turn", turn);
-        listener.doPlay(play);
+        listener.doPlay(play, currentPlaying);
     }
 
-    public void resign() {
+    public void resign(GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, RESIGN);
-        listener.doPlay(play);
+        listener.doPlay(play, currentPlaying);
     }
 }

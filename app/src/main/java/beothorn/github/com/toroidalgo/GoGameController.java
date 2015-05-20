@@ -147,23 +147,23 @@ public class GoGameController implements BoardListener{
     }
 
     private void publishToogleDeadStone(int line, int column) {
-        publisher.toggleDeadStone(line, column);
+        publisher.toggleDeadStone(line, column, turn);
     }
 
     private void publishPlayStone(int line, int column) {
-        publisher.playStone(line, column);
+        publisher.playStone(line, column, turn);
     }
 
     private void publishPass() {
-        publisher.pass();
+        publisher.pass(turn);
     }
 
     private void publishContinue() {
-        publisher.continueGame(turn == GoBoard.StoneColor.BLACK ? Publisher.BLACK_TURN : Publisher.WHITE_TURN);
+        publisher.continueGame(turn == GoBoard.StoneColor.BLACK ? Publisher.BLACK_TURN : Publisher.WHITE_TURN, turn);
     }
 
     private void publishResign() {
-        publisher.resign();
+        publisher.resign(turn);
     }
 
 }
