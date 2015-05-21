@@ -6,16 +6,22 @@ import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 
 public class GoView extends View{
+
+    private ScaleGestureDetector mScaleDetector;
+    private float mScaleFactor = 1.f;
 
     private final Paint paint = new Paint();
     private final Paint blackPaint = new Paint();
@@ -40,10 +46,12 @@ public class GoView extends View{
         super(context, attrs);
         blackPaint.setStyle(Paint.Style.FILL);
         blackPaint.setStrokeWidth(3);
-        blackPaint.setColor(Color.BLACK);
+        blackPaint.setAntiAlias(true);
+        //blackPaint.setColor(Color.BLACK);
 
         whitePaint.setStyle(Paint.Style.FILL);
         whitePaint.setStrokeWidth(2);
+        whitePaint.setAntiAlias(true);
         whitePaint.setColor(Color.WHITE);
 
         shadowPaint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
@@ -51,10 +59,31 @@ public class GoView extends View{
         shadowPaint.setStyle(Paint.Style.FILL);
 
         paint.setStrokeWidth(3);
+        paint.setAntiAlias(true);
+
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                blockSize = (int) detector.getCurrentSpan();
+                return false;
+            }
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                return false;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
+
+            }
+        });
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        mScaleDetector.onTouchEvent(ev);
+
         final int action = ev.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_SCROLL: {
@@ -81,28 +110,33 @@ public class GoView extends View{
                 final float x = ev.getX();
                 final float y = ev.getY();
 
-                final float dx = x - mLastTouchX;
-                final float dy = y - mLastTouchY;
+                // Only move if the ScaleGestureDetector isn't processing a gesture.
+                if (!mScaleDetector.isInProgress()) {
+                    final float dx = x - mLastTouchX;
+                    final float dy = y - mLastTouchY;
 
-                boardX += dx;
-                boardY += dy;
+                    boardX += dx;
+                    boardY += dy;
 
-                if(boardX < 0){
-                    boardX = boardX + (boardSize * blockSize);
-                }else if(boardX > getMeasuredWidth()){
-                    boardX = boardX - (boardSize * blockSize);
+                    if(boardX < 0){
+                        boardX = boardX + (boardSize * blockSize);
+                    }else if(boardX > getMeasuredWidth()){
+                        boardX = boardX - (boardSize * blockSize);
+                    }
+
+                    if(boardY < 0){
+                        boardY = boardY + (boardSize * blockSize);
+                    }else if(boardY > getMeasuredHeight()){
+                        boardY = boardY - (boardSize * blockSize);
+                    }
+
+                    mLastTouchX = x;
+                    mLastTouchY = y;
+
+                    invalidate();
                 }
 
-                if(boardY < 0){
-                    boardY = boardY + (boardSize * blockSize);
-                }else if(boardY > getMeasuredHeight()){
-                    boardY = boardY - (boardSize * blockSize);
-                }
 
-                mLastTouchX = x;
-                mLastTouchY = y;
-
-                invalidate();
                 break;
             }
 
@@ -205,6 +239,7 @@ public class GoView extends View{
                 if(controller.getPieceAt(line, column) == null) continue;
 
                 if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
+                    blackPaint.setShader(new RadialGradient((column * blockSize) + onBoardX, (line * blockSize) + onBoardY,blockSize,Color.BLACK,Color.DKGRAY, Shader.TileMode.MIRROR));
                     canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, blackPaint);
                 }else{
                     canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, whitePaint);
@@ -212,6 +247,7 @@ public class GoView extends View{
 
 
 
+                blackPaint.setShader(null);
                 if(controller.stoneAtPositionIsLastPlayedStone(line, column)){
                     if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
                         canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 4, whitePaint);
