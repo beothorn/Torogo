@@ -1,11 +1,15 @@
 package beothorn.github.com.toroidalgo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -14,6 +18,9 @@ import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 public class GoView extends View{
 
     private final Paint paint = new Paint();
+    private final Paint blackPaint = new Paint();
+    private final Paint whitePaint = new Paint();
+    private final Paint shadowPaint = new Paint();
 
     private float mLastTouchX;
     private float mLastTouchY;
@@ -31,7 +38,18 @@ public class GoView extends View{
 
     public GoView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        paint.setStyle(Paint.Style.STROKE);
+        blackPaint.setStyle(Paint.Style.FILL);
+        blackPaint.setStrokeWidth(3);
+        blackPaint.setColor(Color.BLACK);
+
+        whitePaint.setStyle(Paint.Style.FILL);
+        whitePaint.setStrokeWidth(2);
+        whitePaint.setColor(Color.WHITE);
+
+        shadowPaint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
+        shadowPaint.setColor(Color.BLACK);
+        shadowPaint.setStyle(Paint.Style.FILL);
+
         paint.setStrokeWidth(3);
     }
 
@@ -39,6 +57,13 @@ public class GoView extends View{
     public boolean onTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_SCROLL: {
+                blockSize += ev.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                System.out.println(blockSize);
+
+                break;
+            }
+
             case MotionEvent.ACTION_DOWN: {
                 final float x = ev.getX();
                 final float y = ev.getY();
@@ -131,6 +156,12 @@ public class GoView extends View{
         canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
 
 
+        Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.wood);//http://tiled-bg.blogspot.com.br/
+        BitmapDrawable tileImg = new BitmapDrawable(getResources(), img);
+        tileImg.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        tileImg.setTileModeXY(Shader.TileMode.REPEAT.REPEAT, Shader.TileMode.REPEAT.REPEAT);
+        tileImg.draw(canvas);
+
         int onBoardX = boardX;
         int onBoardY = boardY;
 
@@ -160,27 +191,34 @@ public class GoView extends View{
     }
 
     private void drawPieces(int onBoardX, int onBoardY, Canvas canvas) {
-        paint.setStyle(Paint.Style.FILL);
+        for(int line = 0; line < boardSize; line++){
+            for(int column = 0; column < boardSize; column++){
+                if(controller.getPieceAt(line, column) == null) continue;
+                int shadowDistance = 4;
+                canvas.drawCircle(((column * blockSize) + onBoardX) +shadowDistance, ((line * blockSize) + onBoardY) +shadowDistance, blockSize / 2, shadowPaint);
+
+            }
+        }
+
         for(int line = 0; line < boardSize; line++){
             for(int column = 0; column < boardSize; column++){
                 if(controller.getPieceAt(line, column) == null) continue;
 
                 if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
-                    paint.setColor(Color.BLACK);
+                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, blackPaint);
                 }else{
-                    paint.setColor(Color.WHITE);
+                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, whitePaint);
                 }
-                paint.setStyle(Paint.Style.FILL);
-                canvas.drawCircle((column*blockSize)+onBoardX,(line*blockSize)+onBoardY, blockSize/2, paint);
+
+
 
                 if(controller.stoneAtPositionIsLastPlayedStone(line, column)){
-                    paint.setStyle(Paint.Style.FILL);
                     if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
-                        paint.setColor(Color.WHITE);
+                        canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 4, whitePaint);
                     }else{
-                        paint.setColor(Color.BLACK);
+                        canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 4, blackPaint);
                     }
-                    canvas.drawCircle((column*blockSize)+onBoardX,(line*blockSize)+onBoardY, blockSize/4, paint);
+
                 }
             }
         }
