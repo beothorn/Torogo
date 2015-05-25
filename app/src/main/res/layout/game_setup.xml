@@ -100,6 +100,7 @@
         android:layout_height="wrap_content"
         android:text="Accept"
         android:id="@+id/buttonAccept"
-        android:textSize="32dp" />
+        android:textSize="32dp"
+        android:textStyle="bold" />
 
 </LinearLayout>

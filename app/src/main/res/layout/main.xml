@@ -12,6 +12,18 @@
         android:layout_gravity="center_horizontal"
         android:src="@drawable/splash" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Torogo"
+        android:id="@+id/textView4"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textColor="#ff000000"
+        android:textSize="42dp"
+        android:typeface="serif" />
+
     <Button
         android:layout_width="325dp"
         android:layout_height="wrap_content"
