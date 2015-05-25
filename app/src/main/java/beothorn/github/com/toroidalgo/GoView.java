@@ -19,6 +19,8 @@ import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 
 public class GoView extends View{
 
+    public static final int MIN_BLOCK_SIZE = 40;
+    public static final int MAX_BLOCK_SIZE = 200;
     private ScaleGestureDetector scaleGestureDetector;
 
     private final Paint paint = new Paint();
@@ -32,16 +34,23 @@ public class GoView extends View{
     private float mLastBoardX;
     private float mLastBoardY;
 
+    private Bitmap img;
+    private BitmapDrawable tileImg;
+
     private int blockSize;
     private int moveTolerance = 10;
     private int boardSize;
-    private int boardX = 10;
-    private int boardY = 10;
+    private int boardX;
+    private int boardY;
     private int rowSize = blockSize * boardSize;
     private GoGameController controller;
 
     public GoView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        img = BitmapFactory.decodeResource(getResources(), R.drawable.wood);//http://tiled-bg.blogspot.com.br/
+        tileImg = new BitmapDrawable(getResources(), img);
+
         blackPaint.setStyle(Paint.Style.FILL);
         blackPaint.setStrokeWidth(1);
         blackPaint.setAntiAlias(true);
@@ -94,7 +103,10 @@ public class GoView extends View{
     }
 
     private void updateBlockSize(int newSize) {
-        if(newSize < 30 || newSize > 1000) return;
+        if(newSize < MIN_BLOCK_SIZE)
+            newSize = MIN_BLOCK_SIZE;
+        if(newSize > MAX_BLOCK_SIZE)
+            newSize = MAX_BLOCK_SIZE;
         blockSize = newSize;
         rowSize = blockSize * boardSize;
         invalidate();
@@ -184,19 +196,27 @@ public class GoView extends View{
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(blockSize == 0) blockSize = getMeasuredWidth() / boardSize;
+        if(blockSize == 0) updateBlockSize(getMeasuredWidth() / boardSize);
 
         if(controller == null) return;
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.rgb(240, 182, 98));
-        canvas.drawRect(0, 0, getMeasuredWidth()+boardX, getMeasuredHeight()+boardY, paint);
-
+        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
 
         int saveCount = canvas.save();
         try {
-            canvas.translate(boardX, boardY);
-            paintBackground(canvas);
+            int width = img.getWidth();
+            int height = img.getHeight();
+            if(boardX != 0 && boardY != 0 && blockSize != 0) {
+                int dx = (boardX % width) - width;
+                int dy = (boardY % height) - height;
+                canvas.translate(dx, dy);
+            }
+
+            tileImg.setBounds(0, 0, getMeasuredWidth()+width, getMeasuredHeight()+height);
+            tileImg.setTileModeXY(Shader.TileMode.REPEAT.REPEAT, Shader.TileMode.REPEAT.REPEAT);
+            tileImg.draw(canvas);
         } finally {
             canvas.restoreToCount(saveCount);
         }
@@ -227,15 +247,6 @@ public class GoView extends View{
             currentBoardX = startDrawingX;
             currentBoardY += (blockSize*(boardSize));
         }
-    }
-
-    private void paintBackground(Canvas canvas) {
-        Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.wood);//http://tiled-bg.blogspot.com.br/
-        BitmapDrawable tileImg = new BitmapDrawable(getResources(), img);
-
-        tileImg.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
-        tileImg.setTileModeXY(Shader.TileMode.REPEAT.REPEAT, Shader.TileMode.REPEAT.REPEAT);
-        tileImg.draw(canvas);
     }
 
     private void drawPieces(int onBoardX, int onBoardY, Canvas canvas) {
