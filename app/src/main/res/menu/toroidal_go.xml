@@ -1,15 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ToroidalGoActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="1" />
     <item android:id="@+id/passButton"
         android:title="@string/pass"
-        android:orderInCategory="2" />
+        android:orderInCategory="1" />
     <item android:id="@+id/resignButton"
         android:title="@string/resign"
-        android:orderInCategory="3" />
-
-
+        android:orderInCategory="2" />
 </menu>

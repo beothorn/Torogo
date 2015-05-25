@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:touchscreenBlocksFocus="true"
+    android:background="#ffffffff">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/splash" />
+
+    <Button
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:text="Play local"
+        android:id="@+id/playLocal"
+        android:layout_gravity="center_horizontal"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:layout_width="324dp"
+        android:layout_height="wrap_content"
+        android:text="Play with a friend"
+        android:id="@+id/playRemotely"
+        android:layout_gravity="center_horizontal"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:text="Learn to play"
+        android:id="@+id/learnToPlay"
+        android:layout_gravity="center_horizontal"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+</LinearLayout>
