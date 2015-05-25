@@ -3,5 +3,7 @@
 
     <string name="app_name">Torogo</string>
     <string name="action_settings">Settings</string>
+    <string name="pass">Pass</string>
+    <string name="resign">Resign</string>
 
 </resources>

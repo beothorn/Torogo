@@ -12,9 +12,9 @@ public class GoGameController implements BoardListener{
 
     private GoBoard goBoard;
     private int size = 9;
-    private TextView stateLabel;
-    private TextView blackScore;
-    private TextView whiteScore;
+    private StateListener stateLabel;
+    private ScoreListener scoreListener;
+    private ScoreListener whiteScore;
     private Publisher publisher;
 
     private GoBoard.StoneColor myColor;
@@ -49,31 +49,21 @@ public class GoGameController implements BoardListener{
         return size;
     }
 
-    public void setStateLabel(TextView stateLabel) {
+    public void setStateListener(StateListener stateLabel) {
         this.stateLabel = stateLabel;
     }
 
-    public void setPassButton(Button passButton) {
-        passButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isMyTurn()) return;
-                publishPass();
-            }
-        });
+    public void callPass() {
+        if(!isMyTurn()) return;
+        publishPass();
+    }
+
+    public void callResign() {
+        publishResign();
     }
 
     private boolean isMyTurn() {
         return turn.equals(myColor);
-    }
-
-    public void setResignButton(Button resignButton) {
-        resignButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                publishResign();
-            }
-        });
     }
 
     public void setContinueButton(Button continueButton) {
@@ -87,29 +77,28 @@ public class GoGameController implements BoardListener{
 
     @Override
     public void updateScore(int _blackScore, int _whiteScore) {
-        blackScore.setText("Black: "+_blackScore);
-        whiteScore.setText("White: " + _whiteScore);
+        if(scoreListener != null)
+            scoreListener.setScore(_blackScore, _whiteScore);
     }
 
     @Override
     public void nextToPlay(GoBoard.StoneColor _nextToPlay) {
         if(_nextToPlay == null){
-            stateLabel.setText("Game ended, please mark the dead stones");
+            if(stateLabel!= null)
+                stateLabel.setState("Game ended, please mark the dead stones");
         }else{
             if(_nextToPlay.equals(GoBoard.StoneColor.BLACK)){
-                stateLabel.setText("Black's turn");
+                if(stateLabel!= null)
+                    stateLabel.setState("Black's turn");
             }else{
-                stateLabel.setText("White's turn");
+                if(stateLabel!= null)
+                    stateLabel.setState("White's turn");
             }
         }
     }
 
-    public void setBlackScore(TextView blackScore) {
-        this.blackScore = blackScore;
-    }
-
-    public void setWhiteScore(TextView whiteScore) {
-        this.whiteScore = whiteScore;
+    public void setScoreListener(ScoreListener scoreListener) {
+        this.scoreListener = scoreListener;
     }
 
     public void toggleDeadStone(int line, int column) {

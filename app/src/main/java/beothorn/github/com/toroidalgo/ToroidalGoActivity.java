@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -63,25 +61,21 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
         controller = new GoGameController(publisher, myColor);
         goView.setController(controller);
 
-        TextView gameStateLabel = (TextView) findViewById(R.id.gameState);
-        controller.setStateLabel(gameStateLabel);
+        controller.setStateListener(new StateListener() {
+            @Override
+            public void setState(String s) {
+                System.out.println(s);
+            }
+        });
 
-        Button continueButton =  (Button) findViewById(R.id.continueButton);
-        controller.setContinueButton(continueButton);
+        controller.setScoreListener(new ScoreListener() {
+            @Override
+            public void setScore(int blackScore, int whiteScore) {
+                System.out.println(blackScore+" "+whiteScore);
+            }
+        });
 
-        Button passButton =  (Button) findViewById(R.id.passButton);
-        controller.setPassButton(passButton);
-
-        Button resignButton =  (Button) findViewById(R.id.resignButton);
-        controller.setResignButton(resignButton);
-
-        TextView blackScore =  (TextView) findViewById(R.id.blackScore);
-        controller.setBlackScore(blackScore);
-
-        TextView whiteScore =  (TextView) findViewById(R.id.whiteScore);
-        controller.setWhiteScore(whiteScore);
-
-        publisher.setPublishListener(new ToroidalGoListener(){
+        publisher.setPublishListener(new ToroidalGoListener() {
             @Override
             public void doPlay(Map<String, Integer> play, GoBoard.StoneColor playingColor) {
                 Map<String, Long> casted = new LinkedHashMap<String, Long>();
@@ -89,7 +83,7 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
                     casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());
                 }
 
-                if(playingColor == myColor) {
+                if (playingColor == myColor) {
                     playLocally(play);
                     goView.invalidate();
                 }
@@ -97,6 +91,13 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
                 session.send(casted);
             }
         });
+        LinkedHashMap<String, Integer> stringIntegerLinkedHashMap = new LinkedHashMap<String, Integer>();
+
+        stringIntegerLinkedHashMap.put("TYPE", Publisher.PLAY);
+        stringIntegerLinkedHashMap.put("line", 1);
+        stringIntegerLinkedHashMap.put("column", 1);
+        playLocally(stringIntegerLinkedHashMap);
+
     }
 
     public void playLocally(Map<String, Integer> play){
@@ -120,18 +121,22 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toroidal_go, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.passButton) {
+            controller.callPass();
+            return true;
+        }
+        if (id == R.id.resignButton) {
+            controller.callResign();
             return true;
         }
         return super.onOptionsItemSelected(item);
