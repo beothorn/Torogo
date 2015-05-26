@@ -20,6 +20,10 @@ public class GoGameController implements BoardListener{
     private GoBoard.StoneColor myColor;
     private GoBoard.StoneColor turn = GoBoard.StoneColor.BLACK;
 
+    public GoGameController(Publisher publisher){
+        this(publisher, GoBoard.StoneColor.ANY);
+    }
+
     public GoGameController(Publisher publisher, GoBoard.StoneColor myColor){
         this.publisher = publisher;
         this.myColor = myColor;
@@ -63,6 +67,7 @@ public class GoGameController implements BoardListener{
     }
 
     private boolean isMyTurn() {
+        if(myColor == GoBoard.StoneColor.ANY) return true;
         return turn.equals(myColor);
     }
 

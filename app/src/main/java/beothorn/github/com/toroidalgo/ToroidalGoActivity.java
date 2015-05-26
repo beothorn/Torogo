@@ -8,15 +8,11 @@ import android.view.MenuItem;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-import sneer.android.Message;
-import sneer.android.PartnerSession;
-
-public class ToroidalGoActivity extends Activity { // implements Listener {
+public class ToroidalGoActivity extends Activity {
 
     private GoGameController controller;
 
-    private GoView goView;
+    public GoView goView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,40 +21,12 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
         setContentView(R.layout.activity_toroidal_go);
 
         goView = (GoView) findViewById(R.id.goView);
-        Publisher publisher = new Publisher();
 
-        final PartnerSession session = PartnerSession.join(this, new PartnerSession.Listener() {
-            @Override
-            public void onUpToDate() {      /////////////Sneer API
-                goView.invalidate();
-            }
+        if(true)
+                controller = new LocalPlaySetup().setupController(this);
+            else
+                controller = new SneerSetup().setupController(this);
 
-            @Override
-            public void onMessage(Message message) {
-                if(message.wasSentByMe()) return;
-                Object payload = message.payload();
-                Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
-                playLocally(torogoMove);
-                goView.invalidate();
-            }
-
-            private Map<String, Integer> convertFromSneerToTorogoMove(Map<String, Long> payload) {
-                Map<String, Integer> casted = new LinkedHashMap<String, Integer>();
-                for (Map.Entry<String, Long> stringLongEntry : payload.entrySet()) {
-                    casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().intValue());
-                }
-                return casted;
-            }
-        });
-
-        final GoBoard.StoneColor myColor;
-        if(session.wasStartedByMe()){
-            myColor = GoBoard.StoneColor.WHITE;
-        }else{
-            myColor = GoBoard.StoneColor.BLACK;
-        }
-
-        controller = new GoGameController(publisher, myColor);
         goView.setController(controller);
 
         controller.setStateListener(new StateListener() {
@@ -71,26 +39,10 @@ public class ToroidalGoActivity extends Activity { // implements Listener {
         controller.setScoreListener(new ScoreListener() {
             @Override
             public void setScore(int blackScore, int whiteScore) {
-                System.out.println(blackScore+" "+whiteScore);
+                System.out.println(blackScore + " " + whiteScore);
             }
         });
 
-        publisher.setPublishListener(new ToroidalGoListener() {
-            @Override
-            public void doPlay(Map<String, Integer> play, GoBoard.StoneColor playingColor) {
-                Map<String, Long> casted = new LinkedHashMap<String, Long>();
-                for (Map.Entry<String, Integer> stringLongEntry : play.entrySet()) {
-                    casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());
-                }
-
-                if (playingColor == myColor) {
-                    playLocally(play);
-                    goView.invalidate();
-                }
-
-                session.send(casted);
-            }
-        });
         LinkedHashMap<String, Integer> stringIntegerLinkedHashMap = new LinkedHashMap<String, Integer>();
 
         stringIntegerLinkedHashMap.put("TYPE", Publisher.PLAY);

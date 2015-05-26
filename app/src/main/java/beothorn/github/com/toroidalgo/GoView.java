@@ -45,6 +45,8 @@ public class GoView extends View{
     private int rowSize = blockSize * boardSize;
     private GoGameController controller;
 
+    private int infiniteLoopProtection = 0;
+
     public GoView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -54,7 +56,6 @@ public class GoView extends View{
         blackPaint.setStyle(Paint.Style.FILL);
         blackPaint.setStrokeWidth(1);
         blackPaint.setAntiAlias(true);
-        //blackPaint.setColor(Color.BLACK);
 
         whitePaint.setStyle(Paint.Style.FILL);
         whitePaint.setStrokeWidth(1);
@@ -199,7 +200,7 @@ public class GoView extends View{
         if(blockSize == 0) updateBlockSize(getMeasuredWidth() / boardSize);
 
         if(controller == null) return;
-
+        infiniteLoopProtection = 0;
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.rgb(240, 182, 98));
         canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
@@ -227,11 +228,15 @@ public class GoView extends View{
         int startDrawingX = onBoardX;
         while(startDrawingX > 0){
             startDrawingX -= (blockSize*(boardSize));
+
+            BreakOnInfiniteLoop();
         }
 
         int startDrawingY = onBoardY;
         while(startDrawingY > 0){
             startDrawingY -= (blockSize*(boardSize));
+
+            BreakOnInfiniteLoop();
         }
 
         int currentBoardX = startDrawingX;
@@ -242,11 +247,21 @@ public class GoView extends View{
                 drawPieces(currentBoardX, currentBoardY, canvas);
 
                 currentBoardX += (blockSize*(boardSize));
+
+                BreakOnInfiniteLoop();
             }
 
             currentBoardX = startDrawingX;
             currentBoardY += (blockSize*(boardSize));
+
+            BreakOnInfiniteLoop();
         }
+    }
+
+    private void BreakOnInfiniteLoop() {
+        infiniteLoopProtection++;
+        if(infiniteLoopProtection > 2000)
+            throw new RuntimeException("Infinite loop on 1");
     }
 
     private void drawPieces(int onBoardX, int onBoardY, Canvas canvas) {

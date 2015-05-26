@@ -10,7 +10,7 @@ import beothorn.github.com.toroidalgo.Publisher;
 
 public class GoBoard {
 
-    public static enum StoneColor { BLACK, WHITE;}
+    public static enum StoneColor { BLACK, WHITE, ANY;}
 
 	public GoBoard(int size) {
 		_intersections = createIntersections(size);
