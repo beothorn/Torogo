@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "beothorn.github.com.toroidalgo"
-        minSdkVersion 15
         targetSdkVersion 20
+        minSdkVersion 16
         versionCode 1
         versionName "1.0"
     }
