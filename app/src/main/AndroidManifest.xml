@@ -17,6 +17,7 @@
             android:label="@string/app_name" >
             <meta-data android:name="sneer:session-type" android:value="torogo" />
             <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
