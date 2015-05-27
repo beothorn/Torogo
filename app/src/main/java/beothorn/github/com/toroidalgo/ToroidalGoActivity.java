@@ -65,6 +65,7 @@ public class ToroidalGoActivity extends Activity {
                 break;
             case Publisher.RESIGN:
                 controller.resign();
+                break;
             case Publisher.CONTINUE:
                 controller.continueGame(play.get("turn"));
                 break;
