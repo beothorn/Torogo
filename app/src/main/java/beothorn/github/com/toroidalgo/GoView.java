@@ -2,11 +2,11 @@ package beothorn.github.com.toroidalgo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,12 +16,15 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.painters.BoardPainter;
 
 public class GoView extends View{
 
     public static final int MIN_BLOCK_SIZE = 40;
     public static final int MAX_BLOCK_SIZE = 200;
     private ScaleGestureDetector scaleGestureDetector;
+
+    private BoardPainter boardPainter;
 
     private final Paint paint = new Paint();
     private final Paint blackPaint = new Paint();
@@ -37,21 +40,24 @@ public class GoView extends View{
     private Bitmap img;
     private BitmapDrawable tileImg;
 
+
+    private Bitmap boardBitmap;
+    private Canvas boardCanvas;
+    private Paint boardPaint = new Paint();
+
     private int blockSize;
     private int moveTolerance = 10;
-    private int boardSize;
+    private int boardSlotsCount;
     private int boardX;
     private int boardY;
-    private int rowSize = blockSize * boardSize;
+    private int rowSize = blockSize * boardSlotsCount;
     private GoGameController controller;
 
-    private int infiniteLoopProtection = 0;
 
     public GoView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        img = BitmapFactory.decodeResource(getResources(), R.drawable.wood);//http://tiled-bg.blogspot.com.br/
-        tileImg = new BitmapDrawable(getResources(), img);
+        boardPainter = new BoardPainter(this);
 
         blackPaint.setStyle(Paint.Style.FILL);
         blackPaint.setStrokeWidth(1);
@@ -94,9 +100,15 @@ public class GoView extends View{
         });
     }
 
+    private void redrawBoard() {
+        drawGrid(boardCanvas);
+        drawPieces(boardCanvas);
+    }
+
     public void setController(GoGameController controller) {
         this.controller = controller;
-        boardSize = controller.getSize();
+        boardSlotsCount = controller.getSize();
+        updateBlockSize((MAX_BLOCK_SIZE+MIN_BLOCK_SIZE)/2);
     }
 
     public void play(int column, int line) {
@@ -104,12 +116,16 @@ public class GoView extends View{
     }
 
     private void updateBlockSize(int newSize) {
+        if(newSize == blockSize) return;
         if(newSize < MIN_BLOCK_SIZE)
             newSize = MIN_BLOCK_SIZE;
         if(newSize > MAX_BLOCK_SIZE)
             newSize = MAX_BLOCK_SIZE;
         blockSize = newSize;
-        rowSize = blockSize * boardSize;
+        rowSize = blockSize * boardSlotsCount;
+        boardBitmap = Bitmap.createBitmap(rowSize, rowSize, Bitmap.Config.ARGB_8888);
+        boardCanvas = new Canvas(boardBitmap);
+        redrawBoard();
         invalidate();
     }
 
@@ -142,18 +158,17 @@ public class GoView extends View{
                     final float dy = y - mLastTouchY;
 
                     boardX += dx;
-                    boardY += dy;
-
                     if(boardX < 0){
-                        boardX = boardX + (boardSize * blockSize);
+                        boardX = boardX + (boardSlotsCount * blockSize);
                     }else if(boardX > getMeasuredWidth()){
-                        boardX = boardX - (boardSize * blockSize);
+                        boardX = boardX - (boardSlotsCount * blockSize);
                     }
 
+                    boardY += dy;
                     if(boardY < 0){
-                        boardY = boardY + (boardSize * blockSize);
+                        boardY = boardY + (boardSlotsCount * blockSize);
                     }else if(boardY > getMeasuredHeight()){
-                        boardY = boardY - (boardSize * blockSize);
+                        boardY = boardY - (boardSlotsCount * blockSize);
                     }
 
                     mLastTouchX = x;
@@ -174,15 +189,16 @@ public class GoView extends View{
                 float boardDeltaY = Math.abs(mLastBoardY - boardY);
 
                 if(boardDeltaX < moveTolerance && boardDeltaY < moveTolerance){
-                    int column = Math.round((mLastTouchX - boardX) / blockSize) % boardSize;
+                    int column = Math.round((mLastTouchX - boardX) / blockSize) % boardSlotsCount;
                     if(column < 0){
-                        column = boardSize + column;
+                        column = boardSlotsCount + column;
                     }
-                    int line = Math.round((mLastTouchY - boardY) / blockSize) % boardSize;
+                    int line = Math.round((mLastTouchY - boardY) / blockSize) % boardSlotsCount;
                     if(line < 0){
-                        line = boardSize + line;
+                        line = boardSlotsCount + line;
                     }
                     play(column, line);
+                    redrawBoard();
                 }
                 invalidate();
 
@@ -197,109 +213,72 @@ public class GoView extends View{
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(blockSize == 0) updateBlockSize(getMeasuredWidth() / boardSize);
+        if(blockSize == 0) updateBlockSize(getMeasuredWidth() / boardSlotsCount);
 
         if(controller == null) return;
-        infiniteLoopProtection = 0;
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.rgb(240, 182, 98));
-        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
 
-        int saveCount = canvas.save();
-        try {
-            int width = img.getWidth();
-            int height = img.getHeight();
-            if(boardX != 0 && boardY != 0 && blockSize != 0) {
-                int dx = (boardX % width) - width;
-                int dy = (boardY % height) - height;
-                canvas.translate(dx, dy);
-            }
-
-            tileImg.setBounds(0, 0, getMeasuredWidth()+width, getMeasuredHeight()+height);
-            tileImg.setTileModeXY(Shader.TileMode.REPEAT.REPEAT, Shader.TileMode.REPEAT.REPEAT);
-            tileImg.draw(canvas);
-        } finally {
-            canvas.restoreToCount(saveCount);
-        }
+        boardPainter.onDraw(canvas, boardX, boardY, blockSize);
 
         int onBoardX = boardX;
         int onBoardY = boardY;
 
-        int startDrawingX = onBoardX;
-        while(startDrawingX > 0){
-            startDrawingX -= (blockSize*(boardSize));
+        int boardSize = blockSize * boardSlotsCount;
 
-            BreakOnInfiniteLoop();
-        }
-
-        int startDrawingY = onBoardY;
-        while(startDrawingY > 0){
-            startDrawingY -= (blockSize*(boardSize));
-
-            BreakOnInfiniteLoop();
-        }
+        int startDrawingX = onBoardX-((onBoardX / boardSize)+1) * boardSize;
+        int startDrawingY = onBoardY-((onBoardY / boardSize)+1) * boardSize;
 
         int currentBoardX = startDrawingX;
         int currentBoardY = startDrawingY;
+
         while(currentBoardX < getMeasuredWidth() && currentBoardY < getMeasuredHeight() ){
             while(currentBoardX < getMeasuredWidth()){
-                drawGrid(currentBoardX, currentBoardY, canvas);
-                drawPieces(currentBoardX, currentBoardY, canvas);
+                canvas.drawBitmap(boardBitmap, currentBoardX, currentBoardY, paint);
 
-                currentBoardX += (blockSize*(boardSize));
-
-                BreakOnInfiniteLoop();
+                currentBoardX += (blockSize*(boardSlotsCount));
             }
 
             currentBoardX = startDrawingX;
-            currentBoardY += (blockSize*(boardSize));
-
-            BreakOnInfiniteLoop();
+            currentBoardY += (blockSize*(boardSlotsCount));
         }
     }
 
-    private void BreakOnInfiniteLoop() {
-        infiniteLoopProtection++;
-        if(infiniteLoopProtection > 2000)
-            throw new RuntimeException("Infinite loop on 1");
-    }
-
-    private void drawPieces(int onBoardX, int onBoardY, Canvas canvas) {
-        for(int line = 0; line < boardSize; line++){
-            for(int column = 0; column < boardSize; column++){
-                if(controller.getPieceAt(line, column) == null) continue;
+    private void drawPieces(Canvas canvas) {
+        for(int line = 0; line <= boardSlotsCount; line++){
+            for(int column = 0; column <= boardSlotsCount; column++){
+                if(controller.getPieceAt(line%boardSlotsCount, column%boardSlotsCount) == null) continue;
                 int shadowDistance = 4;
-                canvas.drawCircle(((column * blockSize) + onBoardX) +shadowDistance, ((line * blockSize) + onBoardY) +shadowDistance, blockSize / 2, shadowPaint);
-
+                canvas.drawCircle(column * blockSize +shadowDistance, line * blockSize +shadowDistance, blockSize / 2, shadowPaint);
             }
         }
 
-        for(int line = 0; line < boardSize; line++){
-            for(int column = 0; column < boardSize; column++){
-                if(controller.getPieceAt(line, column) == null) continue;
+        for(int line = 0; line <= boardSlotsCount; line++){
+            for(int column = 0; column <= boardSlotsCount; column++){
+                GoBoard.StoneColor pieceAt = controller.getPieceAt(line%boardSlotsCount, column%boardSlotsCount);
+                if(pieceAt == null) continue;
 
-                if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
-                    blackPaint.setShader(new RadialGradient((column * blockSize) + onBoardX, (line * blockSize) + onBoardY,blockSize * 2,Color.BLACK,Color.DKGRAY, Shader.TileMode.MIRROR));
-                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, blackPaint);
+                int cx = column * blockSize;
+                int cy = line * blockSize;
+                int radius = blockSize / 2;
+                if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
+                    blackPaint.setShader(new RadialGradient(cx, cy,blockSize * 2,Color.BLACK,Color.DKGRAY, Shader.TileMode.MIRROR));
+                    canvas.drawCircle(cx, cy, radius, blackPaint);
                     whitePaint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, whitePaint);
+                    canvas.drawCircle(cx, cy, radius, whitePaint);
                 }else{
                     whitePaint.setStyle(Paint.Style.FILL);
-                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, whitePaint);
+                    canvas.drawCircle(cx, cy, radius, whitePaint);
                     blackPaint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 2, blackPaint);
+                    canvas.drawCircle(cx, cy, radius, blackPaint);
                 }
 
-
-
                 blackPaint.setShader(null);
-                if(controller.stoneAtPositionIsLastPlayedStone(line, column)){
-                    if(controller.getPieceAt(line, column).equals(GoBoard.StoneColor.BLACK)){
+                if(controller.stoneAtPositionIsLastPlayedStone(line%boardSlotsCount, column%boardSlotsCount)){
+                    if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
                         whitePaint.setStyle(Paint.Style.FILL);
-                        canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 4, whitePaint);
+                        canvas.drawCircle(cx, cy, blockSize / 4, whitePaint);
                     }else{
                         blackPaint.setStyle(Paint.Style.FILL);
-                        canvas.drawCircle((column * blockSize) + onBoardX, (line * blockSize) + onBoardY, blockSize / 4, blackPaint);
+                        canvas.drawCircle(cx, cy, blockSize / 4, blackPaint);
                     }
 
                 }
@@ -307,27 +286,28 @@ public class GoView extends View{
         }
     }
 
-    private void drawGrid(int onBoardX, int onBoardY, Canvas canvas) {
-        drawGrid(onBoardX, onBoardY, canvas, Color.DKGRAY, 4);
-        drawGrid(onBoardX, onBoardY, canvas, Color.BLACK, 2);
+    private void drawGrid(Canvas canvas) {
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        drawGrid(canvas, Color.DKGRAY, 4);
+        drawGrid(canvas, Color.BLACK, 2);
     }
 
-    private void drawGrid(int onBoardX, int onBoardY, Canvas canvas, int color, int size) {
+    private void drawGrid(Canvas canvas, int color, int size) {
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(color);
         paint.setStrokeWidth(size);
-        for(int i = 0; i < boardSize ; i++){
+        for(int i = 0; i < boardSlotsCount; i++){
             int start = i * blockSize;
 
-            int lineLeft = onBoardX;
-            int lineTop = onBoardY + start;
-            int lineRight = onBoardX + rowSize;
+            int lineLeft = 0;
+            int lineTop = start;
+            int lineRight =  rowSize;
             int lineBottom = lineTop + blockSize;
 
-            int columnLeft = onBoardX + start;
-            int columnTop = onBoardY ;
+            int columnLeft =  start;
+            int columnTop = 0 ;
             int columnRight = columnLeft + blockSize;
-            int columnBottom = onBoardY + rowSize;
+            int columnBottom = rowSize;
 
             canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, paint);
             canvas.drawRect(columnLeft, columnTop, columnRight, columnBottom, paint);

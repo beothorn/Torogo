@@ -11,7 +11,6 @@ import java.util.Map;
 public class ToroidalGoActivity extends Activity {
 
     private GoGameController controller;
-
     public GoView goView;
 
     @Override
@@ -45,10 +44,10 @@ public class ToroidalGoActivity extends Activity {
 
         LinkedHashMap<String, Integer> stringIntegerLinkedHashMap = new LinkedHashMap<String, Integer>();
 
-        stringIntegerLinkedHashMap.put("TYPE", Publisher.PLAY);
-        stringIntegerLinkedHashMap.put("line", 1);
-        stringIntegerLinkedHashMap.put("column", 1);
-        playLocally(stringIntegerLinkedHashMap);
+//        stringIntegerLinkedHashMap.put("TYPE", Publisher.PLAY);
+//        stringIntegerLinkedHashMap.put("line", 1);
+//        stringIntegerLinkedHashMap.put("column", 1);
+//        playLocally(stringIntegerLinkedHashMap);
 
     }
 
