@@ -2,8 +2,6 @@ package beothorn.github.com.toroidalgo.go.impl.logic;
 
 import android.graphics.Point;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,13 +36,13 @@ public class GoBoard {
 		_lastPlayedPiece = new Point();
 		_lastPlayedPiece.set(Integer.valueOf(lastPlayed.split(",")[0]), Integer.valueOf(lastPlayed.split(",")[1]));
 		String playingColor = playingColorAndBoardState[1];
-		_nextToPlay = StoneColor.valueOf(playingColor);
+		nextToPlay = StoneColor.valueOf(playingColor);
 		String[] setup = playingColorAndBoardState[2].split("\n");
 		setup(setup.length);
 		IntersectionUtils.setup(_intersections,setup);
 	}
 
-	private StoneColor _nextToPlay = StoneColor.BLACK;
+	private StoneColor nextToPlay = StoneColor.BLACK;
 
 
     private int _whiteScore = 0;
@@ -56,7 +54,7 @@ public class GoBoard {
     private boolean _previousWasPass = false;
     private int _capturedStonesBlack;
     private int _capturedStonesWhite;
-    private BoardListener _boardListener;
+    private BoardListener boardListener;
     private Point _lastPlayedPiece;
 	protected Intersection intersection(int x, int y) {
 		return _intersections[x][y];
@@ -119,7 +117,7 @@ public class GoBoard {
     }
 
 	public void passTurn() {
-		next();
+		nextPass();
 
 		if (_previousWasPass)
 			stopAcceptingMoves();
@@ -158,11 +156,7 @@ public class GoBoard {
 	}
 	
 	public StoneColor nextToPlay() {
-		return _nextToPlay;
-	}
-	
-	public StoneColor getPrevColor(int x, int y) {
-		return _previousSituation[x][y]._stone;
+		return nextToPlay;
 	}
 
 	public StoneColor winner() {
@@ -170,7 +164,7 @@ public class GoBoard {
 	}
 
 	public void setBoardListener(BoardListener boardListener) {
-		_boardListener = boardListener;
+		this.boardListener = boardListener;
 	}
 
 
@@ -227,9 +221,9 @@ public class GoBoard {
 
     private void stopAcceptingMoves() {
         _previousSituation = copy(_intersections);
-        _nextToPlay = null;
-        if(_boardListener != null){
-            _boardListener.nextToPlay(_nextToPlay);
+        nextToPlay = null;
+        if(boardListener != null){
+            boardListener.nextToPlay(nextToPlay);
         }
 
         _capturedStonesBlack = _blackScore;
@@ -240,9 +234,9 @@ public class GoBoard {
 
     private void returnToAcceptingMoves(int turn) {
         _previousSituation = copy(_intersections);
-        _nextToPlay = turn == Publisher.BLACK_TURN ? StoneColor.BLACK : StoneColor.WHITE;
-        if(_boardListener != null){
-            _boardListener.nextToPlay(_nextToPlay);
+        nextToPlay = turn == Publisher.BLACK_TURN ? StoneColor.BLACK : StoneColor.WHITE;
+        if(boardListener != null){
+            boardListener.nextToPlay(nextToPlay);
         }
 
         _capturedStonesBlack = 0;
@@ -257,8 +251,8 @@ public class GoBoard {
 		_whiteScore = _capturedStonesWhite;
 		countDeadStones();
 		countTerritories();
-		if(_boardListener != null){
-			_boardListener.updateScore(_blackScore,_whiteScore);
+		if(boardListener != null){
+			boardListener.updateScore(_blackScore,_whiteScore);
 		}
 	}
 
@@ -307,11 +301,17 @@ public class GoBoard {
 		}
 	}
 
-	
+	private void nextPass() {
+		nextToPlay = other(nextToPlay());
+		if(boardListener !=null){
+			boardListener.nextToPlayOnPass(nextToPlay);
+		}
+	}
+
 	private void next() {
-		_nextToPlay = other(nextToPlay());
-		if(_boardListener!=null){
-			_boardListener.nextToPlay(_nextToPlay);
+		nextToPlay = other(nextToPlay());
+		if(boardListener !=null){
+			boardListener.nextToPlay(nextToPlay);
 		}
 	}
 	

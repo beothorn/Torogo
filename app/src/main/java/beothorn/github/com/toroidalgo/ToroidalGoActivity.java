@@ -30,8 +30,38 @@ public class ToroidalGoActivity extends Activity {
 
         controller.setStateListener(new StateListener() {
             @Override
-            public void setState(String s) {
-                System.out.println(s);
+            public void onPassWhite() {
+                goView.setText("White Passed");
+            }
+
+            @Override
+            public void onPassBlack() {
+                goView.setText("Black Passed");
+            }
+
+            @Override
+            public void onWhiteTurn() {
+                goView.clearText();
+            }
+
+            @Override
+            public void onBlackTurn() {
+                goView.clearText();
+            }
+
+            @Override
+            public void onResignWhite() {
+
+            }
+
+            @Override
+            public void onResignBlack() {
+
+            }
+
+            @Override
+            public void onMarkStonesPhaseStart() {
+                goView.setText("mark dead");
             }
         });
 

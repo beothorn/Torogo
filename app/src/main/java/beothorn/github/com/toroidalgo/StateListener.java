@@ -1,5 +1,11 @@
 package beothorn.github.com.toroidalgo;
 
 public interface StateListener {
-    void setState(String state);
+    void onPassWhite();
+    void onPassBlack();
+    void onWhiteTurn();
+    void onBlackTurn();
+    void onResignWhite();
+    void onResignBlack();
+    void onMarkStonesPhaseStart();
 }

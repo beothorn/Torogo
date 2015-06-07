@@ -95,6 +95,14 @@ public class GoView extends View{
         invalidate();
     }
 
+    public void setText(String text){
+        textPainter.setText(text);
+    }
+
+    public void clearText(){
+        textPainter.clearText();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         scaleGestureDetector.onTouchEvent(ev);

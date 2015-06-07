@@ -3,7 +3,6 @@ package beothorn.github.com.toroidalgo;
 import android.graphics.Point;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
@@ -13,9 +12,8 @@ public class GoGameController implements BoardListener{
 
     private GoBoard goBoard;
     private int size = 9;
-    private StateListener stateLabel;
+    private StateListener stateListener;
     private ScoreListener scoreListener;
-    private ScoreListener whiteScore;
     private Publisher publisher;
 
     private GoBoard.StoneColor myColor;
@@ -55,7 +53,7 @@ public class GoGameController implements BoardListener{
     }
 
     public void setStateListener(StateListener stateLabel) {
-        this.stateLabel = stateLabel;
+        this.stateListener = stateLabel;
     }
 
     public void callPass() {
@@ -72,15 +70,6 @@ public class GoGameController implements BoardListener{
         return turn.equals(myColor);
     }
 
-    public void setContinueButton(Button continueButton) {
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                publishContinue();
-            }
-        });
-    }
-
     @Override
     public void updateScore(int _blackScore, int _whiteScore) {
         if(scoreListener != null)
@@ -88,17 +77,34 @@ public class GoGameController implements BoardListener{
     }
 
     @Override
-    public void nextToPlay(GoBoard.StoneColor _nextToPlay) {
-        if(_nextToPlay == null){
-            if(stateLabel!= null)
-                stateLabel.setState("Game ended, please mark the dead stones");
+    public void nextToPlay(GoBoard.StoneColor nextToPlay) {
+        boolean gameEnded = nextToPlay == null;
+        if(gameEnded){
+            if(stateListener != null)
+                stateListener.onMarkStonesPhaseStart();
         }else{
-            if(_nextToPlay.equals(GoBoard.StoneColor.BLACK)){
-                if(stateLabel!= null)
-                    stateLabel.setState("Black's turn");
-            }else{
-                if(stateLabel!= null)
-                    stateLabel.setState("White's turn");
+            if(nextToPlay.equals(GoBoard.StoneColor.BLACK)){
+                stateListener.onBlackTurn();
+            }
+            if(nextToPlay.equals(GoBoard.StoneColor.WHITE)){
+                stateListener.onWhiteTurn();
+            }
+        }
+    }
+
+    @Override
+    public void nextToPlayOnPass(GoBoard.StoneColor nextToPlay) {
+        boolean gameEnded = nextToPlay == null;
+        if(gameEnded){
+            if(stateListener != null){
+                stateListener.onMarkStonesPhaseStart();
+            }
+        }else{
+            if(nextToPlay.equals(GoBoard.StoneColor.BLACK)){
+                stateListener.onPassWhite();
+            }
+            if(nextToPlay.equals(GoBoard.StoneColor.WHITE)){
+                stateListener.onPassBlack();
             }
         }
     }

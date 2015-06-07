@@ -7,7 +7,7 @@ import android.graphics.Typeface;
 
 public class TextPainter {
 
-    private String text = "White passed";
+    private String text = "";
     private Paint textPaint;
     private Paint textStrokePaint;
     private Paint backPaint;
@@ -30,7 +30,16 @@ public class TextPainter {
         textStrokePaint.setTextSize(130);
     }
 
+    public void clearText(){
+        this.text = "";
+    }
+
+    public void setText(String text){
+        this.text = text;
+    }
+
     public void paintText(Canvas canvas){
+        if(text.isEmpty()) return;
         int width = canvas.getWidth();
         int xPos = (width / 2);
         float fontHeight = textPaint.descent() - textPaint.ascent();
