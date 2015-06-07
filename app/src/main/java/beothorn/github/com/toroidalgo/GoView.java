@@ -199,7 +199,7 @@ public class GoView extends View{
     }
 
     public String asString() {
-        return boardX+","+boardY+","+blockSize+","+boardSlotsCount;
+        return boardX+","+boardY+","+blockSize+","+boardSlotsCount+","+textPainter.getText();
     }
 
     public void recoverFromString(String viewState) {
@@ -208,5 +208,6 @@ public class GoView extends View{
         boardY = Integer.valueOf(splitted[1]);
         blockSize = Integer.valueOf(splitted[2]);
         boardSlotsCount = Integer.valueOf(splitted[3]);
+        textPainter.setText(splitted[4]);
     }
 }

@@ -1,17 +1,15 @@
 package beothorn.github.com.toroidalgo.go.impl.logic;
 
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-
 public class ToroidalGoBoard extends GoBoard {
 
 	public ToroidalGoBoard(int size) {
 		super(size);
-		makeToroidal(_intersections);
+		makeToroidal(intersections);
 	}
 
 	public ToroidalGoBoard(String[] setup) {
 		super(setup);
-		makeToroidal(_intersections);
+		makeToroidal(intersections);
 	}
 	
 	private void makeToroidal(Intersection[][] intersection) {

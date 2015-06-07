@@ -171,4 +171,16 @@ public class GoGameController implements BoardListener{
     public GoBoard.StoneColor getWinner() {
         return goBoard.winner();
     }
+
+    public void endMarkingStones() {
+        goBoard.endMarkingStones();
+    }
+
+    public int getWhiteScore() {
+        return goBoard.whiteScore();
+    }
+
+    public int getBlackScore() {
+        return goBoard.blackScore();
+    }
 }

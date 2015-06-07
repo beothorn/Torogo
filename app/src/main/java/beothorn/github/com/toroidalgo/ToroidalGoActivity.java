@@ -64,7 +64,7 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onMarkStonesPhaseStart() {
-                goView.setText("Mark Dead");
+                goView.setText("Mark Dead\nStones");
                 menu.clear();
                 getMenuInflater().inflate(R.menu.dead_stones, menu);
             }
@@ -125,8 +125,12 @@ public class ToroidalGoActivity extends Activity {
             return true;
         }
         if (id == R.id.acceptButton) {
+            controller.endMarkingStones();
             GoBoard.StoneColor s = controller.getWinner();
-            String text = s + " Wins";
+            String text = "White Wins";
+            if(s.equals(GoBoard.StoneColor.BLACK))
+                text = "Black Wins";
+            text+="\nW: "+controller.getWhiteScore()+" x B: "+controller.getBlackScore();
             goView.setText(text);
             return true;
         }
