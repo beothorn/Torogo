@@ -8,10 +8,13 @@ import android.view.MenuItem;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+
 public class ToroidalGoActivity extends Activity {
 
     private GoGameController controller;
     public GoView goView;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,9 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onMarkStonesPhaseStart() {
-                goView.setText("mark dead");
+                goView.setText("Mark Dead");
+                menu.clear();
+                getMenuInflater().inflate(R.menu.dead_stones, menu);
             }
         });
 
@@ -103,6 +108,7 @@ public class ToroidalGoActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.toroidal_go, menu);
         return true;
     }
@@ -116,6 +122,12 @@ public class ToroidalGoActivity extends Activity {
         }
         if (id == R.id.resignButton) {
             controller.callResign();
+            return true;
+        }
+        if (id == R.id.acceptButton) {
+            GoBoard.StoneColor s = controller.getWinner();
+            String text = s + " Wins";
+            goView.setText(text);
             return true;
         }
         return super.onOptionsItemSelected(item);

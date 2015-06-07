@@ -4,5 +4,6 @@
     <string name="app_name">Torogo</string>
     <string name="pass">Pass</string>
     <string name="resign">Resign</string>
+    <string name="accept">Accept</string>
 
 </resources>

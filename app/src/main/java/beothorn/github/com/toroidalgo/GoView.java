@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.painters.BackgroundPainter;
 import beothorn.github.com.toroidalgo.painters.BoardPainter;
 import beothorn.github.com.toroidalgo.painters.TextPainter;
@@ -96,10 +97,13 @@ public class GoView extends View{
     }
 
     public void setText(String text){
+        GoLogger.log("Set Text to:" + text);
         textPainter.setText(text);
+        redraw();
     }
 
     public void clearText(){
+        GoLogger.log("Clear text");
         textPainter.clearText();
     }
 

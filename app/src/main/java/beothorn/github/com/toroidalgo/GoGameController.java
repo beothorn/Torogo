@@ -167,4 +167,8 @@ public class GoGameController implements BoardListener{
     public void recoverFromString(String gameState) {
         goBoard.loadGame(gameState);
     }
+
+    public GoBoard.StoneColor getWinner() {
+        return goBoard.winner();
+    }
 }
