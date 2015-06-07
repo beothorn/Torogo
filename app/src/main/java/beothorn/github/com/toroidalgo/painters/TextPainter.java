@@ -63,7 +63,7 @@ public class TextPainter {
         int margin = 50;
         float charHeight = fontHeight + margin;
         float top = height - charHeight * 2;
-        canvas.drawRect(0, top + margin, width, height, backPaint);
+        canvas.drawRect(0, top - (margin*2), width, height, backPaint);
         float y = height - charHeight - halfFontHeight;
         canvas.drawText(textLines[0], xPos, y, textPaint);
         canvas.drawText(textLines[0], xPos, y, textStrokePaint);
