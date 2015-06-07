@@ -14,7 +14,7 @@ public class GoBoard {
 		return _lastPlayedPiece;
 	}
 
-	public static enum StoneColor { BLACK, WHITE, ANY;}
+	public enum StoneColor { BLACK, WHITE, BLACKDEAD, WHITEDEAD, ANY;}
 
 	public GoBoard(int size) {
 		setup(size);
@@ -36,7 +36,8 @@ public class GoBoard {
 		_lastPlayedPiece = new Point();
 		_lastPlayedPiece.set(Integer.valueOf(lastPlayed.split(",")[0]), Integer.valueOf(lastPlayed.split(",")[1]));
 		String playingColor = playingColorAndBoardState[1];
-		nextToPlay = StoneColor.valueOf(playingColor);
+		if(!playingColor.equals("null"))
+			nextToPlay = StoneColor.valueOf(playingColor);
 		String[] setup = playingColorAndBoardState[2].split("\n");
 		setup(setup.length);
 		IntersectionUtils.setup(_intersections,setup);
@@ -65,11 +66,6 @@ public class GoBoard {
 		return IntersectionUtils.print(_intersections);
 	}
 
-
-	public int size() {
-		return _intersections.length;
-	}
-
 	public boolean canPlayStone(int x, int y) {
 		if (nextToPlay() == null) return false;
 
@@ -84,7 +80,6 @@ public class GoBoard {
 
 		return true;
 	}
-
 
 	public void playStone(int x, int y) {
 		Intersection[][] situationFound = copy(_intersections);
@@ -102,7 +97,7 @@ public class GoBoard {
 	}
 
 	public void toggleDeadStone(int x, int y) {
-		if (_intersections[x][y]._stone == null)
+		if (isDead(_intersections[x][y]))
 			unmarkDeadStones(x, y);
 		else
 			_intersections[x][y].markDeadStones();
@@ -110,7 +105,11 @@ public class GoBoard {
 		updateScore();
 	}
 
-    private int _blackScore = 0;
+	private boolean isDead(Intersection intersection) {
+		return intersection._stone == null || intersection._stone.equals(StoneColor.BLACKDEAD) || intersection._stone.equals(StoneColor.WHITEDEAD);
+	}
+
+	private int _blackScore = 0;
 
     public boolean gameHasEnded() {
         return nextToPlay() == null;
@@ -171,7 +170,7 @@ public class GoBoard {
 	private void unmarkDeadStones(int x, int y) {
 		Set<Intersection> group = _intersections[x][y].getGroupWithNeighbours();
 		for (Intersection intersection : group)
-			if (intersection._stone == null)
+			if (isDead(intersection))
 				intersection._stone = previousEquivalent(intersection)._stone;
 	}
 

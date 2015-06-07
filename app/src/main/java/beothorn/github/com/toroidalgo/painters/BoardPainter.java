@@ -54,7 +54,8 @@ public class BoardPainter {
     private void drawPieces(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize) {
         for(int line = 0; line <= boardSlotsCount; line++){
             for(int column = 0; column <= boardSlotsCount; column++){
-                if(controller.getPieceAt(line%boardSlotsCount, column%boardSlotsCount) == null) continue;
+                GoBoard.StoneColor pieceAt = controller.getPieceAt(line % boardSlotsCount, column % boardSlotsCount);
+                if(pieceAt == null || pieceAt.equals(GoBoard.StoneColor.WHITEDEAD) || pieceAt.equals(GoBoard.StoneColor.BLACKDEAD)) continue;
                 int shadowDistance = 4;
                 canvas.drawCircle(column * blockSize +shadowDistance, line * blockSize +shadowDistance, blockSize / 2, shadowPaint);
             }
@@ -68,30 +69,57 @@ public class BoardPainter {
                 int cx = column * blockSize;
                 int cy = line * blockSize;
                 int radius = blockSize / 2;
-                if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
-                    blackPaint.setShader(new RadialGradient(cx, cy,blockSize * 2,Color.BLACK,Color.DKGRAY, Shader.TileMode.MIRROR));
-                    canvas.drawCircle(cx, cy, radius, blackPaint);
-                    whitePaint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(cx, cy, radius, whitePaint);
-                }else{
-                    whitePaint.setStyle(Paint.Style.FILL);
-                    canvas.drawCircle(cx, cy, radius, whitePaint);
-                    blackPaint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(cx, cy, radius, blackPaint);
-                }
-
-                blackPaint.setShader(null);
-                if(controller.stoneAtPositionIsLastPlayedStone(line%boardSlotsCount, column%boardSlotsCount)){
-                    if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
-                        whitePaint.setStyle(Paint.Style.FILL);
-                        canvas.drawCircle(cx, cy, blockSize / 4, whitePaint);
-                    }else{
-                        blackPaint.setStyle(Paint.Style.FILL);
-                        canvas.drawCircle(cx, cy, blockSize / 4, blackPaint);
-                    }
-
-                }
+                paintSolidPieces(canvas, blockSize, pieceAt, cx, cy, radius);
+                paintDeadPieces(canvas, blockSize, pieceAt, cx, cy, radius);
+                paintShadows(canvas, boardSlotsCount, controller, blockSize, line, column, pieceAt, cx, cy);
             }
+        }
+    }
+
+    private void paintShadows(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize, int line, int column, GoBoard.StoneColor pieceAt, int cx, int cy) {
+        blackPaint.setShader(null);
+        if(controller.stoneAtPositionIsLastPlayedStone(line%boardSlotsCount, column%boardSlotsCount)){
+            if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
+                whitePaint.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(cx, cy, blockSize / 4, whitePaint);
+            }
+            if(pieceAt.equals(GoBoard.StoneColor.WHITE)){
+                blackPaint.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(cx, cy, blockSize / 4, blackPaint);
+            }
+
+        }
+    }
+
+    private void paintSolidPieces(Canvas canvas, int blockSize, GoBoard.StoneColor pieceAt, int cx, int cy, int radius) {
+        if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
+            blackPaint.setShader(new RadialGradient(cx, cy, blockSize * 2, Color.BLACK, Color.DKGRAY, Shader.TileMode.MIRROR));
+            canvas.drawCircle(cx, cy, radius, blackPaint);
+            whitePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(cx, cy, radius, whitePaint);
+        }
+        if(pieceAt.equals(GoBoard.StoneColor.WHITE)){
+            whitePaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(cx, cy, radius, whitePaint);
+            blackPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(cx, cy, radius, blackPaint);
+        }
+    }
+
+    private void paintDeadPieces(Canvas canvas, int blockSize, GoBoard.StoneColor pieceAt, int cx, int cy, int radiusBig) {
+        int radius = radiusBig/3;
+        if(pieceAt.equals(GoBoard.StoneColor.BLACKDEAD)){
+            blackPaint.setShader(null);
+            blackPaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(cx, cy, radius, blackPaint);
+            whitePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(cx, cy, radius, whitePaint);
+        }
+        if(pieceAt.equals(GoBoard.StoneColor.WHITEDEAD)){
+            whitePaint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(cx, cy, radius, whitePaint);
+            blackPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(cx, cy, radius, blackPaint);
         }
     }
 

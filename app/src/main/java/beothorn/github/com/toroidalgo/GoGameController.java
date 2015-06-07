@@ -131,10 +131,6 @@ public class GoGameController implements BoardListener{
         goBoard.continueGame(turn);
     }
 
-    public void setColor(GoBoard.StoneColor color){
-        myColor = color;
-    }
-
     private void changePlayingColor() {
         if(turn.equals(GoBoard.StoneColor.BLACK)){
             turn = GoBoard.StoneColor.WHITE;
@@ -159,17 +155,13 @@ public class GoGameController implements BoardListener{
         publisher.pass(turn);
     }
 
-    private void publishContinue() {
-        publisher.continueGame(turn == GoBoard.StoneColor.BLACK ? Publisher.BLACK_TURN : Publisher.WHITE_TURN, turn);
-    }
-
     private void publishResign() {
         publisher.resign(turn);
     }
 
     public String asString() {
         Point lastPlayedPiece = goBoard.getLastPlayedPiece();
-        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay().toString()+"|"+goBoard.printOut();
+        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay()+"|"+goBoard.printOut();
     }
 
     public void recoverFromString(String gameState) {

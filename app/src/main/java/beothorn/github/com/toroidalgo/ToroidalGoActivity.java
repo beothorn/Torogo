@@ -51,12 +51,12 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onResignWhite() {
-
+                goView.setText("White Resigned");
             }
 
             @Override
             public void onResignBlack() {
-
+                goView.setText("Black Resigned");
             }
 
             @Override

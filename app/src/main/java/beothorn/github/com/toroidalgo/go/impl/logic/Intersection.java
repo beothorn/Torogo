@@ -68,7 +68,10 @@ public class Intersection {
 			Set<Intersection> group = getGroupWithNeighbours();
 			for (Intersection intersection : group)
 				if (intersection._stone == colorToKill) {
-					intersection._stone = null;
+					if(colorToKill.equals(GoBoard.StoneColor.BLACK))
+						intersection._stone = GoBoard.StoneColor.BLACKDEAD;
+					else
+						intersection._stone = GoBoard.StoneColor.WHITEDEAD;
 					killed = true;
 				}
 		} while (killed);
