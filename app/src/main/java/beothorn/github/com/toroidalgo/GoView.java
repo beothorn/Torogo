@@ -9,6 +9,7 @@ import android.view.View;
 
 import beothorn.github.com.toroidalgo.painters.BackgroundPainter;
 import beothorn.github.com.toroidalgo.painters.BoardPainter;
+import beothorn.github.com.toroidalgo.painters.TextPainter;
 
 public class GoView extends View{
 
@@ -18,6 +19,7 @@ public class GoView extends View{
 
     private BackgroundPainter backgroundPainter;
     private BoardPainter boardPainter;
+    private TextPainter textPainter;
 
     private float mLastTouchX;
     private float mLastTouchY;
@@ -38,6 +40,7 @@ public class GoView extends View{
 
         backgroundPainter = new BackgroundPainter(this);
         boardPainter = new BoardPainter();
+        textPainter = new TextPainter();
 
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
@@ -175,5 +178,6 @@ public class GoView extends View{
 
         backgroundPainter.paintOn(canvas, boardX, boardY, blockSize);
         boardPainter.paint(canvas,blockSize,boardSlotsCount,boardX,boardY,getMeasuredWidth(),getMeasuredHeight());
+        textPainter.paintText(canvas);
     }
 }
