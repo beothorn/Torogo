@@ -27,8 +27,9 @@ public class GoView extends View{
     private float mLastBoardX;
     private float mLastBoardY;
 
-    private int blockSize;
     private int moveTolerance = 10;
+
+    private int blockSize;
     private int boardSlotsCount;
     private int boardX;
     private int boardY;
@@ -86,6 +87,10 @@ public class GoView extends View{
             newSize = MAX_BLOCK_SIZE;
         blockSize = newSize;
 
+        redraw();
+    }
+
+    public void redraw() {
         boardPainter.updateBoard(controller, boardSlotsCount, blockSize);
         invalidate();
     }
@@ -177,7 +182,19 @@ public class GoView extends View{
         if(controller == null) return;
 
         backgroundPainter.paintOn(canvas, boardX, boardY, blockSize);
-        boardPainter.paint(canvas,blockSize,boardSlotsCount,boardX,boardY,getMeasuredWidth(),getMeasuredHeight());
+        boardPainter.paint(canvas, blockSize, boardSlotsCount, boardX, boardY, getMeasuredWidth(), getMeasuredHeight());
         textPainter.paintText(canvas);
+    }
+
+    public String asString() {
+        return boardX+","+boardY+","+blockSize+","+boardSlotsCount;
+    }
+
+    public void recoverFromString(String viewState) {
+        String[] splitted = viewState.split(",");
+        boardX = Integer.valueOf(splitted[0]);
+        boardY = Integer.valueOf(splitted[1]);
+        blockSize = Integer.valueOf(splitted[2]);
+        boardSlotsCount = Integer.valueOf(splitted[3]);
     }
 }

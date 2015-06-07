@@ -90,4 +90,19 @@ public class ToroidalGoActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("gameState", controller.asString());
+        outState.putString("viewState", goView.asString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        controller.recoverFromString(savedInstanceState.getString("gameState"));
+        goView.recoverFromString(savedInstanceState.getString("viewState"));
+        goView.redraw();
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

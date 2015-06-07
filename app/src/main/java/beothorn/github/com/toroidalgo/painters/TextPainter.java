@@ -11,7 +11,6 @@ public class TextPainter {
     private Paint textPaint;
     private Paint textStrokePaint;
     private Paint backPaint;
-    private int yPos = 1000;
 
     public TextPainter(){
         textPaint = new Paint();
@@ -32,11 +31,16 @@ public class TextPainter {
     }
 
     public void paintText(Canvas canvas){
-        int xPos = (canvas.getWidth() / 2);
-        float fontHeight = (textPaint.descent() + textPaint.ascent()) / 2;
+        int width = canvas.getWidth();
+        int xPos = (width / 2);
+        float fontHeight = textPaint.descent() - textPaint.ascent();
+        float halfFontHeight = fontHeight / 2;
 
-        canvas.drawRect(0, yPos + textPaint.ascent(), canvas.getWidth(),canvas.getHeight(), backPaint);
-        canvas.drawText(text, xPos, yPos, textPaint);
-        canvas.drawText(text, xPos, yPos, textStrokePaint);
+        int height = canvas.getHeight();
+        float top = height - fontHeight;
+        canvas.drawRect(0, top - 50, width, height, backPaint);
+        float y = height - halfFontHeight;
+        canvas.drawText(text, xPos, y, textPaint);
+        canvas.drawText(text, xPos, y, textStrokePaint);
     }
 }

@@ -2,6 +2,8 @@ package beothorn.github.com.toroidalgo.go.impl.logic;
 
 import android.graphics.Point;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,15 +12,35 @@ import beothorn.github.com.toroidalgo.Publisher;
 
 public class GoBoard {
 
-    public static enum StoneColor { BLACK, WHITE, ANY;}
+	public Point getLastPlayedPiece() {
+		return _lastPlayedPiece;
+	}
+
+	public static enum StoneColor { BLACK, WHITE, ANY;}
 
 	public GoBoard(int size) {
+		setup(size);
+	}
+
+	private void setup(int size) {
 		_intersections = createIntersections(size);
 		_previousSituation = createIntersections(size);
 	}
 
 	public GoBoard(String[] setup) {
 		this(setup.length);
+		IntersectionUtils.setup(_intersections,setup);
+	}
+
+	public void loadGame(String gameState) {
+		String[] playingColorAndBoardState = gameState.split("\\|");
+		String lastPlayed = playingColorAndBoardState[0];
+		_lastPlayedPiece = new Point();
+		_lastPlayedPiece.set(Integer.valueOf(lastPlayed.split(",")[0]), Integer.valueOf(lastPlayed.split(",")[1]));
+		String playingColor = playingColorAndBoardState[1];
+		_nextToPlay = StoneColor.valueOf(playingColor);
+		String[] setup = playingColorAndBoardState[2].split("\n");
+		setup(setup.length);
 		IntersectionUtils.setup(_intersections,setup);
 	}
 
@@ -338,7 +360,7 @@ public class GoBoard {
 
 	public boolean stoneAtPositionIsLastPlayedStone(int x, int y) {
 		if(_lastPlayedPiece == null) return false;
-		return x == _lastPlayedPiece.x && y == _lastPlayedPiece.y; 
+		return x == _lastPlayedPiece.x && y == _lastPlayedPiece.y;
 	}
 	
 }

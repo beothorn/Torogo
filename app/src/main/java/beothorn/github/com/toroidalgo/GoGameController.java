@@ -1,5 +1,6 @@
 package beothorn.github.com.toroidalgo;
 
+import android.graphics.Point;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -160,4 +161,12 @@ public class GoGameController implements BoardListener{
         publisher.resign(turn);
     }
 
+    public String asString() {
+        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
+        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay().toString()+"|"+goBoard.printOut();
+    }
+
+    public void recoverFromString(String gameState) {
+        goBoard.loadGame(gameState);
+    }
 }
