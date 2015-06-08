@@ -8,6 +8,7 @@ import beothorn.github.com.toroidalgo.ToroidalGoActivity;
 import beothorn.github.com.toroidalgo.ToroidalGoListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import sneer.android.PartnerSession;
+import sneer.android.ui.SneerInstallation;
 
 public class Publisher {
 
@@ -23,11 +24,12 @@ public class Publisher {
     public static final int BLACK_TURN = 6;
 
     public static GoGameController createController(ToroidalGoActivity activity){
-        if(true) {
-            return new LocalPlaySetup().setupController(activity);
+
+        if(SneerInstallation.wasCalledFromConversation(activity)) {
+            return new SneerSetup().setupController(activity);
         }
         else {
-            return new SneerSetup().setupController(activity);
+            return new LocalPlaySetup().setupController(activity);
         }
 
     }
