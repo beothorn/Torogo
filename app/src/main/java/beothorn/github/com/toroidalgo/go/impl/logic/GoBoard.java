@@ -5,7 +5,7 @@ import android.graphics.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import beothorn.github.com.toroidalgo.Publisher;
+import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 
 public class GoBoard {

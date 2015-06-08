@@ -1,8 +1,11 @@
-package beothorn.github.com.toroidalgo;
+package beothorn.github.com.toroidalgo.publisher;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import beothorn.github.com.toroidalgo.GoGameController;
+import beothorn.github.com.toroidalgo.ToroidalGoActivity;
+import beothorn.github.com.toroidalgo.ToroidalGoListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import sneer.android.PartnerSession;
 
@@ -18,6 +21,16 @@ public class Publisher {
     public static final int CONTINUE = 4;
     public static final int WHITE_TURN = 5;
     public static final int BLACK_TURN = 6;
+
+    public static GoGameController createController(ToroidalGoActivity activity){
+        if(true) {
+            return new LocalPlaySetup().setupController(activity);
+        }
+        else {
+            return new SneerSetup().setupController(activity);
+        }
+
+    }
 
     public void setPublishListener(ToroidalGoListener listener){
         this.listener = listener;

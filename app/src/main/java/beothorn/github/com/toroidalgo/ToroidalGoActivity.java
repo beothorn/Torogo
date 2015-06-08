@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 public class ToroidalGoActivity extends Activity {
 
@@ -24,10 +25,7 @@ public class ToroidalGoActivity extends Activity {
 
         goView = (GoView) findViewById(R.id.goView);
 
-        if(true)
-                controller = new LocalPlaySetup().setupController(this);
-            else
-                controller = new SneerSetup().setupController(this);
+        controller = Publisher.createController(this);
 
         goView.setController(controller);
 

@@ -1,12 +1,11 @@
 package beothorn.github.com.toroidalgo;
 
 import android.graphics.Point;
-import android.view.View;
-import android.widget.Button;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoBoard;
+import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 public class GoGameController implements BoardListener{
 
