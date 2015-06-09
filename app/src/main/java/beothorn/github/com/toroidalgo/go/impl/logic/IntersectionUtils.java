@@ -11,7 +11,7 @@ public class IntersectionUtils {
 		}
 		for (int x = 0; x < intersectionsA.length; x++) {
 			for (int y = 0; y < intersectionsA[x].length; y++) {
-				if(intersectionsA[x][y]._stone != intersectionsB[x][y]._stone){
+				if(intersectionsA[x][y].stone != intersectionsB[x][y].stone){
 					return false;
 				}
 			}
@@ -23,7 +23,7 @@ public class IntersectionUtils {
 		StringBuffer result= new StringBuffer();
 		for (int y = 0; y < intersections.length; y++) {
 			for (int x = 0; x < intersections[y].length; x++) {
-				GoBoard.StoneColor stone = intersections[x][y]._stone;
+				GoBoard.StoneColor stone = intersections[x][y].stone;
 				if(stone == GoBoard.StoneColor.WHITE)
 					result.append(" "+WHITE_CHAR);
 				else if(stone == GoBoard.StoneColor.BLACK)
@@ -45,7 +45,7 @@ public class IntersectionUtils {
 			if(symbol == WHITE_CHAR) stone = GoBoard.StoneColor.WHITE;
 			if(symbol == BLACK_CHAR) stone = GoBoard.StoneColor.BLACK;
 			
-			intersection[x][y]._stone = stone;
+			intersection[x][y].stone = stone;
 			x++;
 		}
 	}

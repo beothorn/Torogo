@@ -100,10 +100,10 @@ public class GoBoard {
 	}
 
 	private boolean isDead(Intersection intersection) {
-		return intersection._stone == null || intersection._stone.equals(StoneColor.BLACKDEAD) || intersection._stone.equals(StoneColor.WHITEDEAD);
+		return intersection.stone == null || intersection.stone.equals(StoneColor.BLACKDEAD) || intersection.stone.equals(StoneColor.WHITEDEAD);
 	}
 
-	private int _blackScore = 0;
+	private int blackScore = 0;
 
     public boolean gameHasEnded() {
         return nextToPlay() == null;
@@ -130,7 +130,7 @@ public class GoBoard {
 
 	public void endMarkingStones(){
 		stopAcceptingMoves();
-		if(_blackScore > whiteScore){
+		if(blackScore > whiteScore){
 			winner = StoneColor.BLACK;
 		}else{
 			winner = StoneColor.WHITE;
@@ -139,7 +139,7 @@ public class GoBoard {
 
 
 	public int blackScore() {
-		return _blackScore;
+		return blackScore;
 	}
 
 
@@ -154,7 +154,7 @@ public class GoBoard {
 	
 	
 	public StoneColor stoneAt(int x, int y) {
-		return intersection(x, y)._stone;
+		return intersection(x, y).stone;
 	}
 	
 	public StoneColor nextToPlay() {
@@ -174,7 +174,7 @@ public class GoBoard {
 		Set<Intersection> group = intersections[x][y].getGroupWithNeighbours();
 		for (Intersection intersection : group)
 			if (isDead(intersection))
-				intersection._stone = previousEquivalent(intersection)._stone;
+				intersection.stone = previousEquivalent(intersection).stone;
 	}
 
 
@@ -228,7 +228,7 @@ public class GoBoard {
             boardListener.nextToPlay(nextToPlay);
         }
 
-        capturedStonesBlack = _blackScore;
+        capturedStonesBlack = blackScore;
         capturedStonesWhite = whiteScore;
 
         updateScore();
@@ -249,12 +249,12 @@ public class GoBoard {
 
 
     private void updateScore() {
-		_blackScore = capturedStonesBlack;
+		blackScore = capturedStonesBlack;
 		whiteScore = capturedStonesWhite;
 		countDeadStones();
 		countTerritories();
 		if(boardListener != null){
-			boardListener.updateScore(_blackScore, whiteScore);
+			boardListener.updateScore(blackScore, whiteScore);
 		}
 	}
 
@@ -265,12 +265,12 @@ public class GoBoard {
 			for (int y = 0; y < size; y++) {
 				if (!intersections[x][y].isLiberty())
 					continue;
-				StoneColor previousStone = previousSituation[x][y]._stone;
+				StoneColor previousStone = previousSituation[x][y].stone;
 				if (previousStone == StoneColor.BLACK){
 					whiteScore++;
 				}
 				if (previousStone == StoneColor.WHITE){
-					_blackScore++;
+					blackScore++;
 				}
 			}
 		}
@@ -290,12 +290,12 @@ public class GoBoard {
 			int numEmpty=0;
 			for (Intersection groupee : group) {
 				pending.remove(groupee);
-				if (groupee._stone == StoneColor.BLACK) belongsToB = true;
-				if (groupee._stone == StoneColor.WHITE) belongsToW = true;
+				if (groupee.stone == StoneColor.BLACK) belongsToB = true;
+				if (groupee.stone == StoneColor.WHITE) belongsToW = true;
 				if (groupee.isLiberty()) numEmpty++;
 			}
 			if (belongsToB & !belongsToW){
-				_blackScore += numEmpty;
+				blackScore += numEmpty;
 			}
 			if (!belongsToB & belongsToW){
 				whiteScore += numEmpty;
