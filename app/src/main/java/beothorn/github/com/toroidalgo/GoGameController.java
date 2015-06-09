@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
@@ -204,5 +205,22 @@ public class GoGameController implements BoardListener{
         GoBoard.StoneColor playingColor = (GoBoard.StoneColor) savedInstanceState.getSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay");
         String boardSetup = savedInstanceState.getString(CLASSIFIED_NAME + "goBoard.printOut");
         goBoard.loadGame(lastPieceX, lastPieceY, playingColor, boardSetup);
+    }
+
+    public void playLocally(Map<String, Integer> play) {
+        switch (play.get("TYPE")){
+            case Publisher.TOGGLE_DEAD_STONE:
+                toggleDeadStone(play.get("line"), play.get("column"));
+                break;
+            case Publisher.PLAY:
+                playStone(play.get("line"), play.get("column"));
+                break;
+            case Publisher.PASS:
+                pass();
+                break;
+            case Publisher.RESIGN:
+                resign();
+                break;
+        }
     }
 }

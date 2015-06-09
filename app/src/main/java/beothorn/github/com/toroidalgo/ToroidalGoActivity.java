@@ -80,23 +80,7 @@ public class ToroidalGoActivity extends Activity {
     }
 
     public void playLocally(Map<String, Integer> play){
-        switch (play.get("TYPE")){
-            case Publisher.TOGGLE_DEAD_STONE:
-                controller.toggleDeadStone(play.get("line"), play.get("column"));
-                break;
-            case Publisher.PLAY:
-                controller.playStone(play.get("line"), play.get("column"));
-                break;
-            case Publisher.PASS:
-                controller.pass();
-                break;
-            case Publisher.RESIGN:
-                controller.resign();
-                break;
-            case Publisher.CONTINUE:
-                controller.continueGame(play.get("turn"));
-                break;
-        }
+        controller.playLocally(play);
     }
 
     @Override
