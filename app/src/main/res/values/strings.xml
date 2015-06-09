@@ -5,5 +5,7 @@
     <string name="pass">Pass</string>
     <string name="resign">Resign</string>
     <string name="accept">Accept</string>
+    <string name="restart">restart</string>
+    <string name="close">close</string>
 
 </resources>

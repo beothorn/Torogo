@@ -2,6 +2,7 @@ package beothorn.github.com.toroidalgo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -13,6 +14,8 @@ import beothorn.github.com.toroidalgo.painters.BoardPainter;
 import beothorn.github.com.toroidalgo.painters.TextPainter;
 
 public class GoView extends View{
+
+    public static final String CLASSIFIED_NAME = "beothorn.github.com.toroidalgo.GoView";
 
     public static final int MIN_BLOCK_SIZE = 40;
     public static final int MAX_BLOCK_SIZE = 200;
@@ -198,16 +201,21 @@ public class GoView extends View{
         textPainter.paintText(canvas);
     }
 
-    public String asString() {
-        return boardX+","+boardY+","+blockSize+","+boardSlotsCount+","+textPainter.getText();
+    public void save(Bundle outState) {
+        outState.putInt(CLASSIFIED_NAME + "boardX", boardX);
+        outState.putInt(CLASSIFIED_NAME + "boardY", boardY);
+        outState.putInt(CLASSIFIED_NAME + "blockSize", blockSize);
+        outState.putInt(CLASSIFIED_NAME + "boardSlotsCount", boardSlotsCount);
+        outState.putString(CLASSIFIED_NAME + "textPainter.getText", textPainter.getText());
     }
 
-    public void recoverFromString(String viewState) {
-        String[] splitted = viewState.split(",");
-        boardX = Integer.valueOf(splitted[0]);
-        boardY = Integer.valueOf(splitted[1]);
-        blockSize = Integer.valueOf(splitted[2]);
-        boardSlotsCount = Integer.valueOf(splitted[3]);
-        textPainter.setText(splitted[4]);
+    public void recoverFrom(Bundle savedInstanceState) {
+        boardX = savedInstanceState.getInt(CLASSIFIED_NAME + "boardX");
+        boardY = savedInstanceState.getInt(CLASSIFIED_NAME + "boardY");
+        blockSize = savedInstanceState.getInt(CLASSIFIED_NAME + "blockSize");
+        boardSlotsCount = savedInstanceState.getInt(CLASSIFIED_NAME + "boardSlotsCount");
+        textPainter.setText(savedInstanceState.getString(CLASSIFIED_NAME + "textPainter.getText"));
+
+        redraw();
     }
 }

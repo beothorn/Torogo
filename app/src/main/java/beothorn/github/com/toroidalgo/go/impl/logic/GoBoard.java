@@ -30,21 +30,15 @@ public class GoBoard {
 		IntersectionUtils.setup(intersections,setup);
 	}
 
-	public void loadGame(String gameState) {
-		String[] playingColorAndBoardState = gameState.split("\\|");
-		String lastPlayed = playingColorAndBoardState[0];
-		lastPlayedPiece = new Point();
-		lastPlayedPiece.set(Integer.valueOf(lastPlayed.split(",")[0]), Integer.valueOf(lastPlayed.split(",")[1]));
-		String playingColor = playingColorAndBoardState[1];
-		if(!playingColor.equals("null"))
-			nextToPlay = StoneColor.valueOf(playingColor);
-		String[] setup = playingColorAndBoardState[2].split("\n");
-		setup(setup.length);
-		IntersectionUtils.setup(intersections,setup);
-	}
+    public void loadGame(int lastPlayedPieceX, int lastPlayedPieceY, StoneColor playingColor, String boardSetup) {
+        lastPlayedPiece = new Point(lastPlayedPieceX, lastPlayedPieceY);
+        nextToPlay = playingColor;
+        String[] setup = boardSetup.split("\n");
+        setup(setup.length);
+        IntersectionUtils.setup(intersections,setup);
+    }
 
 	private StoneColor nextToPlay = StoneColor.BLACK;
-
 
     private int whiteScore = 0;
     private StoneColor winner = null;
@@ -368,6 +362,7 @@ public class GoBoard {
 
 	public boolean stoneAtPositionIsLastPlayedStone(int x, int y) {
 		if(lastPlayedPiece == null) return false;
+        if(lastPlayedPiece.x < 0) return false;
 		return x == lastPlayedPiece.x && y == lastPlayedPiece.y;
 	}
 	

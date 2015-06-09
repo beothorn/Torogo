@@ -1,6 +1,9 @@
 package beothorn.github.com.toroidalgo;
 
 import android.graphics.Point;
+import android.os.Bundle;
+
+import java.io.Serializable;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
@@ -9,6 +12,7 @@ import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 public class GoGameController implements BoardListener{
 
+    public static final String CLASSIFIED_NAME = "beothorn.github.com.toroidalgo.GoGameController";
     private GoBoard goBoard;
     private int size = 9;
     private StateListener stateListener;
@@ -18,7 +22,7 @@ public class GoGameController implements BoardListener{
     private GoBoard.StoneColor myColor;
     private GoBoard.StoneColor turn = GoBoard.StoneColor.BLACK;
 
-    public GoGameController(Publisher publisher){
+    public GoGameController(Publisher publisher) {
         this(publisher, GoBoard.StoneColor.ANY);
     }
 
@@ -158,15 +162,6 @@ public class GoGameController implements BoardListener{
         publisher.resign(turn);
     }
 
-    public String asString() {
-        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
-        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay()+"|"+goBoard.printOut();
-    }
-
-    public void recoverFromString(String gameState) {
-        goBoard.loadGame(gameState);
-    }
-
     public GoBoard.StoneColor getWinner() {
         return goBoard.winner();
     }
@@ -181,5 +176,33 @@ public class GoGameController implements BoardListener{
 
     public int getBlackScore() {
         return goBoard.blackScore();
+    }
+
+    private String asString() {
+        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
+
+
+        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay()+"|"+goBoard.printOut();
+    }
+
+    public void save(Bundle outState) {
+
+        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
+        if(lastPlayedPiece == null){
+            lastPlayedPiece = new Point(-1, -1);
+        }
+
+        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.x", lastPlayedPiece.x);
+        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.y", lastPlayedPiece.y);
+        outState.putSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay", goBoard.nextToPlay());
+        outState.putString(CLASSIFIED_NAME + "goBoard.printOut", goBoard.printOut());
+    }
+
+    public void recoverFrom(Bundle savedInstanceState) {
+        int lastPieceX = savedInstanceState.getInt(CLASSIFIED_NAME + "lastPlayedPiece.x");
+        int lastPieceY = savedInstanceState.getInt(CLASSIFIED_NAME + "lastPlayedPiece.y");
+        GoBoard.StoneColor playingColor = (GoBoard.StoneColor) savedInstanceState.getSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay");
+        String boardSetup = savedInstanceState.getString(CLASSIFIED_NAME + "goBoard.printOut");
+        goBoard.loadGame(lastPieceX, lastPieceY, playingColor, boardSetup);
     }
 }

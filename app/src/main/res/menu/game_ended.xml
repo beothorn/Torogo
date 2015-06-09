@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/restart"
+        android:title="@string/restart"
+        android:orderInCategory="1" />
+    <item android:id="@+id/close"
+        android:title="@string/close"
+        android:orderInCategory="2" />
+</menu>

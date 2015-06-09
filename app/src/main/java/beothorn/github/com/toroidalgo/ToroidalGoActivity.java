@@ -77,11 +77,6 @@ public class ToroidalGoActivity extends Activity {
 
         LinkedHashMap<String, Integer> stringIntegerLinkedHashMap = new LinkedHashMap<String, Integer>();
 
-//        stringIntegerLinkedHashMap.put("TYPE", Publisher.PLAY);
-//        stringIntegerLinkedHashMap.put("line", 1);
-//        stringIntegerLinkedHashMap.put("column", 1);
-//        playLocally(stringIntegerLinkedHashMap);
-
     }
 
     public void playLocally(Map<String, Integer> play){
@@ -130,6 +125,10 @@ public class ToroidalGoActivity extends Activity {
                 text = "Black Wins";
             text+="\nW: "+controller.getWhiteScore()+" x B: "+controller.getBlackScore();
             goView.setText(text);
+
+            menu.clear();
+            getMenuInflater().inflate(R.menu.game_ended, menu);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -137,16 +136,15 @@ public class ToroidalGoActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("gameState", controller.asString());
-        outState.putString("viewState", goView.asString());
+        controller.save(outState);
+        goView.save(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        controller.recoverFromString(savedInstanceState.getString("gameState"));
-        goView.recoverFromString(savedInstanceState.getString("viewState"));
-        goView.redraw();
+        controller.recoverFrom(savedInstanceState);
+        goView.recoverFrom(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
 }
