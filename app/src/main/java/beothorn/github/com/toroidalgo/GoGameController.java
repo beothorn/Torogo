@@ -22,6 +22,7 @@ public class GoGameController implements BoardListener{
 
     private GoBoard.StoneColor myColor;
     private GoBoard.StoneColor turn = GoBoard.StoneColor.BLACK;
+    private boolean gameFinished = false;
 
     public GoGameController(Publisher publisher) {
         this(publisher, GoBoard.StoneColor.ANY);
@@ -168,6 +169,7 @@ public class GoGameController implements BoardListener{
     }
 
     public void endMarkingStones() {
+        gameFinished = true;
         goBoard.endMarkingStones();
     }
 
@@ -208,6 +210,8 @@ public class GoGameController implements BoardListener{
     }
 
     public void playLocally(Map<String, Integer> play) {
+        if (gameFinished) return;
+
         switch (play.get("TYPE")){
             case Publisher.TOGGLE_DEAD_STONE:
                 toggleDeadStone(play.get("line"), play.get("column"));
