@@ -132,10 +132,6 @@ public class GoGameController implements BoardListener{
         changePlayingColor();
     }
 
-    public void continueGame(int turn) {
-        goBoard.continueGame(turn);
-    }
-
     private void changePlayingColor() {
         if(turn.equals(GoBoard.StoneColor.BLACK)){
             turn = GoBoard.StoneColor.WHITE;

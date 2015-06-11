@@ -5,8 +5,6 @@ import android.graphics.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import beothorn.github.com.toroidalgo.publisher.Publisher;
-
 
 public class GoBoard {
 
@@ -118,10 +116,6 @@ public class GoBoard {
 		previousWasPass = true;
 	}
 
-    public void continueGame(int turn) {
-        returnToAcceptingMoves(turn);
-    }
-
 	public void resign() {
 		StoneColor loser = nextToPlay();
 		winner = other(loser);
@@ -199,7 +193,7 @@ public class GoBoard {
 		return wereStonesKilled;
 	}
 	
-	private HashSet<Intersection> allIntersections() {
+	private HashSet<Intersection> copyIntersections() {
 		HashSet<Intersection> set = new HashSet<Intersection>();
 		
 		for (Intersection[] column: intersections)
@@ -234,20 +228,6 @@ public class GoBoard {
         updateScore();
     }
 
-    private void returnToAcceptingMoves(int turn) {
-        previousSituation = copy(intersections);
-        nextToPlay = turn == Publisher.BLACK_TURN ? StoneColor.BLACK : StoneColor.WHITE;
-        if(boardListener != null){
-            boardListener.nextToPlay(nextToPlay);
-        }
-
-        capturedStonesBlack = 0;
-        capturedStonesWhite = 0;
-
-        updateScore();
-    }
-
-
     private void updateScore() {
 		blackScore = capturedStonesBlack;
 		whiteScore = capturedStonesWhite;
@@ -263,28 +243,30 @@ public class GoBoard {
 		int size = intersections.length;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
-				if (!intersections[x][y].isLiberty())
-					continue;
 				StoneColor previousStone = previousSituation[x][y].stone;
-				if (previousStone == StoneColor.BLACK){
+				if ( (intersections[x][y].stone == null && StoneColor.BLACK.equals(previousStone) ) || StoneColor.BLACKDEAD.equals(intersections[x][y].stone)){
 					whiteScore++;
 				}
-				if (previousStone == StoneColor.WHITE){
+				if ((intersections[x][y].stone == null && StoneColor.WHITE.equals(previousStone) ) || StoneColor.WHITEDEAD.equals(intersections[x][y].stone)){
 					blackScore++;
 				}
 			}
 		}
 	}
-	
+
+    /**
+     * TODO: Tem que expor este método
+     * Ao invés de somar nas linhas 280 e 283, retornar os grupos
+     */
 	private void countTerritories() {
 	
-		HashSet<Intersection> pending = allIntersections();
+		HashSet<Intersection> pending = copyIntersections();
 		
 		while (!pending.isEmpty()) {
 			Intersection starting = pending.iterator().next();
 			
 			HashSet<Intersection> group = new HashSet<Intersection>();
-			starting.fillGroupWithNeighbours(null, group);
+			starting.fillGroupWithNeighbours2(group);
 			
 			boolean belongsToW=false, belongsToB=false;
 			int numEmpty=0;
@@ -292,7 +274,7 @@ public class GoBoard {
 				pending.remove(groupee);
 				if (groupee.stone == StoneColor.BLACK) belongsToB = true;
 				if (groupee.stone == StoneColor.WHITE) belongsToW = true;
-				if (groupee.isLiberty()) numEmpty++;
+				if (groupee.isLiberty() || groupee.isDead()) numEmpty++;
 			}
 			if (belongsToB & !belongsToW){
 				blackScore += numEmpty;

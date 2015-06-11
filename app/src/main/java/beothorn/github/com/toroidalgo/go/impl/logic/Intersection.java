@@ -45,13 +45,24 @@ public class Intersection {
 		other.down = this;
 	}
 
-	
+	void fillGroupWithNeighbours2(Set<Intersection> group) {
+		if (group.contains(this)) return;
+		group.add(this);
+
+		if(stone != null && stone != GoBoard.StoneColor.WHITEDEAD && stone != GoBoard.StoneColor.BLACKDEAD) return;
+
+		if (up != null) up.fillGroupWithNeighbours2(group);
+		if (down != null) down.fillGroupWithNeighbours2(group);
+		if (left != null) left.fillGroupWithNeighbours2(group);
+		if (right != null) right.fillGroupWithNeighbours2(group);
+	}
+
 	void fillGroupWithNeighbours(GoBoard.StoneColor stoneColor, Set<Intersection> group) {
 		if (group.contains(this)) return;
 		group.add(this);
 		
-		if(stone != stoneColor) return;
-		
+		if(stone != stoneColor && stone != null) return;
+
 		if (up != null) up.fillGroupWithNeighbours(stoneColor, group);
 		if (down != null) down.fillGroupWithNeighbours(stoneColor, group);
 		if (left != null) left.fillGroupWithNeighbours(stoneColor, group);
@@ -104,4 +115,7 @@ public class Intersection {
 		return stone == null;
 	}
 
+	public boolean isDead() {
+		return stone == GoBoard.StoneColor.BLACKDEAD || stone == GoBoard.StoneColor.WHITEDEAD;
+	}
 }
