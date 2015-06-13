@@ -53,7 +53,8 @@ public class BoardPainter {
         }
         drawGrid(boardCanvas, boardSlotsCount, blockSize, rowSize);
         drawPieces(boardCanvas, boardSlotsCount, controller, blockSize);
-        drawTerritories(boardCanvas, controller, blockSize, boardSlotsCount);
+        if(controller.gameHasEnded())
+            drawTerritories(boardCanvas, controller, blockSize, boardSlotsCount);
     }
 
     private void drawPieces(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize) {

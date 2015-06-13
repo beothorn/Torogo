@@ -42,9 +42,13 @@ public class GoGameController implements BoardListener{
 
         if(goBoard.canPlayStone(column, line))
             publishPlayStone(line, column);
-        if(goBoard.gameHasEnded()){
+        if(gameHasEnded()){
             publishToogleDeadStone(line, column);
         }
+    }
+
+    public boolean gameHasEnded() {
+        return goBoard.gameHasEnded();
     }
 
     public GoBoard.StoneColor getPieceAt(int line, int column){
