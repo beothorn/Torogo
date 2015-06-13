@@ -9,7 +9,11 @@ import android.graphics.PorterDuff;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
 
+import java.util.List;
+import java.util.Map;
+
 import beothorn.github.com.toroidalgo.GoGameController;
+import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 
 public class BoardPainter {
@@ -49,6 +53,7 @@ public class BoardPainter {
         }
         drawGrid(boardCanvas, boardSlotsCount, blockSize, rowSize);
         drawPieces(boardCanvas, boardSlotsCount, controller, blockSize);
+        drawTerritories(boardCanvas, controller, blockSize, boardSlotsCount);
     }
 
     private void drawPieces(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize) {
@@ -63,7 +68,23 @@ public class BoardPainter {
                 int cy = line * blockSize;
                 int radius = blockSize / 2;
                 paintSolidPieces(canvas, blockSize, pieceAt, cx, cy, radius);
+                paintLastPlayedMark(canvas, boardSlotsCount, controller, blockSize, line, column, pieceAt, cx, cy);
                 paintDeadPieces(canvas, pieceAt, cx, cy, radius);
+            }
+        }
+    }
+
+    private void paintLastPlayedMark(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize, int line, int column, GoBoard.StoneColor pieceAt, int cx, int cy) {
+        if(controller.stoneAtPositionIsLastPlayedStone(line % boardSlotsCount, column % boardSlotsCount)){
+            if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
+                whitePaint.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(cx, cy, blockSize / 4, whitePaint);
+            }
+
+            if(pieceAt.equals(GoBoard.StoneColor.WHITE)){
+                blackPaint.setShader(null);
+                blackPaint.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(cx, cy, blockSize / 4, blackPaint);
             }
         }
     }
@@ -74,7 +95,7 @@ public class BoardPainter {
                 GoBoard.StoneColor pieceAt = controller.getPieceAt(line % boardSlotsCount, column % boardSlotsCount);
                 if(pieceAt == null || pieceAt.equals(GoBoard.StoneColor.WHITEDEAD) || pieceAt.equals(GoBoard.StoneColor.BLACKDEAD)) continue;
                 int shadowDistance = 4;
-                canvas.drawCircle(column * blockSize +shadowDistance, line * blockSize +shadowDistance, blockSize / 2, shadowPaint);
+                canvas.drawCircle(column * blockSize + shadowDistance, line * blockSize + shadowDistance, blockSize / 2, shadowPaint);
             }
         }
     }
@@ -95,8 +116,75 @@ public class BoardPainter {
         }
     }
 
+    private void paintTerritory(Canvas canvas, int blockSize, GoBoard.StoneColor pieceAt, int cx, int cy, int radius) {
+        if(pieceAt.equals(GoBoard.StoneColor.BLACK)){
+            blackPaint.setShader(new RadialGradient(cx, cy, blockSize * 2, Color.BLACK, Color.DKGRAY, Shader.TileMode.MIRROR));
+            blackPaint.setStyle(Paint.Style.FILL);
+            canvas.drawRect(cx - radius, cy - radius,cx + radius,cy + radius, blackPaint);
+            whitePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(cx - radius, cy - radius, cx + radius, cy + radius, whitePaint);
+        }
+        if(pieceAt.equals(GoBoard.StoneColor.WHITE)){
+            whitePaint.setStyle(Paint.Style.FILL);
+            canvas.drawRect(cx - radius, cy - radius, cx + radius, cy + radius, whitePaint);
+            blackPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(cx - radius, cy - radius, cx + radius, cy + radius, blackPaint);
+        }
+    }
+
+    private void drawTerritories(Canvas canvas, GoGameController controller,int blockSize, int boardSlotsCount) {
+
+        Map<GoBoard.StoneColor, List<List<BoardPosition>>> territoriesOwnership = controller.getTerritoriesOwnership();
+
+        List<List<BoardPosition>> blackTerritories = territoriesOwnership.get(GoBoard.StoneColor.BLACK);
+        for(List<BoardPosition> blackTerritory : blackTerritories){
+            for(BoardPosition territoryPosition : blackTerritory){
+                int column = territoryPosition.getColumn();
+                int line = territoryPosition.getLine();
+
+                int cx = column * blockSize;
+                int cy = line * blockSize;
+                int radius = blockSize / 4;
+
+                paintTerritory(canvas, blockSize, GoBoard.StoneColor.BLACK, cx, cy, radius);
+                if(column == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.BLACK, boardSlotsCount * blockSize, cy, radius);
+                }
+                if(line == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.BLACK, cx, boardSlotsCount * blockSize, radius);
+                }
+                if(line == 0 && column == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.BLACK, boardSlotsCount * blockSize, boardSlotsCount * blockSize, radius);
+                }
+            }
+        }
+
+        List<List<BoardPosition>> whiteTerritories = territoriesOwnership.get(GoBoard.StoneColor.WHITE);
+        for(List<BoardPosition> whiteTerritory : whiteTerritories){
+            for(BoardPosition territoryPosition : whiteTerritory){
+                int column = territoryPosition.getColumn();
+                int line = territoryPosition.getLine();
+
+                int cx = column * blockSize;
+                int cy = line * blockSize;
+                int radius = blockSize / 4;
+
+                paintTerritory(canvas, blockSize, GoBoard.StoneColor.WHITE, cx, cy, radius);
+                if(column == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.WHITE, boardSlotsCount * blockSize, cy, radius);
+                }
+                if(line == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.WHITE, cx, boardSlotsCount * blockSize, radius);
+                }
+                if(line == 0 && column == 0){
+                    paintTerritory(canvas, blockSize, GoBoard.StoneColor.WHITE, boardSlotsCount * blockSize, boardSlotsCount * blockSize, radius);
+                }
+            }
+        }
+    }
+
     private void paintDeadPieces(Canvas canvas, GoBoard.StoneColor pieceAt, int cx, int cy, int radiusBig) {
-        int radius = radiusBig/3;
+        int radius = radiusBig;
         if(pieceAt.equals(GoBoard.StoneColor.BLACKDEAD)){
             blackPaint.setShader(null);
             blackPaint.setStyle(Paint.Style.FILL);

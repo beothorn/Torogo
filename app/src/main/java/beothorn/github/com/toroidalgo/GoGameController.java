@@ -4,9 +4,11 @@ import android.graphics.Point;
 import android.os.Bundle;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
+import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoBoard;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
@@ -222,5 +224,9 @@ public class GoGameController implements BoardListener{
                 resign();
                 break;
         }
+    }
+
+    public Map<GoBoard.StoneColor, List<List<BoardPosition>>> getTerritoriesOwnership(){
+        return goBoard.getTerritoriesOwnership();
     }
 }
