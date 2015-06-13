@@ -2,7 +2,11 @@ package beothorn.github.com.toroidalgo.go.impl.logic;
 
 import android.graphics.Point;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -254,35 +258,55 @@ public class GoBoard {
 		}
 	}
 
-    /**
-     * TODO: Tem que expor este método
-     * Ao invés de somar nas linhas 280 e 283, retornar os grupos
-     */
+
+	public Map<StoneColor, List<List<BoardPosition>>> getTerritoriesOwnership(){
+        LinkedHashMap<StoneColor, List<List<BoardPosition>>> ownedTerritories = new LinkedHashMap<StoneColor, List<List<BoardPosition>>>();
+        List<List<BoardPosition>> blackTerritories = new ArrayList<List<BoardPosition>>();
+        List<List<BoardPosition>> whiteTerritories = new ArrayList<List<BoardPosition>>();
+
+        ownedTerritories.put(StoneColor.BLACK, blackTerritories);
+        ownedTerritories.put(StoneColor.WHITE, whiteTerritories);
+
+        HashSet<Intersection> pending = copyIntersections();
+
+        while (!pending.isEmpty()) {
+            Intersection startingStone = pending.iterator().next();
+
+            Set<Intersection> stonePlusAllEmptiesAround = startingStone.getLinkedEmptyOrDeadTerritories();
+
+            boolean whiteClaimsGroupOwnership=false, blackClaimsGroupOwnership=false;
+            ArrayList<BoardPosition> boardPositions = new ArrayList<BoardPosition>();
+            for (Intersection intersection : stonePlusAllEmptiesAround) {
+                pending.remove(intersection);
+
+                if (intersection.stone == StoneColor.BLACK) blackClaimsGroupOwnership = true;
+                if (intersection.stone == StoneColor.WHITE) whiteClaimsGroupOwnership = true;
+                if (intersection.isLiberty() || intersection.isDead()) boardPositions.add(intersection.getBoardPosition());;
+            }
+            if (blackClaimsGroupOwnership & !whiteClaimsGroupOwnership){
+                blackTerritories.add(boardPositions);
+            }
+            if (!blackClaimsGroupOwnership & whiteClaimsGroupOwnership){
+                whiteTerritories.add(boardPositions);
+            }
+        }
+
+        return ownedTerritories;
+    }
+
 	private void countTerritories() {
-	
-		HashSet<Intersection> pending = copyIntersections();
-		
-		while (!pending.isEmpty()) {
-			Intersection starting = pending.iterator().next();
-			
-			HashSet<Intersection> group = new HashSet<Intersection>();
-			starting.fillGroupWithNeighbours2(group);
-			
-			boolean belongsToW=false, belongsToB=false;
-			int numEmpty=0;
-			for (Intersection groupee : group) {
-				pending.remove(groupee);
-				if (groupee.stone == StoneColor.BLACK) belongsToB = true;
-				if (groupee.stone == StoneColor.WHITE) belongsToW = true;
-				if (groupee.isLiberty() || groupee.isDead()) numEmpty++;
-			}
-			if (belongsToB & !belongsToW){
-				blackScore += numEmpty;
-			}
-			if (!belongsToB & belongsToW){
-				whiteScore += numEmpty;
-			}
-		}
+
+        Map<StoneColor, List<List<BoardPosition>>> territoriesOwnership = getTerritoriesOwnership();
+
+        List<List<BoardPosition>> blackTerritories = territoriesOwnership.get(StoneColor.BLACK);
+        for(List<BoardPosition> blackTerritory : blackTerritories){
+            blackScore += blackTerritory.size();
+        }
+
+        List<List<BoardPosition>> whiteTerritories = territoriesOwnership.get(StoneColor.WHITE);
+        for(List<BoardPosition> whiteTerritory : whiteTerritories){
+            whiteScore += whiteTerritory.size();
+        }
 	}
 
 	private void nextPass() {
@@ -308,9 +332,9 @@ public class GoBoard {
 			return new Intersection[0][0];
 		Intersection[][] copy =  new Intersection[intersections.length][intersections[0].length];
 		
-		for (int x = 0; x < intersections.length; x++) {
-			for (int y = 0; y < intersections[x].length; y++) {
-				copy[x][y] = intersections[x][y].copy();
+		for (int column = 0; column < intersections.length; column++) {
+			for (int line = 0; line < intersections[column].length; line++) {
+				copy[column][line] = intersections[column][line].copy();
 			}
 		}
 		
@@ -321,10 +345,10 @@ public class GoBoard {
 	
 	private Intersection[][] createIntersections(int size) {
 		Intersection[][] intersections = new Intersection[size][size];
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				Intersection newOne = new Intersection();
-				intersections[x][y] = newOne;
+		for (int column = 0; column < size; column++) {
+			for (int line = 0; line < size; line++) {
+				Intersection newOne = new Intersection(column, line);
+				intersections[column][line] = newOne;
 			}
 		}
 		

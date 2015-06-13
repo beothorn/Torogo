@@ -11,10 +11,15 @@ public class Intersection {
 	private Intersection right;
 	private Intersection up;
 	private Intersection down;
-	
+
+    private BoardPosition position;
+
 	GoBoard.StoneColor stone = null;
 
-	
+    public Intersection(int column, int line){
+        position = new BoardPosition(column, line);
+    }
+
 	@Override
 	public boolean equals(Object obj) {
 		final Intersection other = (Intersection) obj;
@@ -29,7 +34,7 @@ public class Intersection {
 	}
 
 	protected Intersection copy(){
-		Intersection intersection = new Intersection();
+		Intersection intersection = new Intersection(position.getColumn(), position.getLine());
 		intersection.stone = stone;
 		return intersection;
 	}
@@ -45,28 +50,36 @@ public class Intersection {
 		other.down = this;
 	}
 
-	void fillGroupWithNeighbours2(Set<Intersection> group) {
+    public Set<Intersection> getLinkedEmptyOrDeadTerritories() {
+        HashSet<Intersection> intersections = new HashSet<Intersection>();
+        internalGetLinkedEmptyOrDeadTerritories(intersections);
+        return intersections;
+    }
+
+	private void internalGetLinkedEmptyOrDeadTerritories(Set<Intersection> group) {
 		if (group.contains(this)) return;
 		group.add(this);
 
-		if(stone != null && stone != GoBoard.StoneColor.WHITEDEAD && stone != GoBoard.StoneColor.BLACKDEAD) return;
+        boolean notAFreePosition = stone != null && stone != GoBoard.StoneColor.WHITEDEAD && stone != GoBoard.StoneColor.BLACKDEAD;
+        if(notAFreePosition) return;
 
-		if (up != null) up.fillGroupWithNeighbours2(group);
-		if (down != null) down.fillGroupWithNeighbours2(group);
-		if (left != null) left.fillGroupWithNeighbours2(group);
-		if (right != null) right.fillGroupWithNeighbours2(group);
+		if (up != null) up.internalGetLinkedEmptyOrDeadTerritories(group);
+		if (down != null) down.internalGetLinkedEmptyOrDeadTerritories(group);
+		if (left != null) left.internalGetLinkedEmptyOrDeadTerritories(group);
+		if (right != null) right.internalGetLinkedEmptyOrDeadTerritories(group);
 	}
 
-	void fillGroupWithNeighbours(GoBoard.StoneColor stoneColor, Set<Intersection> group) {
+	void getLinkedStonesOfSameColor(GoBoard.StoneColor stoneColor, Set<Intersection> group) {
 		if (group.contains(this)) return;
 		group.add(this);
-		
-		if(stone != stoneColor && stone != null) return;
 
-		if (up != null) up.fillGroupWithNeighbours(stoneColor, group);
-		if (down != null) down.fillGroupWithNeighbours(stoneColor, group);
-		if (left != null) left.fillGroupWithNeighbours(stoneColor, group);
-		if (right != null) right.fillGroupWithNeighbours(stoneColor, group);
+        boolean notAnotherStoneOfSameColor = stone != stoneColor && stone != null;
+        if(notAnotherStoneOfSameColor) return;
+
+		if (up != null) up.getLinkedStonesOfSameColor(stoneColor, group);
+		if (down != null) down.getLinkedStonesOfSameColor(stoneColor, group);
+		if (left != null) left.getLinkedStonesOfSameColor(stoneColor, group);
+		if (right != null) right.getLinkedStonesOfSameColor(stoneColor, group);
 	}
 	
 	
@@ -91,7 +104,7 @@ public class Intersection {
 	
 	Set<Intersection> getGroupWithNeighbours() {
 		Set<Intersection> result = new HashSet<Intersection>();
-		fillGroupWithNeighbours(stone, result);
+		getLinkedStonesOfSameColor(stone, result);
 		return result;
 	}
 
@@ -118,4 +131,8 @@ public class Intersection {
 	public boolean isDead() {
 		return stone == GoBoard.StoneColor.BLACKDEAD || stone == GoBoard.StoneColor.WHITEDEAD;
 	}
+
+    public BoardPosition getBoardPosition() {
+        return position;
+    }
 }
