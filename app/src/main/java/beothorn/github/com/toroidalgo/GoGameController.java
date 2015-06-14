@@ -3,10 +3,10 @@ package beothorn.github.com.toroidalgo;
 import android.graphics.Point;
 import android.os.Bundle;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
@@ -41,9 +41,9 @@ public class GoGameController implements BoardListener{
         if(!isMyTurn()) return;
 
         if(goBoard.canPlayStone(column, line))
-            publishPlayStone(line, column);
+            publisher.playStone(line, column, turn);
         if(gameHasEnded()){
-            publishToogleDeadStone(line, column);
+            publisher.toggleDeadStone(line, column, turn);
         }
     }
 
@@ -69,11 +69,15 @@ public class GoGameController implements BoardListener{
 
     public void callPass() {
         if(!isMyTurn()) return;
-        publishPass();
+        publisher.pass(turn);
     }
 
     public void callResign() {
-        publishResign();
+        publisher.resign(turn);
+    }
+
+    public void callEndMarkingStones() {
+        publisher.endMarkingStones();
     }
 
     private boolean isMyTurn() {
@@ -126,6 +130,7 @@ public class GoGameController implements BoardListener{
 
     public void toggleDeadStone(int line, int column) {
         goBoard.toggleDeadStone(column, line);
+        stateListener.onMarkStone();
     }
 
     public void playStone(int line, int column) {
@@ -150,22 +155,6 @@ public class GoGameController implements BoardListener{
         goBoard.resign();
     }
 
-    private void publishToogleDeadStone(int line, int column) {
-        publisher.toggleDeadStone(line, column, turn);
-    }
-
-    private void publishPlayStone(int line, int column) {
-        publisher.playStone(line, column, turn);
-    }
-
-    private void publishPass() {
-        publisher.pass(turn);
-    }
-
-    private void publishResign() {
-        publisher.resign(turn);
-    }
-
     public GoBoard.StoneColor getWinner() {
         return goBoard.winner();
     }
@@ -173,6 +162,7 @@ public class GoGameController implements BoardListener{
     public void endMarkingStones() {
         gameFinished = true;
         goBoard.endMarkingStones();
+        stateListener.onMarkStonesPhaseEnded();
     }
 
     public int getWhiteScore() {
@@ -181,13 +171,6 @@ public class GoGameController implements BoardListener{
 
     public int getBlackScore() {
         return goBoard.blackScore();
-    }
-
-    private String asString() {
-        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
-
-
-        return lastPlayedPiece.x+","+lastPlayedPiece.y+"|"+goBoard.nextToPlay()+"|"+goBoard.printOut();
     }
 
     public void save(Bundle outState) {
@@ -216,16 +199,24 @@ public class GoGameController implements BoardListener{
 
         switch (play.get("TYPE")){
             case Publisher.TOGGLE_DEAD_STONE:
+                GoLogger.log("Controller Playing TOGGLE_DEAD_STONE: line: " + play.get("line")+" column: "+ play.get("column"));
                 toggleDeadStone(play.get("line"), play.get("column"));
                 break;
             case Publisher.PLAY:
+                GoLogger.log("Controller Playing PLAY: line: " + play.get("line")+" column: "+ play.get("column"));
                 playStone(play.get("line"), play.get("column"));
                 break;
             case Publisher.PASS:
+                GoLogger.log("Controller Playing PASS");
                 pass();
                 break;
             case Publisher.RESIGN:
+                GoLogger.log("Controller Playing RESIGN");
                 resign();
+                break;
+            case Publisher.END_GAME:
+                GoLogger.log("Controller Playing END GAME");
+                endMarkingStones();
                 break;
         }
     }
@@ -233,4 +224,6 @@ public class GoGameController implements BoardListener{
     public Map<GoBoard.StoneColor, List<List<BoardPosition>>> getTerritoriesOwnership(){
         return goBoard.getTerritoriesOwnership();
     }
+
+
 }

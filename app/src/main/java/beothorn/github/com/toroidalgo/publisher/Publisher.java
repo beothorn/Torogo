@@ -22,6 +22,7 @@ public class Publisher {
     public static final int CONTINUE = 4;
     public static final int WHITE_TURN = 5;
     public static final int BLACK_TURN = 6;
+    public static final int END_GAME = 7;
 
     public static GoGameController createController(ToroidalGoActivity activity){
 
@@ -60,16 +61,15 @@ public class Publisher {
         listener.doPlay(play, currentPlaying);
     }
 
-    public void continueGame(int turn, GoBoard.StoneColor currentPlaying) {
-        Map<String, Integer> play = new LinkedHashMap<String, Integer>();
-        play.put(TYPE, CONTINUE);
-        play.put("turn", turn);
-        listener.doPlay(play, currentPlaying);
-    }
-
     public void resign(GoBoard.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, RESIGN);
         listener.doPlay(play, currentPlaying);
+    }
+
+    public void endMarkingStones() {
+        Map<String, Integer> play = new LinkedHashMap<String, Integer>();
+        play.put(TYPE, END_GAME);
+        listener.doPlay(play, GoBoard.StoneColor.ANY);
     }
 }

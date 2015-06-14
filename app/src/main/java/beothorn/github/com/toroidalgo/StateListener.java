@@ -7,5 +7,7 @@ public interface StateListener {
     void onBlackTurn();
     void onResignWhite();
     void onResignBlack();
+    void onMarkStone();
     void onMarkStonesPhaseStart();
+    void onMarkStonesPhaseEnded();
 }

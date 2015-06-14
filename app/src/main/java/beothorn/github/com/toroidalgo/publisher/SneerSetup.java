@@ -7,6 +7,7 @@ import beothorn.github.com.toroidalgo.ControllerSetup;
 import beothorn.github.com.toroidalgo.GoGameController;
 import beothorn.github.com.toroidalgo.ToroidalGoActivity;
 import beothorn.github.com.toroidalgo.ToroidalGoListener;
+import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
@@ -26,9 +27,11 @@ public class SneerSetup implements ControllerSetup {
 
             @Override
             public void onMessage(Message message) {
+                GoLogger.log("Received Sneer Message");
                 if(message.wasSentByMe()) return;
                 Object payload = message.payload();
                 Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
+                GoLogger.log("Playing from Sneer Message");
                 toroidalGoActivity.playLocally(torogoMove);
                 toroidalGoActivity.goView.invalidate();
             }
