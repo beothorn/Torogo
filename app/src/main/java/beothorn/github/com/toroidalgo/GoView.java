@@ -61,6 +61,7 @@ public class GoView extends View{
             }
 
             private void rescale(float span, float scaleFactor) {
+                if( Math.abs(1 - scaleFactor) < 0.001) return;
                 int scale = 100;
                 if(scaleFactor < 1){
                     scale *= -1;
