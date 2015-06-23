@@ -121,6 +121,9 @@ public class GoView extends View{
         scaleGestureDetector.onTouchEvent(ev);
 
         final int action = ev.getAction();
+        if(System.currentTimeMillis() - zoomEventEndingTimestamp < ZOOM_WAITING_INTERVAL){
+            return true;
+        }
         switch (action & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN: {
@@ -169,9 +172,6 @@ public class GoView extends View{
             }
 
             case MotionEvent.ACTION_UP: {
-                if(System.currentTimeMillis() - zoomEventEndingTimestamp < ZOOM_WAITING_INTERVAL){
-                    break;
-                }
                 mLastTouchX = ev.getX();
                 mLastTouchY = ev.getY();
 
