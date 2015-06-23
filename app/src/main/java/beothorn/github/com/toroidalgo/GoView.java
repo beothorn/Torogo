@@ -19,9 +19,12 @@ public class GoView extends View{
 
     public static final int MIN_BLOCK_SIZE = 40;
     public static final int MAX_BLOCK_SIZE = 200;
-    private ScaleGestureDetector scaleGestureDetector;
+    private long ZOOM_WAITING_INTERVAL = 300;
 
+    private static final int MOVE_TOLERANCE = 10;
+    private ScaleGestureDetector scaleGestureDetector;
     private BackgroundPainter backgroundPainter;
+
     private BoardPainter boardPainter;
     private TextPainter textPainter;
 
@@ -29,16 +32,16 @@ public class GoView extends View{
     private float mLastTouchY;
 
     private float mLastBoardX;
+
     private float mLastBoardY;
-
-    private int moveTolerance = 10;
-
     private int blockSize;
     private int boardSlotsCount;
     private int boardX;
     private int boardY;
-    private GoGameController controller;
 
+
+    private GoGameController controller;
+    private long zoomEventEndingTimestamp;
 
     public GoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,7 +72,9 @@ public class GoView extends View{
             public boolean onScaleBegin(ScaleGestureDetector detector) { return true; }
 
             @Override
-            public void onScaleEnd(ScaleGestureDetector detector) {}
+            public void onScaleEnd(ScaleGestureDetector detector) {
+                zoomEventEndingTimestamp = System.currentTimeMillis();
+            }
         });
     }
 
@@ -163,13 +168,16 @@ public class GoView extends View{
             }
 
             case MotionEvent.ACTION_UP: {
+                if(System.currentTimeMillis() - zoomEventEndingTimestamp < ZOOM_WAITING_INTERVAL){
+                    break;
+                }
                 mLastTouchX = ev.getX();
                 mLastTouchY = ev.getY();
 
                 float boardDeltaX = Math.abs(mLastBoardX - boardX);
                 float boardDeltaY = Math.abs(mLastBoardY - boardY);
 
-                if(boardDeltaX < moveTolerance && boardDeltaY < moveTolerance){
+                if(boardDeltaX < MOVE_TOLERANCE && boardDeltaY < MOVE_TOLERANCE){
                     int column = Math.round((mLastTouchX - boardX) / blockSize) % boardSlotsCount;
                     if(column < 0){
                         column = boardSlotsCount + column;
