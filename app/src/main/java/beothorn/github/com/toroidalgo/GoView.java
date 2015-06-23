@@ -19,9 +19,9 @@ public class GoView extends View{
 
     public static final int MIN_BLOCK_SIZE = 40;
     public static final int MAX_BLOCK_SIZE = 200;
-    private long ZOOM_WAITING_INTERVAL = 300;
+    private long ZOOM_WAITING_INTERVAL = 400;
 
-    private static final int MOVE_TOLERANCE = 10;
+    private static final int MOVE_TOLERANCE = 20;
     private ScaleGestureDetector scaleGestureDetector;
     private BackgroundPainter backgroundPainter;
 
