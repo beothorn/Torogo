@@ -69,7 +69,8 @@ public class BoardPainter {
                 int cy = line * blockSize;
                 int radius = blockSize / 2;
                 paintSolidPieces(canvas, blockSize, pieceAt, cx, cy, radius);
-                paintLastPlayedMark(canvas, boardSlotsCount, controller, blockSize, line, column, pieceAt, cx, cy);
+                if(!controller.gameHasEnded())
+                    paintLastPlayedMark(canvas, boardSlotsCount, controller, blockSize, line, column, pieceAt, cx, cy);
                 paintDeadPieces(canvas, pieceAt, cx, cy, radius);
             }
         }
