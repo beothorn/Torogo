@@ -55,18 +55,26 @@ public class GoView extends View{
             public boolean onScale(ScaleGestureDetector detector) {
                 float span = detector.getCurrentSpan();
                 float scaleFactor = detector.getScaleFactor();
-
-                rescale(span, scaleFactor);
+                float focusX = detector.getFocusX();
+                float focusY = detector.getFocusY();
+                rescale(span, scaleFactor, focusX, focusY);
                 return true;
             }
 
-            private void rescale(float span, float scaleFactor) {
+            private void rescale(float span, float scaleFactor, float focusX, float focusY) {
                 if( Math.abs(1 - scaleFactor) < 0.001) return;
                 int scale = 100;
                 if(scaleFactor < 1){
                     scale *= -1;
                 }
-                updateBlockSize((int) (blockSize + (span/scale)));
+
+                float focusBlockX = (focusX - boardX)/ blockSize;
+                float focusBlockY = (focusY - boardY) / blockSize;
+
+                updateBlockSize((int) (blockSize + (span / scale)));
+
+                boardX = (int) (focusX - (blockSize * focusBlockX));
+                boardY = (int) (focusY - (blockSize * focusBlockY));
             }
 
             @Override
