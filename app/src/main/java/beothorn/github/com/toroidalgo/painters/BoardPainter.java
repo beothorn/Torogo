@@ -45,7 +45,7 @@ public class BoardPainter {
 
     public void updateBoard(GoGameController controller, int boardSlotsCount, int blockSize) {
         int rowSize = blockSize * boardSlotsCount;
-        if(boardBitmap == null || boardBitmap.getWidth() != rowSize){
+        if(boardBitmap == null || boardBitmap.getWidth() < rowSize){
             boardBitmap = Bitmap.createBitmap(rowSize, rowSize, Bitmap.Config.ARGB_8888);
             boardCanvas = new Canvas(boardBitmap);
         }else{
