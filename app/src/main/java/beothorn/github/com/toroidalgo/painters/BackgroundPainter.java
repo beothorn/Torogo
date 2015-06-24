@@ -36,7 +36,7 @@ public class BackgroundPainter {
                 canvas.translate(dx, dy);
             }
 
-            tileImg.setBounds(0, 0, goView.getMeasuredWidth()+width, goView.getMeasuredHeight()+height);
+            tileImg.setBounds(0, 0, goView.getMeasuredWidth()+(width*2), goView.getMeasuredHeight()+(height*2));
             tileImg.setTileModeXY(Shader.TileMode.REPEAT.REPEAT, Shader.TileMode.REPEAT.REPEAT);
             tileImg.draw(canvas);
         } finally {
