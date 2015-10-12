@@ -2,6 +2,7 @@ package beothorn.github.com.toroidalgo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -54,12 +55,22 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onResignWhite() {
-                goView.setText("White Resigned");
+                String text = "B + R";
+                goView.setText(text);
+                gameEndedMenu();
             }
 
             @Override
             public void onResignBlack() {
-                goView.setText("Black Resigned");
+                goView.setText("W + R");
+                gameEndedMenu();
+            }
+
+            private void gameEndedMenu() {
+                if (menu != null) {
+                    menu.clear();
+                    getMenuInflater().inflate(R.menu.game_ended, menu);
+                }
             }
 
             @Override
@@ -78,27 +89,26 @@ public class ToroidalGoActivity extends Activity {
             public void onMarkStonesPhaseEnded() {
                 GoBoard.StoneColor s = controller.getWinner();
                 String text = "White Wins";
-                if(s.equals(GoBoard.StoneColor.BLACK))
+                if (s.equals(GoBoard.StoneColor.BLACK))
                     text = "Black Wins";
-                text+="\nW: "+controller.getWhiteScore()+" x B: "+controller.getBlackScore();
+                text += "\nW:" + controller.getWhiteScore() + " x B:" + controller.getBlackScore();
                 goView.setText(text);
 
-                menu.clear();
-                getMenuInflater().inflate(R.menu.game_ended, menu);
+                gameEndedMenu();
             }
         });
 
         controller.setScoreListener(new ScoreListener() {
             @Override
-            public void setScore(int blackScore, int whiteScore) {
+            public void setScore(int blackScore, float whiteScore) {
                 System.out.println(blackScore + " " + whiteScore);
             }
         });
 
     }
 
-    public void playLocally(Map<String, Integer> play){
-        GoLogger.log("Activity Playing: "+play.get(Publisher.TYPE));
+    public void playLocally(Map<String, Integer> play) {
+        GoLogger.log("Activity Playing: " + play.get(Publisher.TYPE));
         controller.playLocally(play);
     }
 
@@ -124,6 +134,12 @@ public class ToroidalGoActivity extends Activity {
             controller.callEndMarkingStones();
             return true;
         }
+        if (id == R.id.restart) {
+            return true;
+        }
+        if (id == R.id.close) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -140,4 +156,14 @@ public class ToroidalGoActivity extends Activity {
         goView.recoverFrom(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

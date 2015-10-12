@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class GoBoard {
 
+	private static final float KOMI = 5.5f;
+
 	public Point getLastPlayedPiece() {
 		return lastPlayedPiece;
 	}
@@ -42,7 +44,7 @@ public class GoBoard {
 
 	private StoneColor nextToPlay = StoneColor.BLACK;
 
-    private int whiteScore = 0;
+    private float whiteScore = 0;
     private StoneColor winner = null;
 	protected Intersection[][] intersections;
 
@@ -50,7 +52,7 @@ public class GoBoard {
     private Intersection[][] previousSituation;
     private boolean previousWasPass = false;
     private int capturedStonesBlack;
-    private int capturedStonesWhite;
+    private float capturedStonesWhite;
     private BoardListener boardListener;
     private Point lastPlayedPiece;
 	protected Intersection intersection(int x, int y) {
@@ -141,8 +143,8 @@ public class GoBoard {
 	}
 
 
-	public int whiteScore() {
-		return whiteScore;
+	public float whiteScore() {
+		return whiteScore + KOMI;
 	}
 
 	

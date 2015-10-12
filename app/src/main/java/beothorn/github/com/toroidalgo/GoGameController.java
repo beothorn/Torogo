@@ -81,12 +81,11 @@ public class GoGameController implements BoardListener{
     }
 
     private boolean isMyTurn() {
-        if(myColor == GoBoard.StoneColor.ANY) return true;
-        return turn.equals(myColor);
+        return myColor == GoBoard.StoneColor.ANY || turn.equals(myColor);
     }
 
     @Override
-    public void updateScore(int _blackScore, int _whiteScore) {
+    public void updateScore(int _blackScore, float _whiteScore) {
         if(scoreListener != null)
             scoreListener.setScore(_blackScore, _whiteScore);
     }
@@ -94,9 +93,17 @@ public class GoGameController implements BoardListener{
     @Override
     public void nextToPlay(GoBoard.StoneColor nextToPlay) {
         boolean gameEnded = nextToPlay == null;
-        if(gameEnded){
-            if(stateListener != null)
-                stateListener.onMarkStonesPhaseStart();
+        if(gameEnded) {
+            if (stateListener != null) {
+                if (getWinner() != null) {
+                    if (getWinner().equals(GoBoard.StoneColor.BLACK))
+                        stateListener.onResignWhite();
+                    else
+                        stateListener.onResignBlack();
+                } else {
+                    stateListener.onMarkStonesPhaseStart();
+                }
+            }
         }else{
             if(nextToPlay.equals(GoBoard.StoneColor.BLACK)){
                 stateListener.onBlackTurn();
@@ -165,7 +172,7 @@ public class GoGameController implements BoardListener{
         stateListener.onMarkStonesPhaseEnded();
     }
 
-    public int getWhiteScore() {
+    public float getWhiteScore() {
         return goBoard.whiteScore();
     }
 

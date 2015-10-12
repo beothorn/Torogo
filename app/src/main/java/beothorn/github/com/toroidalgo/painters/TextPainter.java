@@ -17,17 +17,17 @@ public class TextPainter {
         textPaint.setARGB(200, 250, 250, 250);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.MONOSPACE);
-        textPaint.setTextSize(130);
+        textPaint.setTextSize(100);
 
         backPaint = new Paint();
         backPaint.setARGB(200, 50, 50, 50);
 
         textStrokePaint = new Paint();
-        textStrokePaint.setARGB(200, 0, 0, 0);
+        textStrokePaint.setARGB(200, 100, 100, 100);
         textStrokePaint.setStyle(Paint.Style.STROKE);
         textStrokePaint.setTextAlign(Paint.Align.CENTER);
         textStrokePaint.setTypeface(Typeface.MONOSPACE);
-        textStrokePaint.setTextSize(130);
+        textStrokePaint.setTextSize(100);
     }
 
     public void clearText(){
