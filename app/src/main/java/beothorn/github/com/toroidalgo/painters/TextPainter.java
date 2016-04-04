@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.widget.Button;
 
 public class TextPainter {
 
@@ -11,23 +12,25 @@ public class TextPainter {
     private Paint textPaint;
     private Paint textStrokePaint;
     private Paint backPaint;
+    private Button passButton;
 
     public TextPainter(){
         textPaint = new Paint();
-        textPaint.setARGB(200, 250, 250, 250);
+        textPaint.setARGB(255, 250, 250, 250);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.MONOSPACE);
         textPaint.setTextSize(100);
 
         backPaint = new Paint();
-        backPaint.setARGB(200, 50, 50, 50);
+        backPaint.setARGB(255, 50, 50, 50);
 
         textStrokePaint = new Paint();
-        textStrokePaint.setARGB(200, 100, 100, 100);
+        textStrokePaint.setARGB(255, 100, 100, 100);
         textStrokePaint.setStyle(Paint.Style.STROKE);
         textStrokePaint.setTextAlign(Paint.Align.CENTER);
         textStrokePaint.setTypeface(Typeface.MONOSPACE);
         textStrokePaint.setTextSize(100);
+
     }
 
     public void clearText(){
