@@ -2,21 +2,24 @@ package beothorn.github.com.toroidalgo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.publisher.DialogHandler;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 public class ToroidalGoActivity extends Activity {
 
     private GoGameController controller;
     public GoView goView;
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,37 @@ public class ToroidalGoActivity extends Activity {
         setContentView(R.layout.activity_toroidal_go);
 
         goView = (GoView) findViewById(R.id.goView);
+
+        final Button passButton = (Button) findViewById(R.id.passButton);
+        passButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                new DialogHandler().confirm(ToroidalGoActivity.this, "Confirmation", "Confirm pass?",
+                        "Yes", "No", new Runnable() {
+                    public void run() {
+                        controller.callPass();
+                        Log.d("pass action", "user passed");
+                    }
+                },  new Runnable() {
+                    public void run() {
+                        Log.d("pass action", "user gave up pass");
+                    }
+                });
+            }
+        });
+
+        final Button acceptButton = (Button) findViewById(R.id.acceptButton);
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                controller.callEndMarkingStones();
+            }
+        });
+
+        final Button resignButton = (Button) findViewById(R.id.resignButton);
+        resignButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                controller.callResign();
+            }
+        });
 
         controller = Publisher.createController(this);
 
@@ -67,10 +101,6 @@ public class ToroidalGoActivity extends Activity {
             }
 
             private void gameEndedMenu() {
-                if (menu != null) {
-                    menu.clear();
-                    getMenuInflater().inflate(R.menu.game_ended, menu);
-                }
             }
 
             @Override
@@ -81,8 +111,6 @@ public class ToroidalGoActivity extends Activity {
             @Override
             public void onMarkStonesPhaseStart() {
                 goView.setText("Mark Dead\nStones");
-                menu.clear();
-                getMenuInflater().inflate(R.menu.dead_stones, menu);
             }
 
             @Override
@@ -110,13 +138,6 @@ public class ToroidalGoActivity extends Activity {
     public void playLocally(Map<String, Integer> play) {
         GoLogger.log("Activity Playing: " + play.get(Publisher.TYPE));
         controller.playLocally(play);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-        getMenuInflater().inflate(R.menu.toroidal_go, menu);
-        return true;
     }
 
     @Override

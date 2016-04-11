@@ -33,7 +33,7 @@ public class SneerSetup implements ControllerSetup {
                 Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
                 GoLogger.log("Playing from Sneer Message");
                 toroidalGoActivity.playLocally(torogoMove);
-                toroidalGoActivity.goView.invalidate();
+                toroidalGoActivity.goView.invalidate(); // is this line necessary?
             }
 
             private Map<String, Integer> convertFromSneerToTorogoMove(Map<String, Long> payload) {

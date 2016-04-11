@@ -16,11 +16,19 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true" style="@android:style/ButtonBar">
 
-        <Button android:id="@+id/saveButton" android:layout_width="wrap_content"
+        <Button android:id="@+id/passButton" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_weight="1"
             android:text="Pass" />
 
-        <Button android:id="@+id/cancelButton" android:layout_width="wrap_content"
+        <Button android:id="@+id/undoButton" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Undo" />
+
+        <Button android:id="@+id/acceptButton" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Accept" />
+
+        <Button android:id="@+id/resignButton" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_weight="1"
             android:text="Resign" />
     </LinearLayout>
