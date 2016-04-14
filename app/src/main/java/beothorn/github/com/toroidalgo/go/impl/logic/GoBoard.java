@@ -1,7 +1,5 @@
 package beothorn.github.com.toroidalgo.go.impl.logic;
 
-import android.graphics.Point;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,10 +11,6 @@ import java.util.Set;
 public class GoBoard {
 
 	private static final float KOMI = 6.5f;
-
-	public Point getLastPlayedPiece() {
-		return lastPlayedPiece;
-	}
 
 	public enum StoneColor { BLACK, WHITE, BLACKDEAD, WHITEDEAD, ANY;}
 
@@ -35,7 +29,7 @@ public class GoBoard {
 	}
 
     public void loadGame(int lastPlayedPieceX, int lastPlayedPieceY, StoneColor playingColor, String boardSetup) {
-        lastPlayedPiece = new Point(lastPlayedPieceX, lastPlayedPieceY);
+        lastPlayedPiece = new BoardPosition(lastPlayedPieceX, lastPlayedPieceY);
         nextToPlay = playingColor;
         String[] setup = boardSetup.split("\n");
         setup(setup.length);
@@ -45,18 +39,23 @@ public class GoBoard {
 	private StoneColor nextToPlay = StoneColor.BLACK;
 
     private float whiteScore = 0;
-    private StoneColor winner = null;
+
+	private StoneColor winner = null;
 	protected Intersection[][] intersections;
-
-
     private Intersection[][] previousSituation;
-    private boolean previousWasPass = false;
-    private int capturedStonesBlack;
-    private float capturedStonesWhite;
-    private BoardListener boardListener;
-    private Point lastPlayedPiece;
+
+
+	private boolean previousWasPass = false;
+	private int capturedStonesBlack;
+	private float capturedStonesWhite;
+	private BoardListener boardListener;
+	private BoardPosition lastPlayedPiece;
 	protected Intersection intersection(int x, int y) {
 		return intersections[x][y];
+	}
+
+	public BoardPosition getLastPlayedPiece() {
+		return lastPlayedPiece;
 	}
 
 
@@ -87,7 +86,7 @@ public class GoBoard {
 		} catch (IllegalMove e) {
 			throw new IllegalArgumentException(e);
 		}
-		lastPlayedPiece = new Point(x, y);
+		lastPlayedPiece = new BoardPosition(x, y);
 		previousWasPass = false;
 		previousSituation = situationFound;
 		countDeadStones();
@@ -370,8 +369,8 @@ public class GoBoard {
 
 	public boolean stoneAtPositionIsLastPlayedStone(int x, int y) {
 		if(lastPlayedPiece == null) return false;
-        if(lastPlayedPiece.x < 0) return false;
-		return x == lastPlayedPiece.x && y == lastPlayedPiece.y;
+        if(lastPlayedPiece.getColumn() < 0) return false;
+		return x == lastPlayedPiece.getColumn() && y == lastPlayedPiece.getLine();
 	}
 	
 }

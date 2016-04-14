@@ -182,13 +182,13 @@ public class GoGameController implements BoardListener{
 
     public void save(Bundle outState) {
 
-        Point lastPlayedPiece = goBoard.getLastPlayedPiece();
+        BoardPosition lastPlayedPiece = goBoard.getLastPlayedPiece();
         if(lastPlayedPiece == null){
-            lastPlayedPiece = new Point(-1, -1);
+            lastPlayedPiece = new BoardPosition(-1, -1);
         }
 
-        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.x", lastPlayedPiece.x);
-        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.y", lastPlayedPiece.y);
+        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.x", lastPlayedPiece.getColumn());
+        outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.y", lastPlayedPiece.getLine());
         outState.putSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay", goBoard.nextToPlay());
         outState.putString(CLASSIFIED_NAME + "goBoard.printOut", goBoard.printOut());
     }
