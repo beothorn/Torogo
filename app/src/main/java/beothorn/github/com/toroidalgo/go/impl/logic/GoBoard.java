@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class GoBoard {
 
-	private static final float KOMI = 5.5f;
+	private static final float KOMI = 6.5f;
 
 	public Point getLastPlayedPiece() {
 		return lastPlayedPiece;
