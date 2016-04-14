@@ -369,7 +369,11 @@ public class GoBoard {
 
 	public boolean stoneAtPositionIsLastPlayedStone(int x, int y) {
 		if(lastPlayedPiece == null) return false;
-        if(lastPlayedPiece.getColumn() < 0) return false;
+
+        //if(lastPlayedPiece.getColumn() < 0) return false;
+		if (x < 0) throw new IllegalStateException(); //Remove this line and the one above if the exception is never thrown.
+
+
 		return x == lastPlayedPiece.getColumn() && y == lastPlayedPiece.getLine();
 	}
 	
