@@ -359,22 +359,22 @@ public class GoBoard {
 
 	private void connectInternally(Intersection[][] intersections) {
 		int size = intersections.length;
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				if (x != 0) intersections[x][y].connectToYourLeft(intersections[x - 1][y]);
-				if (y != 0) intersections[x][y].connectUp(intersections[x][y - 1]);
+		for (int column = 0; column < size; column++) {
+			for (int line = 0; line < size; line++) {
+				if (column != 0) intersections[column][line].connectToYourLeft(intersections[column - 1][line]);
+				if (line != 0) intersections[column][line].connectUp(intersections[column][line - 1]);
 			}
 		}
 	}
 
-	public boolean stoneAtPositionIsLastPlayedStone(int x, int y) {
+	public boolean stoneAtPositionIsLastPlayedStone(int col, int lin) {
 		if(lastPlayedPiece == null) return false;
 
         //if(lastPlayedPiece.getColumn() < 0) return false;
-		if (x < 0) throw new IllegalStateException(); //Remove this line and the one above if the exception is never thrown.
+		if (col < 0) throw new IllegalStateException(); //Remove this line and the one above if the exception is never thrown.
 
 
-		return x == lastPlayedPiece.getColumn() && y == lastPlayedPiece.getLine();
+		return col == lastPlayedPiece.getColumn() && lin == lastPlayedPiece.getLine();
 	}
 	
 }
