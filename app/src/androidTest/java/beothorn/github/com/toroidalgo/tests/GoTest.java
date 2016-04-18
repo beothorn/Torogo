@@ -119,7 +119,7 @@ public class GoTest extends InstrumentationTestCase{
 			_board.printOut()
 		);
 		
-		assertScore(3, 5.5f);
+		assertScore(3, 6.5f);
 	}
 	
 	public void testSuicide() {
@@ -196,7 +196,7 @@ public class GoTest extends InstrumentationTestCase{
 				" + + + + + + + + +\n"+
 				" + + + + + + + + +\n"
 		);
-		assertScore(2, 5.5f);
+		assertScore(2, 6.5f);
 	}
 
 	public void testPass() {
@@ -238,7 +238,7 @@ public class GoTest extends InstrumentationTestCase{
 		assertTrue(_board.stoneAt(4, 3) != null);
 		_board.playStone(4,4);
 		assertTrue(_board.stoneAt(4, 3) == null);
-		assertScore(1, 5.5f);
+		assertScore(1, 6.5f);
 		
 		_board.playStone(4,5);
 		_board.playStone(0,1);
@@ -246,7 +246,7 @@ public class GoTest extends InstrumentationTestCase{
 		assertTrue(_board.stoneAt(4, 4) != null);
 		_board.playStone(4,3);
 		assertTrue(_board.stoneAt(4, 4) == null);
-		assertScore(1, 6.5f);
+		assertScore(1, 7.5f);
 	}
 	
 	public void testScore() {
@@ -263,7 +263,7 @@ public class GoTest extends InstrumentationTestCase{
 		_board = new ToroidalGoBoard(setup);
 		_board.passTurn();
 		_board.passTurn();
-		assertScore(2, 6.5f);
+		assertScore(2, 7.5f);
 	}
 
 	public void testDeadGroup() {
@@ -281,7 +281,7 @@ public class GoTest extends InstrumentationTestCase{
 		_board.passTurn();
 		_board.passTurn();
 		_board.toggleDeadStone(5, 4);
-		assertScore(14, 5.5f);
+		assertScore(14, 6.5f);
 		
 		setup = new String[]{
 			    "+ + + + + + + + +",
@@ -297,7 +297,7 @@ public class GoTest extends InstrumentationTestCase{
 		_board.passTurn();
 		_board.passTurn();
 		_board.toggleDeadStone(5, 4);
-		assertScore(20, 6.5f);
+		assertScore(20, 7.5f);
 	}
 
 	public void testDeadGroupMissClickOnFreeIntersectionDoesNotFreeze() {
@@ -332,11 +332,11 @@ public class GoTest extends InstrumentationTestCase{
 		_board.passTurn();
 		_board.passTurn();
 		_board.toggleDeadStone(2, 2);
-		assertScore(3, 5.5f);
+		assertScore(3, 6.5f);
 		_board.toggleDeadStone(2, 4);
-		assertScore(6, 5.5f);
+		assertScore(6, 6.5f);
 		_board.toggleDeadStone(2, 4);
-		assertScore(3, 5.5f);
+		assertScore(3, 6.5f);
 	}
 
 	public void testGetLastPlayedStone(){
