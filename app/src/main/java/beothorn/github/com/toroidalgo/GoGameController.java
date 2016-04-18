@@ -1,6 +1,5 @@
 package beothorn.github.com.toroidalgo;
 
-import android.graphics.Point;
 import android.os.Bundle;
 
 import java.util.List;

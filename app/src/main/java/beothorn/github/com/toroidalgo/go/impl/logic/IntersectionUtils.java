@@ -7,7 +7,8 @@ public class IntersectionUtils {
 
 	public static boolean sameSituation(Intersection[][] intersectionsA, Intersection[][] intersectionsB) {
 		if(intersectionsA == null || intersectionsB == null){
-			return intersectionsA == intersectionsB;
+			// return intersectionsA == intersectionsB;
+			throw new IllegalStateException(); // Remove this "if" if it never happens. 2016/04
 		}
 		for (int x = 0; x < intersectionsA.length; x++) {
 			for (int y = 0; y < intersectionsA[x].length; y++) {
