@@ -19,7 +19,6 @@ public class GoView extends View{
 
     public static final int MIN_BLOCK_SIZE = 40;
     public static final int MAX_BLOCK_SIZE = 200;
-    private long ZOOM_WAITING_INTERVAL = 400;
 
     private static final int MOVE_TOLERANCE = 20;
     private ScaleGestureDetector scaleGestureDetector;
@@ -129,9 +128,11 @@ public class GoView extends View{
         scaleGestureDetector.onTouchEvent(ev);
 
         final int action = ev.getAction();
-        if(System.currentTimeMillis() - zoomEventEndingTimestamp < ZOOM_WAITING_INTERVAL){
+
+        long zoomWaitingInterval = 400;
+        if (System.currentTimeMillis() - zoomEventEndingTimestamp < zoomWaitingInterval)
             return true;
-        }
+
         switch (action & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN: {
