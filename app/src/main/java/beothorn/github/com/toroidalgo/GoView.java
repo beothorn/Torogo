@@ -2,6 +2,8 @@ package beothorn.github.com.toroidalgo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -23,6 +25,8 @@ public class GoView extends View{
     private static final int MOVE_TOLERANCE = 20;
     private ScaleGestureDetector scaleGestureDetector;
     private BackgroundPainter backgroundPainter;
+    private Paint paintCrosshair;
+    private int sizeOfCrosshair = 120;
 
     private BoardPainter boardPainter;
     private TextPainter textPainter;
@@ -48,6 +52,11 @@ public class GoView extends View{
         backgroundPainter = new BackgroundPainter(this);
         boardPainter = new BoardPainter();
         textPainter = new TextPainter();
+
+        paintCrosshair = new Paint();
+        paintCrosshair.setColor(Color.RED);
+        paintCrosshair.setStyle(Paint.Style.STROKE);
+        paintCrosshair.setStrokeWidth(5f);
 
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
@@ -181,8 +190,8 @@ public class GoView extends View{
             }
 
             case MotionEvent.ACTION_UP: {
-                mLastTouchX = ev.getX();
-                mLastTouchY = ev.getY();
+                mLastTouchX = centerX();
+                mLastTouchY = centerY();
 
                 float boardDeltaX = Math.abs(mLastBoardX - boardX);
                 float boardDeltaY = Math.abs(mLastBoardY - boardY);
@@ -208,6 +217,14 @@ public class GoView extends View{
         return true;
     }
 
+    private int centerY() {
+        return getMeasuredHeight() / 2;
+    }
+
+    private int centerX() {
+        return getMeasuredWidth() / 2;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -217,6 +234,16 @@ public class GoView extends View{
         backgroundPainter.paintOn(canvas, boardX, boardY, blockSize);
         boardPainter.paint(canvas, blockSize, boardSlotsCount, boardX, boardY, getMeasuredWidth(), getMeasuredHeight());
         textPainter.paintText(canvas);
+
+        drawCrosshair(canvas);
+    }
+
+    private void drawCrosshair(Canvas canvas) {
+        int left = centerX() - sizeOfCrosshair / 2;
+        int top = centerY() - sizeOfCrosshair / 2;
+        int right = centerX() + sizeOfCrosshair / 2;
+        int bottom = centerY() + sizeOfCrosshair / 2;
+        canvas.drawRect(left, top, right, bottom, paintCrosshair);
     }
 
     public void save(Bundle outState) {
