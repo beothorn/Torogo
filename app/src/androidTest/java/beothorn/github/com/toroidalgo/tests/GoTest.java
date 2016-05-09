@@ -1,20 +1,20 @@
 package beothorn.github.com.toroidalgo.tests;
 
 import android.test.InstrumentationTestCase;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoBoard;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
+import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoMatch;
 
 public class GoTest extends InstrumentationTestCase{
 
-	private GoBoard _board;
+	private GoMatch match;
 
 	private void assertScore(int black, float white) {
-		assertEquals(black, _board.blackScore(), 0);
-		assertEquals(white, _board.whiteScore(), 0);
+		assertEquals(black, match.blackScore(), 0);
+		assertEquals(white, match.whiteScore(), 0);
 	}
 
 	public void testSingleStoneCapture() {
-		_board = new ToroidalGoBoard(9);
+		match = new ToroidalGoMatch(9);
 		
 		play(4, 2);
 		play(4, 3);
@@ -23,14 +23,14 @@ public class GoTest extends InstrumentationTestCase{
 		play(5, 3);
 		play(5, 4);
 
-		assertNotNull(_board.stoneAt(4, 3));
+		assertNotNull(match.stoneAt(4, 3));
 		play(4,4);
-		assertNull(   _board.stoneAt(4, 3));
+		assertNull(match.stoneAt(4, 3));
 	}
 
 	private void play(int x, int y) {
-		assertTrue(_board.canPlayStone(x, y));
-		_board.playStone(x, y);
+		assertTrue(match.canPlayStone(x, y));
+		match.playStone(x, y);
 	}
 	
 	public void testSingleStoneCaptureToroidal_shouldNotCapture() {
@@ -44,7 +44,7 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
+		match = new ToroidalGoMatch(setup);
 		
 		play(3, 0);
 		
@@ -58,7 +58,7 @@ public class GoTest extends InstrumentationTestCase{
 			" + + + + + + + + +\n" +
 			" + + + + + + + + +\n" +
 			" + + + + + + + + +\n",
-			_board.printOut()
+			match.printOut()
 		);
 	}
 	
@@ -73,7 +73,7 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
+		match = new ToroidalGoMatch(setup);
 		
 		play(4, 8);
 		
@@ -87,7 +87,7 @@ public class GoTest extends InstrumentationTestCase{
 			" + + + + + + + + +\n" +
 			" + + + + + + + + +\n" +
 			" + + + + b + + + +\n",
-			_board.printOut()
+			match.printOut()
 		);
 	}
 	
@@ -102,9 +102,9 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
+		match = new ToroidalGoMatch(setup);
 		
-		_board.playStone(5, 5);
+		match.playStone(5, 5);
 		
 		assertEquals(
 		    " + + + + + + + + +\n" +
@@ -116,7 +116,7 @@ public class GoTest extends InstrumentationTestCase{
 			" + + + + + + + + +\n" +
 			" + + + + + + + + +\n" +
 			" + + + + + + + + +\n",
-			_board.printOut()
+			match.printOut()
 		);
 		
 		assertScore(3, 6.5f);
@@ -133,9 +133,9 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		assertFalse(_board.canPlayStone(5, 4));
-		assertTrue(_board.stoneAt(5, 4) == null);
+		match = new ToroidalGoMatch(setup);
+		assertFalse(match.canPlayStone(5, 4));
+		assertTrue(match.stoneAt(5, 4) == null);
 	}
 	
 	public void testKillOtherFirst() {
@@ -149,8 +149,8 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		assertTrue(_board.canPlayStone(4, 3));
+		match = new ToroidalGoMatch(setup);
+		assertTrue(match.canPlayStone(4, 3));
 	}
 	
 	public void testKo() {
@@ -164,10 +164,10 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		assertTrue(_board.canPlayStone(4, 3));
-		_board.playStone(4, 3);
-		assertFalse(_board.canPlayStone(4, 2));
+		match = new ToroidalGoMatch(setup);
+		assertTrue(match.canPlayStone(4, 3));
+		match.playStone(4, 3);
+		assertFalse(match.canPlayStone(4, 2));
 	}
 
 	
@@ -182,10 +182,10 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
+		match = new ToroidalGoMatch(setup);
 		
-		_board.playStone(4, 3);
-		assertEquals(_board.printOut(),
+		match.playStone(4, 3);
+		assertEquals(match.printOut(),
 			 	" + + + + + + + + +\n"+
 				" + + + + b + + + +\n"+
 				" + + + b + b + + +\n"+
@@ -200,26 +200,26 @@ public class GoTest extends InstrumentationTestCase{
 	}
 
 	public void testPass() {
-		ToroidalGoBoard subject = new ToroidalGoBoard(new String[]{});
-		assertSame(GoBoard.StoneColor.BLACK, subject.nextToPlay());
+		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
+		assertSame(GoMatch.StoneColor.BLACK, subject.nextToPlay());
 		subject.passTurn();
-		assertSame(GoBoard.StoneColor.WHITE, subject.nextToPlay());
+		assertSame(GoMatch.StoneColor.WHITE, subject.nextToPlay());
 	}
 
 	public void testEndByPass() {
-		ToroidalGoBoard subject = new ToroidalGoBoard(new String[]{});
-		assertSame(GoBoard.StoneColor.BLACK, subject.nextToPlay());
+		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
+		assertSame(GoMatch.StoneColor.BLACK, subject.nextToPlay());
 		subject.passTurn();
-		assertSame(GoBoard.StoneColor.WHITE, subject.nextToPlay());
+		assertSame(GoMatch.StoneColor.WHITE, subject.nextToPlay());
 		subject.passTurn();
 		assertNull(subject.nextToPlay());
 	}
 	
 	public void testResign() {
-		ToroidalGoBoard subject = new ToroidalGoBoard(new String[]{});
+		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
 		subject.resign();
 		assertNull(subject.nextToPlay());
-		assertSame(GoBoard.StoneColor.WHITE, subject.winner());
+		assertSame(GoMatch.StoneColor.WHITE, subject.winner());
 	}
 
 	public void testSingleStoneCaptureScore() {
@@ -233,19 +233,19 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
+		match = new ToroidalGoMatch(setup);
 		
-		assertTrue(_board.stoneAt(4, 3) != null);
-		_board.playStone(4,4);
-		assertTrue(_board.stoneAt(4, 3) == null);
+		assertTrue(match.stoneAt(4, 3) != null);
+		match.playStone(4,4);
+		assertTrue(match.stoneAt(4, 3) == null);
 		assertScore(1, 6.5f);
 		
-		_board.playStone(4,5);
-		_board.playStone(0,1);
+		match.playStone(4,5);
+		match.playStone(0,1);
 		
-		assertTrue(_board.stoneAt(4, 4) != null);
-		_board.playStone(4,3);
-		assertTrue(_board.stoneAt(4, 4) == null);
+		assertTrue(match.stoneAt(4, 4) != null);
+		match.playStone(4,3);
+		assertTrue(match.stoneAt(4, 4) == null);
 		assertScore(1, 7.5f);
 	}
 	
@@ -260,9 +260,9 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + w + w + +",
 				"+ + + + + w + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		_board.passTurn();
-		_board.passTurn();
+		match = new ToroidalGoMatch(setup);
+		match.passTurn();
+		match.passTurn();
 		assertScore(2, 7.5f);
 	}
 
@@ -277,10 +277,10 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + b b b + +",
 				"+ w + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		_board.passTurn();
-		_board.passTurn();
-		_board.toggleDeadStone(5, 4);
+		match = new ToroidalGoMatch(setup);
+		match.passTurn();
+		match.passTurn();
+		match.toggleDeadStone(5, 4);
 		assertScore(14, 6.5f);
 		
 		setup = new String[]{
@@ -293,10 +293,10 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + w + b b b + +",
 				"+ w + w + + + + +",
 				"+ + w + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		_board.passTurn();
-		_board.passTurn();
-		_board.toggleDeadStone(5, 4);
+		match = new ToroidalGoMatch(setup);
+		match.passTurn();
+		match.passTurn();
+		match.toggleDeadStone(5, 4);
 		assertScore(20, 7.5f);
 	}
 
@@ -311,10 +311,10 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + b b b + +",
 				"+ w + + + + + + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		_board.passTurn();
-		_board.passTurn();
-		_board.toggleDeadStone(0, 0);
+		match = new ToroidalGoMatch(setup);
+		match.passTurn();
+		match.passTurn();
+		match.toggleDeadStone(0, 0);
 	}
 
 	public void testUntoggleDeadGroup() {
@@ -328,24 +328,24 @@ public class GoTest extends InstrumentationTestCase{
 				"+ + + + + + + + +",
 				"+ + + + + + w + +",
 				"+ + + + + + + + +"};
-		_board = new ToroidalGoBoard(setup);
-		_board.passTurn();
-		_board.passTurn();
-		_board.toggleDeadStone(2, 2);
+		match = new ToroidalGoMatch(setup);
+		match.passTurn();
+		match.passTurn();
+		match.toggleDeadStone(2, 2);
 		assertScore(3, 6.5f);
-		_board.toggleDeadStone(2, 4);
+		match.toggleDeadStone(2, 4);
 		assertScore(6, 6.5f);
-		_board.toggleDeadStone(2, 4);
+		match.toggleDeadStone(2, 4);
 		assertScore(3, 6.5f);
 	}
 
 	public void testGetLastPlayedStone(){
-		_board = new ToroidalGoBoard(3);
-		_board.playStone(0,0);
-		assertTrue(_board.stoneAtPositionIsLastPlayedStone(0,0));
-		_board.playStone(1,1);
-		assertFalse(_board.stoneAtPositionIsLastPlayedStone(0,0));
-		assertTrue(_board.stoneAtPositionIsLastPlayedStone(1,1));
+		match = new ToroidalGoMatch(3);
+		match.playStone(0,0);
+		assertTrue(match.stoneAtPositionIsLastPlayedStone(0,0));
+		match.playStone(1,1);
+		assertFalse(match.stoneAtPositionIsLastPlayedStone(0,0));
+		assertTrue(match.stoneAtPositionIsLastPlayedStone(1,1));
 	}
 	
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +11,7 @@ import android.widget.Button;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
 import beothorn.github.com.toroidalgo.publisher.DialogHandler;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
 
@@ -115,9 +114,9 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onMarkStonesPhaseEnded() {
-                GoBoard.StoneColor s = controller.getWinner();
+                GoMatch.StoneColor s = controller.getWinner();
                 String text = "White Wins";
-                if (s.equals(GoBoard.StoneColor.BLACK))
+                if (s.equals(GoMatch.StoneColor.BLACK))
                     text = "Black Wins";
                 text += "\nW:" + controller.getWhiteScore() + " x B:" + controller.getBlackScore();
                 goView.setText(text);

@@ -14,7 +14,7 @@ public class Intersection {
 
     private BoardPosition position;
 
-	GoBoard.StoneColor stone = null;
+	GoMatch.StoneColor stone = null;
 
     public Intersection(int column, int line){
         position = new BoardPosition(column, line);
@@ -28,7 +28,7 @@ public class Intersection {
 		return stone.equals(other.stone);
 	}
 	
-	public void setStone(GoBoard.StoneColor stoneColor) throws IllegalMove {
+	public void setStone(GoMatch.StoneColor stoneColor) throws IllegalMove {
 		if (!isLiberty()) throw new IllegalMove();
 		stone = stoneColor;
 	}
@@ -60,7 +60,7 @@ public class Intersection {
 		if (group.contains(this)) return;
 		group.add(this);
 
-        boolean notAFreePosition = stone != null && stone != GoBoard.StoneColor.WHITEDEAD && stone != GoBoard.StoneColor.BLACKDEAD;
+        boolean notAFreePosition = stone != null && stone != GoMatch.StoneColor.WHITEDEAD && stone != GoMatch.StoneColor.BLACKDEAD;
         if(notAFreePosition) return;
 
 		if (up != null) up.internalGetLinkedEmptyOrDeadTerritories(group);
@@ -69,7 +69,7 @@ public class Intersection {
 		if (right != null) right.internalGetLinkedEmptyOrDeadTerritories(group);
 	}
 
-	void getLinkedStonesOfSameColor(GoBoard.StoneColor stoneColor, Set<Intersection> group) {
+	void getLinkedStonesOfSameColor(GoMatch.StoneColor stoneColor, Set<Intersection> group) {
 		if (group.contains(this)) return;
 		group.add(this);
 
@@ -84,7 +84,7 @@ public class Intersection {
 	
 	
 	void markDeadStones() {
-		GoBoard.StoneColor colorToKill = stone;
+		GoMatch.StoneColor colorToKill = stone;
 		boolean killed;
 		
 		do {
@@ -92,10 +92,10 @@ public class Intersection {
 			Set<Intersection> group = getGroupWithNeighbours();
 			for (Intersection intersection : group)
 				if (intersection.stone == colorToKill) {
-					if(colorToKill.equals(GoBoard.StoneColor.BLACK))
-						intersection.stone = GoBoard.StoneColor.BLACKDEAD;
+					if(colorToKill.equals(GoMatch.StoneColor.BLACK))
+						intersection.stone = GoMatch.StoneColor.BLACKDEAD;
 					else
-						intersection.stone = GoBoard.StoneColor.WHITEDEAD;
+						intersection.stone = GoMatch.StoneColor.WHITEDEAD;
 					killed = true;
 				}
 		} while (killed);
@@ -109,7 +109,7 @@ public class Intersection {
 	}
 
 	
-	boolean killGroupIfSurrounded(GoBoard.StoneColor color) {
+	boolean killGroupIfSurrounded(GoMatch.StoneColor color) {
 		if (stone != color) return false;
 		
 		Set<Intersection> groupWithNeighbours = getGroupWithNeighbours();
@@ -129,7 +129,7 @@ public class Intersection {
 	}
 
 	public boolean isDead() {
-		return stone == GoBoard.StoneColor.BLACKDEAD || stone == GoBoard.StoneColor.WHITEDEAD;
+		return stone == GoMatch.StoneColor.BLACKDEAD || stone == GoMatch.StoneColor.WHITEDEAD;
 	}
 
     public BoardPosition getBoardPosition() {

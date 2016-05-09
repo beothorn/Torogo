@@ -15,9 +15,9 @@ import java.util.Map;
 import beothorn.github.com.toroidalgo.GoGameController;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
 
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard.StoneColor;
-import static beothorn.github.com.toroidalgo.go.impl.logic.GoBoard.StoneColor.BLACK;
-import static beothorn.github.com.toroidalgo.go.impl.logic.GoBoard.StoneColor.WHITE;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor;
+import static beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor.BLACK;
+import static beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor.WHITE;
 
 public class BoardPainter {
 

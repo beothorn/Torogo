@@ -8,14 +8,14 @@ import beothorn.github.com.toroidalgo.GoGameController;
 import beothorn.github.com.toroidalgo.ToroidalGoActivity;
 import beothorn.github.com.toroidalgo.ToroidalGoListener;
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
 import sneer.android.Message;
 import sneer.android.PartnerSession;
 
 public class SneerSetup implements ControllerSetup {
 
     public GoGameController setupController(final ToroidalGoActivity toroidalGoActivity) {
-        GoBoard.StoneColor myColor = GoBoard.StoneColor.BLACK;
+        GoMatch.StoneColor myColor = GoMatch.StoneColor.BLACK;
 
         Publisher publisher = new Publisher();
 
@@ -46,13 +46,13 @@ public class SneerSetup implements ControllerSetup {
         });
 
         if(session.wasStartedByMe()){
-            myColor = GoBoard.StoneColor.WHITE;
+            myColor = GoMatch.StoneColor.WHITE;
         }
 
-        final GoBoard.StoneColor finalMyColor = myColor;
+        final GoMatch.StoneColor finalMyColor = myColor;
         publisher.setPublishListener(new ToroidalGoListener() {
             @Override
-            public void doPlay(Map<String, Integer> play, GoBoard.StoneColor playingColor) {
+            public void doPlay(Map<String, Integer> play, GoMatch.StoneColor playingColor) {
                 Map<String, Long> casted = new LinkedHashMap<String, Long>();
                 for (Map.Entry<String, Integer> stringLongEntry : play.entrySet()) {
                     casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());

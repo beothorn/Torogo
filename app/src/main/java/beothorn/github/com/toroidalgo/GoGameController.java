@@ -8,38 +8,38 @@ import java.util.Map;
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoBoard;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
+import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoMatch;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
 
 public class GoGameController implements BoardListener{
 
     public static final String CLASSIFIED_NAME = "beothorn.github.com.toroidalgo.GoGameController";
-    private GoBoard goBoard;
+    private GoMatch goMatch;
     private int size = 9;
     private StateListener stateListener;
     private ScoreListener scoreListener;
     private Publisher publisher;
 
-    private GoBoard.StoneColor myColor;
-    private GoBoard.StoneColor turn = GoBoard.StoneColor.BLACK;
+    private GoMatch.StoneColor myColor;
+    private GoMatch.StoneColor turn = GoMatch.StoneColor.BLACK;
     private boolean gameFinished = false;
 
     public GoGameController(Publisher publisher) {
-        this(publisher, GoBoard.StoneColor.ANY);
+        this(publisher, GoMatch.StoneColor.ANY);
     }
 
-    public GoGameController(Publisher publisher, GoBoard.StoneColor myColor){
+    public GoGameController(Publisher publisher, GoMatch.StoneColor myColor){
         this.publisher = publisher;
         this.myColor = myColor;
-        goBoard = new ToroidalGoBoard(size);
-        goBoard.setBoardListener(this);
+        goMatch = new ToroidalGoMatch(size);
+        goMatch.setBoardListener(this);
     }
 
     public void play(int line, int column){
         if(!isMyTurn()) return;
 
-        if(goBoard.canPlayStone(column, line))
+        if(goMatch.canPlayStone(column, line))
             publisher.playStone(line, column, turn);
         if(gameHasEnded()){
             publisher.toggleDeadStone(line, column, turn);
@@ -47,15 +47,15 @@ public class GoGameController implements BoardListener{
     }
 
     public boolean gameHasEnded() {
-        return goBoard.gameHasEnded();
+        return goMatch.gameHasEnded();
     }
 
-    public GoBoard.StoneColor getPieceAt(int line, int column){
-        return goBoard.stoneAt(column, line);
+    public GoMatch.StoneColor getPieceAt(int line, int column){
+        return goMatch.stoneAt(column, line);
     }
 
     public boolean stoneAtPositionIsLastPlayedStone(int line, int column){
-        return goBoard.stoneAtPositionIsLastPlayedStone(column, line);
+        return goMatch.stoneAtPositionIsLastPlayedStone(column, line);
     }
 
     public int getSize() {
@@ -80,7 +80,7 @@ public class GoGameController implements BoardListener{
     }
 
     private boolean isMyTurn() {
-        return myColor == GoBoard.StoneColor.ANY || turn.equals(myColor);
+        return myColor == GoMatch.StoneColor.ANY || turn.equals(myColor);
     }
 
     @Override
@@ -90,12 +90,12 @@ public class GoGameController implements BoardListener{
     }
 
     @Override
-    public void nextToPlay(GoBoard.StoneColor nextToPlay) {
+    public void nextToPlay(GoMatch.StoneColor nextToPlay) {
         boolean gameEnded = nextToPlay == null;
         if(gameEnded) {
             if (stateListener != null) {
                 if (getWinner() != null) {
-                    if (getWinner().equals(GoBoard.StoneColor.BLACK))
+                    if (getWinner().equals(GoMatch.StoneColor.BLACK))
                         stateListener.onResignWhite();
                     else
                         stateListener.onResignBlack();
@@ -104,27 +104,27 @@ public class GoGameController implements BoardListener{
                 }
             }
         }else{
-            if(nextToPlay.equals(GoBoard.StoneColor.BLACK)){
+            if(nextToPlay.equals(GoMatch.StoneColor.BLACK)){
                 stateListener.onBlackTurn();
             }
-            if(nextToPlay.equals(GoBoard.StoneColor.WHITE)){
+            if(nextToPlay.equals(GoMatch.StoneColor.WHITE)){
                 stateListener.onWhiteTurn();
             }
         }
     }
 
     @Override
-    public void nextToPlayOnPass(GoBoard.StoneColor nextToPlay) {
+    public void nextToPlayOnPass(GoMatch.StoneColor nextToPlay) {
         boolean gameEnded = nextToPlay == null;
         if(gameEnded){
             if(stateListener != null){
                 stateListener.onMarkStonesPhaseStart();
             }
         }else{
-            if(nextToPlay.equals(GoBoard.StoneColor.BLACK)){
+            if(nextToPlay.equals(GoMatch.StoneColor.BLACK)){
                 stateListener.onPassWhite();
             }
-            if(nextToPlay.equals(GoBoard.StoneColor.WHITE)){
+            if(nextToPlay.equals(GoMatch.StoneColor.WHITE)){
                 stateListener.onPassBlack();
             }
         }
@@ -135,69 +135,69 @@ public class GoGameController implements BoardListener{
     }
 
     public void toggleDeadStone(int line, int column) {
-        goBoard.toggleDeadStone(column, line);
+        goMatch.toggleDeadStone(column, line);
         stateListener.onMarkStone();
     }
 
     public void playStone(int line, int column) {
-        goBoard.playStone(column, line);
+        goMatch.playStone(column, line);
         changePlayingColor();
     }
 
     public void pass(){
-        goBoard.passTurn();
+        goMatch.passTurn();
         changePlayingColor();
     }
 
     private void changePlayingColor() {
-        if(turn.equals(GoBoard.StoneColor.BLACK)){
-            turn = GoBoard.StoneColor.WHITE;
+        if(turn.equals(GoMatch.StoneColor.BLACK)){
+            turn = GoMatch.StoneColor.WHITE;
         }else{
-            turn = GoBoard.StoneColor.BLACK;
+            turn = GoMatch.StoneColor.BLACK;
         }
     }
 
     public void resign(){
-        goBoard.resign();
+        goMatch.resign();
     }
 
-    public GoBoard.StoneColor getWinner() {
-        return goBoard.winner();
+    public GoMatch.StoneColor getWinner() {
+        return goMatch.winner();
     }
 
     public void endMarkingStones() {
         gameFinished = true;
-        goBoard.endMarkingStones();
+        goMatch.endMarkingStones();
         stateListener.onMarkStonesPhaseEnded();
     }
 
     public float getWhiteScore() {
-        return goBoard.whiteScore();
+        return goMatch.whiteScore();
     }
 
     public int getBlackScore() {
-        return goBoard.blackScore();
+        return goMatch.blackScore();
     }
 
     public void save(Bundle outState) {
 
-        BoardPosition lastPlayedPiece = goBoard.getLastPlayedPiece();
+        BoardPosition lastPlayedPiece = goMatch.getLastPlayedPiece();
         if(lastPlayedPiece == null){
             lastPlayedPiece = new BoardPosition(-1, -1);
         }
 
         outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.x", lastPlayedPiece.getColumn());
         outState.putInt(CLASSIFIED_NAME + "lastPlayedPiece.y", lastPlayedPiece.getLine());
-        outState.putSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay", goBoard.nextToPlay());
-        outState.putString(CLASSIFIED_NAME + "goBoard.printOut", goBoard.printOut());
+        outState.putSerializable(CLASSIFIED_NAME + "goMatch.nextToPlay", goMatch.nextToPlay());
+        outState.putString(CLASSIFIED_NAME + "goMatch.printOut", goMatch.printOut());
     }
 
     public void recoverFrom(Bundle savedInstanceState) {
         int lastPieceX = savedInstanceState.getInt(CLASSIFIED_NAME + "lastPlayedPiece.x");
         int lastPieceY = savedInstanceState.getInt(CLASSIFIED_NAME + "lastPlayedPiece.y");
-        GoBoard.StoneColor playingColor = (GoBoard.StoneColor) savedInstanceState.getSerializable(CLASSIFIED_NAME + "goBoard.nextToPlay");
-        String boardSetup = savedInstanceState.getString(CLASSIFIED_NAME + "goBoard.printOut");
-        goBoard.loadGame(lastPieceX, lastPieceY, playingColor, boardSetup);
+        GoMatch.StoneColor playingColor = (GoMatch.StoneColor) savedInstanceState.getSerializable(CLASSIFIED_NAME + "goMatch.nextToPlay");
+        String boardSetup = savedInstanceState.getString(CLASSIFIED_NAME + "goMatch.printOut");
+        goMatch.loadGame(lastPieceX, lastPieceY, playingColor, boardSetup);
     }
 
     public void playLocally(Map<String, Integer> play) {
@@ -227,8 +227,8 @@ public class GoGameController implements BoardListener{
         }
     }
 
-    public Map<GoBoard.StoneColor, List<List<BoardPosition>>> getTerritoriesOwnership(){
-        return goBoard.getTerritoriesOwnership();
+    public Map<GoMatch.StoneColor, List<List<BoardPosition>>> getTerritoriesOwnership(){
+        return goMatch.getTerritoriesOwnership();
     }
 
 

@@ -6,8 +6,7 @@ import java.util.Map;
 import beothorn.github.com.toroidalgo.GoGameController;
 import beothorn.github.com.toroidalgo.ToroidalGoActivity;
 import beothorn.github.com.toroidalgo.ToroidalGoListener;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoBoard;
-import sneer.android.PartnerSession;
+import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
 import sneer.android.ui.SneerInstallation;
 
 public class Publisher {
@@ -39,7 +38,7 @@ public class Publisher {
         this.listener = listener;
     }
 
-    public void toggleDeadStone(int line, int column, GoBoard.StoneColor currentPlaying) {
+    public void toggleDeadStone(int line, int column, GoMatch.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, TOGGLE_DEAD_STONE);
         play.put("line", line);
@@ -47,7 +46,7 @@ public class Publisher {
         listener.doPlay(play, currentPlaying);
     }
 
-    public void playStone(int line, int column, GoBoard.StoneColor currentPlaying) {
+    public void playStone(int line, int column, GoMatch.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, PLAY);
         play.put("line", line);
@@ -55,13 +54,13 @@ public class Publisher {
         listener.doPlay(play, currentPlaying);
     }
 
-    public void pass(GoBoard.StoneColor currentPlaying) {
+    public void pass(GoMatch.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, PASS);
         listener.doPlay(play, currentPlaying);
     }
 
-    public void resign(GoBoard.StoneColor currentPlaying) {
+    public void resign(GoMatch.StoneColor currentPlaying) {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, RESIGN);
         listener.doPlay(play, currentPlaying);
@@ -70,6 +69,6 @@ public class Publisher {
     public void endMarkingStones() {
         Map<String, Integer> play = new LinkedHashMap<String, Integer>();
         play.put(TYPE, END_GAME);
-        listener.doPlay(play, GoBoard.StoneColor.ANY);
+        listener.doPlay(play, GoMatch.StoneColor.ANY);
     }
 }
