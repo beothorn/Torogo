@@ -4,6 +4,7 @@ package beothorn.github.com.toroidalgo.go.impl.logic;
 import java.util.HashSet;
 import java.util.Set;
 
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
 
 public class Intersection {
 
@@ -14,7 +15,7 @@ public class Intersection {
 
     private BoardPosition position;
 
-	GoMatch.StoneColor stone = null;
+	StoneColor stone = null;
 
     public Intersection(int column, int line){
         position = new BoardPosition(column, line);
@@ -28,7 +29,7 @@ public class Intersection {
 		return stone.equals(other.stone);
 	}
 	
-	public void setStone(GoMatch.StoneColor stoneColor) throws IllegalMove {
+	public void setStone(StoneColor stoneColor) throws IllegalMove {
 		if (!isLiberty()) throw new IllegalMove();
 		stone = stoneColor;
 	}
@@ -60,7 +61,7 @@ public class Intersection {
 		if (group.contains(this)) return;
 		group.add(this);
 
-        boolean notAFreePosition = stone != null && stone != GoMatch.StoneColor.WHITEDEAD && stone != GoMatch.StoneColor.BLACKDEAD;
+        boolean notAFreePosition = stone != null && stone != WHITEDEAD && stone != BLACKDEAD;
         if(notAFreePosition) return;
 
 		if (up != null) up.internalGetLinkedEmptyOrDeadTerritories(group);
@@ -69,7 +70,7 @@ public class Intersection {
 		if (right != null) right.internalGetLinkedEmptyOrDeadTerritories(group);
 	}
 
-	void getLinkedStonesOfSameColor(GoMatch.StoneColor stoneColor, Set<Intersection> group) {
+	void getLinkedStonesOfSameColor(StoneColor stoneColor, Set<Intersection> group) {
 		if (group.contains(this)) return;
 		group.add(this);
 
@@ -84,7 +85,7 @@ public class Intersection {
 	
 	
 	void markDeadStones() {
-		GoMatch.StoneColor colorToKill = stone;
+		StoneColor colorToKill = stone;
 		boolean killed;
 		
 		do {
@@ -92,10 +93,10 @@ public class Intersection {
 			Set<Intersection> group = getGroupWithNeighbours();
 			for (Intersection intersection : group)
 				if (intersection.stone == colorToKill) {
-					if(colorToKill.equals(GoMatch.StoneColor.BLACK))
-						intersection.stone = GoMatch.StoneColor.BLACKDEAD;
+					if(colorToKill.equals(BLACK))
+						intersection.stone = BLACKDEAD;
 					else
-						intersection.stone = GoMatch.StoneColor.WHITEDEAD;
+						intersection.stone = WHITEDEAD;
 					killed = true;
 				}
 		} while (killed);
@@ -109,7 +110,7 @@ public class Intersection {
 	}
 
 	
-	boolean killGroupIfSurrounded(GoMatch.StoneColor color) {
+	boolean killGroupIfSurrounded(StoneColor color) {
 		if (stone != color) return false;
 		
 		Set<Intersection> groupWithNeighbours = getGroupWithNeighbours();
@@ -129,7 +130,7 @@ public class Intersection {
 	}
 
 	public boolean isDead() {
-		return stone == GoMatch.StoneColor.BLACKDEAD || stone == GoMatch.StoneColor.WHITEDEAD;
+		return stone == BLACKDEAD || stone == WHITEDEAD;
 	}
 
     public BoardPosition getBoardPosition() {

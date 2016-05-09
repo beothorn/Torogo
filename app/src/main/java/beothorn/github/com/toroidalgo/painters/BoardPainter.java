@@ -14,10 +14,9 @@ import java.util.Map;
 
 import beothorn.github.com.toroidalgo.GoGameController;
 import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
+import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
 
-import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor;
-import static beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor.BLACK;
-import static beothorn.github.com.toroidalgo.go.impl.logic.GoMatch.StoneColor.WHITE;
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
 
 public class BoardPainter {
 
@@ -171,7 +170,7 @@ public class BoardPainter {
         for(int line = 0; line <= boardSlotsCount; line++){
             for(int column = 0; column <= boardSlotsCount; column++){
                 StoneColor pieceAt = controller.getPieceAt(line % boardSlotsCount, column % boardSlotsCount);
-                if(pieceAt == null || pieceAt.equals(StoneColor.WHITEDEAD) || pieceAt.equals(StoneColor.BLACKDEAD)) continue;
+                if(pieceAt == null || pieceAt.equals(WHITEDEAD) || pieceAt.equals(BLACKDEAD)) continue;
 
                 int radius = blockSize / 2;
                 int shadowDistance = 4;
@@ -254,10 +253,10 @@ public class BoardPainter {
 
     private void paintDeadPieces(Canvas canvas, StoneColor pieceAt, int cx, int cy, int radiusBig) {
         int radius = radiusBig;
-        if(pieceAt.equals(StoneColor.BLACKDEAD)){
+        if(pieceAt.equals(BLACKDEAD)){
             canvas.drawBitmap(blackPieceBitmap, cx - radius, cy - radius, paint);
         }
-        if(pieceAt.equals(StoneColor.WHITEDEAD)){
+        if(pieceAt.equals(WHITEDEAD)){
             canvas.drawBitmap(whitePieceBitmap, cx - radius, cy - radius, paint);
         }
     }

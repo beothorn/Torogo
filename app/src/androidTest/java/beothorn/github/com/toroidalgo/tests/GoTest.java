@@ -1,7 +1,10 @@
 package beothorn.github.com.toroidalgo.tests;
 
 import android.test.InstrumentationTestCase;
+
 import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITE;
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
 import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoMatch;
 
 public class GoTest extends InstrumentationTestCase{
@@ -201,16 +204,16 @@ public class GoTest extends InstrumentationTestCase{
 
 	public void testPass() {
 		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
-		assertSame(GoMatch.StoneColor.BLACK, subject.nextToPlay());
+		assertSame(BLACK, subject.nextToPlay());
 		subject.passTurn();
-		assertSame(GoMatch.StoneColor.WHITE, subject.nextToPlay());
+		assertSame(WHITE, subject.nextToPlay());
 	}
 
 	public void testEndByPass() {
 		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
-		assertSame(GoMatch.StoneColor.BLACK, subject.nextToPlay());
+		assertSame(BLACK, subject.nextToPlay());
 		subject.passTurn();
-		assertSame(GoMatch.StoneColor.WHITE, subject.nextToPlay());
+		assertSame(WHITE, subject.nextToPlay());
 		subject.passTurn();
 		assertNull(subject.nextToPlay());
 	}
@@ -219,7 +222,7 @@ public class GoTest extends InstrumentationTestCase{
 		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
 		subject.resign();
 		assertNull(subject.nextToPlay());
-		assertSame(GoMatch.StoneColor.WHITE, subject.winner());
+		assertSame(WHITE, subject.winner());
 	}
 
 	public void testSingleStoneCaptureScore() {

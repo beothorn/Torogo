@@ -11,9 +11,11 @@ import android.widget.Button;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
-import beothorn.github.com.toroidalgo.go.impl.logic.GoMatch;
+import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
 import beothorn.github.com.toroidalgo.publisher.DialogHandler;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
+
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
 
 public class ToroidalGoActivity extends Activity {
 
@@ -114,9 +116,9 @@ public class ToroidalGoActivity extends Activity {
 
             @Override
             public void onMarkStonesPhaseEnded() {
-                GoMatch.StoneColor s = controller.getWinner();
+                StoneColor s = controller.getWinner();
                 String text = "White Wins";
-                if (s.equals(GoMatch.StoneColor.BLACK))
+                if (s.equals(BLACK))
                     text = "Black Wins";
                 text += "\nW:" + controller.getWhiteScore() + " x B:" + controller.getBlackScore();
                 goView.setText(text);

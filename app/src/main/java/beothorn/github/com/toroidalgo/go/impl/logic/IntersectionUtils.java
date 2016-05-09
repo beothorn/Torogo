@@ -1,5 +1,7 @@
 package beothorn.github.com.toroidalgo.go.impl.logic;
 
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
+
 public class IntersectionUtils {
 
 	private static final char BLACK_CHAR = 'b';
@@ -24,10 +26,10 @@ public class IntersectionUtils {
 		StringBuffer result= new StringBuffer();
 		for (int y = 0; y < intersections.length; y++) {
 			for (int x = 0; x < intersections[y].length; x++) {
-				GoMatch.StoneColor stone = intersections[x][y].stone;
-				if(stone == GoMatch.StoneColor.WHITE)
+				StoneColor stone = intersections[x][y].stone;
+				if(stone == WHITE)
 					result.append(" "+WHITE_CHAR);
-				else if(stone == GoMatch.StoneColor.BLACK)
+				else if(stone == BLACK)
 					result.append(" "+BLACK_CHAR);
 				else
 					result.append(" +");
@@ -42,9 +44,9 @@ public class IntersectionUtils {
 		for(char symbol : line.toCharArray()) {
 			if (symbol == ' ') continue;
 			
-			GoMatch.StoneColor stone = null;
-			if(symbol == WHITE_CHAR) stone = GoMatch.StoneColor.WHITE;
-			if(symbol == BLACK_CHAR) stone = GoMatch.StoneColor.BLACK;
+			StoneColor stone = null;
+			if(symbol == WHITE_CHAR) stone = WHITE;
+			if(symbol == BLACK_CHAR) stone = BLACK;
 			
 			intersection[x][y].stone = stone;
 			x++;

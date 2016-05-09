@@ -1,7 +1,6 @@
 package beothorn.github.com.toroidalgo.painters;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.widget.Button;

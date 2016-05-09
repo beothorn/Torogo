@@ -8,16 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITE;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITEDEAD;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACKDEAD;
+import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
 
-public class GoMatch {
+public class GoBoard {
 
     private static final float KOMI = 6.5f;
 
-    public GoMatch(int size) {
+    public GoBoard(int size) {
         setup(size);
     }
 
@@ -26,7 +23,7 @@ public class GoMatch {
         previousSituation = createIntersections(size);
     }
 
-    public GoMatch(String[] setup) {
+    public GoBoard(String[] setup) {
         this(setup.length);
         IntersectionUtils.setup(intersections,setup);
     }
