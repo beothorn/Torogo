@@ -137,7 +137,7 @@ public class ToroidalGoActivity extends Activity {
     }
 
     public void playLocally(Map<String, Integer> play) {
-        GoLogger.log("Activity Playing: " + play.get(Publisher.TYPE));
+        GoLogger.log("Activity Playing: " + play.get(Publisher.MOVE_TYPE));
         controller.playLocally(play);
     }
 

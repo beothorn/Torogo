@@ -30,20 +30,19 @@ public class SneerSetup implements ControllerSetup {
             @Override
             public void onMessage(Message message) {
                 GoLogger.log("Received Sneer Message");
-                if(message.wasSentByMe()) return;
                 Object payload = message.payload();
-                Map<String, Integer> torogoMove = convertFromSneerToTorogoMove((Map<String, Long>) payload);
+                Map<String, Integer> torogoMove = convertValuesToInteger((Map<String, Long>) payload);
                 GoLogger.log("Playing from Sneer Message");
                 toroidalGoActivity.playLocally(torogoMove);
                 toroidalGoActivity.goView.invalidate(); // is this line necessary?
             }
 
-            private Map<String, Integer> convertFromSneerToTorogoMove(Map<String, Long> payload) {
-                Map<String, Integer> casted = new LinkedHashMap<String, Integer>();
-                for (Map.Entry<String, Long> stringLongEntry : payload.entrySet()) {
-                    casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().intValue());
-                }
-                return casted;
+            private Map<String, Integer> convertValuesToInteger(Map<String, Long> payload) {
+                    Map<String, Integer> casted = new LinkedHashMap<String, Integer>();
+                    for (Map.Entry<String, Long> entry : payload.entrySet()) {
+                        casted.put(entry.getKey(), entry.getValue().intValue());
+                    }
+                    return casted;
             }
         });
 
@@ -56,15 +55,8 @@ public class SneerSetup implements ControllerSetup {
             @Override
             public void doPlay(Map<String, Integer> play, StoneColor playingColor) {
                 Map<String, Long> casted = new LinkedHashMap<String, Long>();
-                for (Map.Entry<String, Integer> stringLongEntry : play.entrySet()) {
+                for (Map.Entry<String, Integer> stringLongEntry : play.entrySet())
                     casted.put(stringLongEntry.getKey(), stringLongEntry.getValue().longValue());
-                }
-
-                if (playingColor == finalMyColor) {
-                    toroidalGoActivity.playLocally(play);
-                    toroidalGoActivity.goView.invalidate();
-                }
-
                 session.send(casted);
             }
         });

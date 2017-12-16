@@ -16,6 +16,7 @@ import beothorn.github.com.toroidalgo.publisher.Publisher;
 import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.ANY;
 import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITE;
 import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
+import static beothorn.github.com.toroidalgo.publisher.Publisher.MOVE_TYPE;
 
 public class GoGameController implements BoardListener{
 
@@ -208,7 +209,7 @@ public class GoGameController implements BoardListener{
     public void playLocally(Map<String, Integer> play) {
         if (gameFinished) return;
 
-        switch (play.get("TYPE")){
+        switch (play.get(MOVE_TYPE)){
             case Publisher.TOGGLE_DEAD_STONE:
                 GoLogger.log("Controller Playing TOGGLE_DEAD_STONE: line: " + play.get("line")+" column: "+ play.get("column"));
                 toggleDeadStone(play.get("line"), play.get("column"));
