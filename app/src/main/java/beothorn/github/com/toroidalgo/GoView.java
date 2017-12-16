@@ -235,7 +235,8 @@ public class GoView extends View{
         boardPainter.paint(canvas, blockSize, boardSlotsCount, boardX, boardY, getMeasuredWidth(), getMeasuredHeight());
         textPainter.paintText(canvas);
 
-        drawCrosshair(canvas);
+        if (controller.isMyTurn())
+            drawCrosshair(canvas);
     }
 
     private void drawCrosshair(Canvas canvas) {

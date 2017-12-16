@@ -85,7 +85,7 @@ public class GoGameController implements BoardListener{
         publisher.endMarkingStones();
     }
 
-    private boolean isMyTurn() {
+    public boolean isMyTurn() {
         return myColor == ANY || turn.equals(myColor);
     }
 
