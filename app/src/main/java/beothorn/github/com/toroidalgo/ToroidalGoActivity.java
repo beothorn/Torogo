@@ -11,11 +11,8 @@ import android.widget.Button;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
-import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
 import beothorn.github.com.toroidalgo.publisher.DialogHandler;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
-
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
 
 public class ToroidalGoActivity extends Activity {
 
@@ -64,6 +61,7 @@ public class ToroidalGoActivity extends Activity {
         controller = Publisher.createController(this);
 
         goView.setController(controller);
+        findViewById(R.id.acceptButton).setVisibility(View.GONE);
 
         controller.setStateListener(new StateListener() {
             @Override
@@ -76,54 +74,49 @@ public class ToroidalGoActivity extends Activity {
                 goView.setText("Black Passed");
             }
 
-            @Override
-            public void onWhiteTurn() {
-                goView.clearText();
-                goView.redraw();
-            }
+            @Override public void onWhiteTurn() { onSomebodysTurn(); }
+            @Override public void onBlackTurn() { onSomebodysTurn(); }
 
-            @Override
-            public void onBlackTurn() {
+            private void onSomebodysTurn() {
                 goView.clearText();
-                goView.redraw();
+                findViewById(R.id.passButton).setEnabled(controller.isMyTurn());
+                goView.redrawBoard();
             }
 
             @Override
             public void onResignWhite() {
-                String text = "B + R";
-                goView.setText(text);
-                gameEndedMenu();
+                goView.setText("White resigns");
+                gameEnded();
             }
 
             @Override
             public void onResignBlack() {
-                goView.setText("W + R");
-                gameEndedMenu();
+                goView.setText("Black resigns");
+                gameEnded();
             }
 
-            private void gameEndedMenu() {
+            private void gameEnded() {
+                findViewById(R.id.footer).setVisibility(View.GONE);
             }
 
             @Override
             public void onMarkStone() {
-                goView.redraw();
+                goView.redrawBoard();
             }
 
             @Override
             public void onMarkStonesPhaseStart() {
                 goView.setText("Mark Dead\nStones");
+                findViewById(R.id.acceptButton).setVisibility(View.VISIBLE);
+                findViewById(R.id.passButton).setVisibility(View.GONE);
             }
 
             @Override
             public void onMarkStonesPhaseEnded() {
-                StoneColor s = controller.getWinner();
-                String text = "White Wins";
-                if (s.equals(BLACK))
-                    text = "Black Wins";
+                String text = controller.getWinner().name() + " WINS";
                 text += "\nW:" + controller.getWhiteScore() + " x B:" + controller.getBlackScore();
                 goView.setText(text);
-
-                gameEndedMenu();
+                gameEnded();
             }
         });
 

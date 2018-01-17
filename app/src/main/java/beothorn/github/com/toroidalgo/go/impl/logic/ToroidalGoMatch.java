@@ -5,6 +5,7 @@ public class ToroidalGoMatch extends GoMatch {
 	public ToroidalGoMatch(int size) {
 		super(size);
 		makeToroidal(intersections);
+		playStone(0,0); //In toroidal go it does not matter where the first stone is played, so it starts off with a stone already played.
 	}
 
 	public ToroidalGoMatch(String[] setup) {

@@ -113,10 +113,10 @@ public class GoView extends View{
             newSize = MAX_BLOCK_SIZE;
         blockSize = newSize;
 
-        redraw();
+        redrawBoard();
     }
 
-    public void redraw() {
+    public void redrawBoard() {
         boardPainter.updateBoard(controller, boardSlotsCount, blockSize);
         invalidate();
     }
@@ -124,7 +124,7 @@ public class GoView extends View{
     public void setText(String text){
         GoLogger.log("Set Text to:" + text);
         textPainter.setText(text);
-        redraw();
+        redrawBoard();
     }
 
     public void clearText(){
@@ -262,6 +262,6 @@ public class GoView extends View{
         boardSlotsCount = savedInstanceState.getInt(CLASSIFIED_NAME + "boardSlotsCount");
         textPainter.setText(savedInstanceState.getString(CLASSIFIED_NAME + "textPainter.getText"));
 
-        redraw();
+        redrawBoard();
     }
 }

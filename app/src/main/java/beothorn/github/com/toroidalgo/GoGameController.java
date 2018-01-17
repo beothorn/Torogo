@@ -28,7 +28,7 @@ public class GoGameController implements BoardListener{
     private Publisher publisher;
 
     private StoneColor myColor;
-    private StoneColor turn = BLACK;
+    private StoneColor turn = WHITE;
     private boolean gameFinished = false;
 
     public GoGameController(Publisher publisher) {
@@ -156,6 +156,7 @@ public class GoGameController implements BoardListener{
     }
 
     private void changePlayingColor() {
+        //Why not call goMatch.nextToPlay() ?
         if(turn.equals(BLACK)){
             turn = WHITE;
         }else{

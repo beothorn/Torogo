@@ -17,8 +17,6 @@ import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
 public class SneerSetup implements ControllerSetup {
 
     public GoGameController setupController(final ToroidalGoActivity toroidalGoActivity) {
-        StoneColor myColor = BLACK;
-
         Publisher publisher = new Publisher();
 
         final PartnerSession session = PartnerSession.join(toroidalGoActivity, new PartnerSession.Listener() {
@@ -46,11 +44,7 @@ public class SneerSetup implements ControllerSetup {
             }
         });
 
-        if(session.wasStartedByMe()){
-            myColor = WHITE;
-        }
 
-        final StoneColor finalMyColor = myColor;
         publisher.setPublishListener(new ToroidalGoListener() {
             @Override
             public void doPlay(Map<String, Integer> play, StoneColor playingColor) {
@@ -61,6 +55,7 @@ public class SneerSetup implements ControllerSetup {
             }
         });
 
+        StoneColor myColor = session.wasStartedByMe() ? BLACK : WHITE;
         return new GoGameController(publisher, myColor);
     }
 }

@@ -147,7 +147,7 @@ public class GoMatch {
 
 
     public StoneColor other(StoneColor color) {
-        return (color == BLACK) ? WHITE: BLACK;
+        return (color == BLACK) ? WHITE : BLACK;
     }
 
 
