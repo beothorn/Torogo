@@ -75,7 +75,7 @@ public class GoGameController implements BoardListener{
     }
 
     public void callPass() {
-        if(!isMyTurn()) return;
+        if(!isMyTurn()) throw new IllegalStateException("Should be my turn");
         publisher.pass(turn);
     }
 
@@ -126,11 +126,14 @@ public class GoGameController implements BoardListener{
                 stateListener.onMarkStonesPhaseStart();
             }
         }else{
-            if(nextToPlay.equals(BLACK)){
+            turn = nextToPlay;
+            if (nextToPlay.equals(BLACK)) {
                 stateListener.onPassWhite();
+                stateListener.onBlackTurn();
             }
-            if(nextToPlay.equals(WHITE)){
+            if (nextToPlay.equals(WHITE)) {
                 stateListener.onPassBlack();
+                stateListener.onWhiteTurn();
             }
         }
     }
