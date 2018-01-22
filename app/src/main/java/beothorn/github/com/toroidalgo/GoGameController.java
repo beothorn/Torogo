@@ -27,7 +27,9 @@ public class GoGameController implements BoardListener{
     private ScoreListener scoreListener;
     private Publisher publisher;
 
-    private StoneColor myColor;
+    //private
+    public
+    StoneColor myColor;
     private StoneColor turn = WHITE;
     private boolean gameFinished = false;
 
@@ -110,12 +112,9 @@ public class GoGameController implements BoardListener{
                 }
             }
         }else{
-            if(nextToPlay.equals(BLACK)){
-                stateListener.onBlackTurn();
-            }
-            if(nextToPlay.equals(WHITE)){
-                stateListener.onWhiteTurn();
-            }
+            turn = nextToPlay;
+            if (nextToPlay.equals(BLACK)) stateListener.onBlackTurn();
+            if (nextToPlay.equals(WHITE)) stateListener.onWhiteTurn();
         }
     }
 
@@ -147,21 +146,10 @@ public class GoGameController implements BoardListener{
 
     public void playStone(int line, int column) {
         goMatch.playStone(column, line);
-        changePlayingColor();
     }
 
     public void pass(){
         goMatch.passTurn();
-        changePlayingColor();
-    }
-
-    private void changePlayingColor() {
-        //Why not call goMatch.nextToPlay() ?
-        if(turn.equals(BLACK)){
-            turn = WHITE;
-        }else{
-            turn = BLACK;
-        }
     }
 
     public void resign(){

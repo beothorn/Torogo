@@ -11,6 +11,7 @@ import android.widget.Button;
 import java.util.Map;
 
 import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
+import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
 import beothorn.github.com.toroidalgo.publisher.DialogHandler;
 import beothorn.github.com.toroidalgo.publisher.Publisher;
 
@@ -74,7 +75,12 @@ public class ToroidalGoActivity extends Activity {
                 goView.setText("Black Passed");
             }
 
-            @Override public void onWhiteTurn() { onSomebodysTurn(); }
+            @Override public void onWhiteTurn() {
+                if (controller.myColor == StoneColor.WHITE && !controller.isMyTurn())
+                    throw new IllegalStateException("Should be my turn");
+
+                onSomebodysTurn();
+            }
             @Override public void onBlackTurn() { onSomebodysTurn(); }
 
             private void onSomebodysTurn() {

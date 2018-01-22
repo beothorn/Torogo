@@ -48,7 +48,6 @@ public class GoBoard {
     private boolean previousWasPass = false;
     private int capturedStonesBlack;
     private float capturedStonesWhite;
-    private BoardListener boardListener;
     private BoardPosition lastPlayedPiece;
     protected Intersection intersection(int x, int y) {
         return intersections[x][y];
@@ -160,11 +159,6 @@ public class GoBoard {
         return winner;
     }
 
-    public void setBoardListener(BoardListener boardListener) {
-        this.boardListener = boardListener;
-    }
-
-
     private void unmarkDeadStones(int x, int y) {
         Set<Intersection> group = intersections[x][y].getGroupWithNeighbours();
         for (Intersection intersection : group)
@@ -218,7 +212,6 @@ public class GoBoard {
     private void stopAcceptingMoves() {
         previousSituation = copy(intersections);
         nextToPlay = null;
-        notifyNextToPlay();
 
         capturedStonesBlack = blackScore;
         capturedStonesWhite = whiteScore;
@@ -231,9 +224,6 @@ public class GoBoard {
         whiteScore = capturedStonesWhite;
         countDeadStones();
         countTerritories();
-        if(boardListener != null){
-            boardListener.updateScore(blackScore, whiteScore);
-        }
     }
 
 
@@ -305,19 +295,10 @@ public class GoBoard {
 
     private void nextPass() {
         nextToPlay = other(nextToPlay());
-        if(boardListener !=null){
-            boardListener.nextToPlayOnPass(nextToPlay);
-        }
     }
 
     private void next() {
         nextToPlay = other(nextToPlay());
-        notifyNextToPlay();
-    }
-
-    private void notifyNextToPlay() {
-        if (boardListener != null)
-            boardListener.nextToPlay(nextToPlay);
     }
 
     private void restoreSituation(Intersection[][] situation) {
