@@ -344,7 +344,6 @@ public class GoTest extends InstrumentationTestCase{
 
 	public void testGetLastPlayedStone(){
 		match = new ToroidalGoMatch(3);
-		match.playStone(0,0);
 		assertTrue(match.stoneAtPositionIsLastPlayedStone(0,0));
 		match.playStone(1,1);
 		assertFalse(match.stoneAtPositionIsLastPlayedStone(0,0));
