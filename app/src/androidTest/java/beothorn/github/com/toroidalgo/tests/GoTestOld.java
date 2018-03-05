@@ -7,7 +7,7 @@ import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITE;
 import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
 import beothorn.github.com.toroidalgo.go.impl.logic.ToroidalGoMatch;
 
-public class GoTest extends InstrumentationTestCase{
+public class GoTestOld extends InstrumentationTestCase{
 
 	private GoMatch match;
 
