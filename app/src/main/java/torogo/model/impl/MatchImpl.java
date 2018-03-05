@@ -1,42 +1,54 @@
 package torogo.model.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import beothorn.github.com.toroidalgo.go.impl.logic.BoardListener;
-import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
-import beothorn.github.com.toroidalgo.go.impl.logic.IllegalMove;
-import beothorn.github.com.toroidalgo.go.impl.logic.Intersection;
-import beothorn.github.com.toroidalgo.go.impl.logic.IntersectionUtils;
-import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
 import torogo.model.Match;
+import torogo.model.StoneColor;
 
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACK;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.BLACKDEAD;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITE;
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.WHITEDEAD;
+import static torogo.model.StoneColor.BLACK;
+import static torogo.model.StoneColor.WHITE;
 
 public class MatchImpl implements Match {
 
     private static final float KOMI = 6.5f;
 
-//    private final boolean isToroidal;
-//    private final Match.Listener listener;
+    //TODO: Make final:
+    private boolean isToroidal;
+    private Match.Listener listener;
+
+    private final Board board;
+    private StoneColor nextToPlay = BLACK;
 
     public MatchImpl(boolean isToroidal, int size, Match.Listener listener) {
-//        this.isToroidal = isToroidal;
-//        this.listener = listener;
+        this.isToroidal = isToroidal;
+        this.listener = listener;
+        board = new Board(size);
+
+        this.listener.onChange();
     }
 
     @Override public boolean isToroidal() { throw new RuntimeException("TODO");
         //return isToroidal;
     }
     @Override public boolean isParallel() { return false; }
+
+    @Override
+    public void handle(Action action, Object... args) {
+        if (action == Action.PLAY) play((int)args[0], (int)args[1]);
+        listener.onChange();
+    }
+
+    private void play(int x, int y) {
+        board.setStone(x, y, nextToPlay);
+        board.killSurrounded(other(nextToPlay));
+        nextToPlay = other(nextToPlay);
+    }
+
+    public StoneColor other(StoneColor color) {
+        return (color == BLACK) ? WHITE : BLACK;
+    }
+    @Override
+    public StoneColor stoneAt(int x, int y) {
+        return board.stoneAt(x, y);
+    }
 
 /*
 
