@@ -1,4 +1,4 @@
-package torogo.model.test;
+package beothorn.github.com.toroidalgo.tests;
 
 import android.test.InstrumentationTestCase;
 
