@@ -27,7 +27,7 @@ public class MatchTest extends InstrumentationTestCase {
 		assertNotNull(stoneAt(4, 3));
 		play(4,4);
 		System.out.println("TODO");
-		//TODO assertNull(stoneAt(4, 3));
+		assertNull(stoneAt(4, 3));
 	}
 
 	private StoneColor stoneAt(int x, int y) {
@@ -36,9 +36,10 @@ public class MatchTest extends InstrumentationTestCase {
 
 
 	private void initToroidal(int size) {
-		match = new MatchImpl(true, size, new Match.Listener() { @Override public void onChange() {
-			//Ignored
-		}});
+		match = new MatchImpl(true, size);
+	}
+	private void initToroidal(String[] setup) {
+		match = new MatchImpl(true, setup);
 	}
 
 	private void play(int x, int y) {
@@ -46,7 +47,6 @@ public class MatchTest extends InstrumentationTestCase {
 	}
 
 	/*
-
 	public void testSingleStoneCaptureToroidal_shouldNotCapture() {
 		String[] setup = new String[]{
 			    "+ + + + w b + + +",
@@ -58,7 +58,7 @@ public class MatchTest extends InstrumentationTestCase {
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
+		initToroidal(setup);
 		
 		play(3, 0);
 		
@@ -75,6 +75,7 @@ public class MatchTest extends InstrumentationTestCase {
 			match.printOut()
 		);
 	}
+
 	
 	public void testSingleStoneCaptureToroidal_shouldCapture() {
 		String[] setup = new String[]{

@@ -210,9 +210,12 @@ public class GoMatch {
         intersection(x, y).setStone(nextToPlay());
 
         killSurroundedStones(other(nextToPlay()));
+
+        //Suicide
         if (killSurroundedStones(nextToPlay()))
             throw new IllegalMove();
 
+        //Ko
         if(IntersectionUtils.sameSituation(previousSituation, intersections))
             throw new IllegalMove();
     }

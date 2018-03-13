@@ -12,33 +12,36 @@ public class MatchImpl implements Match {
 
     //TODO: Make final:
     private boolean isToroidal;
-    private Match.Listener listener;
 
     private final Board board;
     private StoneColor nextToPlay = BLACK;
 
-    public MatchImpl(boolean isToroidal, int size, Match.Listener listener) {
+    public MatchImpl(boolean isToroidal, int size) {
         this.isToroidal = isToroidal;
-        this.listener = listener;
         board = new Board(size);
-
-        this.listener.onChange();
     }
 
-    @Override public boolean isToroidal() { throw new RuntimeException("TODO");
-        //return isToroidal;
+    public MatchImpl(boolean isToroidal, String[] setup) {
+        this(isToroidal, setup.length);
+        board.setup(setup);
     }
+
+    @Override public boolean isToroidal() { return isToroidal; }
     @Override public boolean isParallel() { return false; }
+
+    @Override
+    public String printOut() {
+        return board.printOut();
+    }
 
     @Override
     public void handle(Action action, Object... args) {
         if (action == Action.PLAY) play((int)args[0], (int)args[1]);
-        listener.onChange();
     }
 
     private void play(int x, int y) {
         board.setStone(x, y, nextToPlay);
-        board.killSurrounded(other(nextToPlay));
+        board.killSurroundedStones(other(nextToPlay));
         nextToPlay = other(nextToPlay);
     }
 
