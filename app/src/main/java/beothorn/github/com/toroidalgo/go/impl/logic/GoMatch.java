@@ -139,8 +139,6 @@ public class GoMatch {
     public int blackScore() {
         return blackScore;
     }
-
-
     public float whiteScore() {
         return whiteScore + KOMI;
     }

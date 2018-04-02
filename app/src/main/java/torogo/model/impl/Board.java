@@ -12,8 +12,9 @@ public class Board {
 
 	private Intersection[][] intersections;
 
-	Board(int size) {
+	Board(boolean isToroidal, int size) {
 		intersections = createIntersections(size);
+		if (isToroidal) makeToroidal();
 	}
 
 	StoneColor stoneAt(int x, int y) {
@@ -120,5 +121,30 @@ public class Board {
 			result.append("\n");
 		}
 		return result.toString();
+	}
+
+	private void makeToroidal() {
+		connectTopToBottom();
+		connectLeftToRight();
+	}
+
+	private void connectTopToBottom() {
+		for (int x = 0; x < intersections.length; x++) {
+			Intersection top = intersections[x][0];
+			Intersection bottom = intersections[x][intersections.length - 1];
+			top.connectUp(bottom);
+		}
+	}
+
+	private void connectLeftToRight() {
+		for (int y = 0; y < intersections.length; y++) {
+			Intersection left = intersections[0][y];
+			Intersection right = intersections[intersections.length - 1][y];
+			left.connectToYourLeft(right);
+		}
+	}
+
+	public StoneColor[][] state() {
+		return null;
 	}
 }

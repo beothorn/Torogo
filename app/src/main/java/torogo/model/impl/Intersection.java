@@ -1,11 +1,6 @@
 package torogo.model.impl;
 
 
-import java.util.HashSet;
-import java.util.Set;
-
-import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
-import beothorn.github.com.toroidalgo.go.impl.logic.IllegalMove;
 import torogo.model.StoneColor;
 
 public class Intersection {

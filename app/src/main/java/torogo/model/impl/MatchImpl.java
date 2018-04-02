@@ -10,20 +10,26 @@ public class MatchImpl implements Match {
 
     private static final float KOMI = 6.5f;
 
-    //TODO: Make final:
-    private boolean isToroidal;
+    private final boolean isToroidal;
 
     private final Board board;
+    private StoneColor[][] previousBoardState; // For KO
+
     private StoneColor nextToPlay = BLACK;
+
+    private int blackCaptures;
+    private int whiteCaptures;
 
     public MatchImpl(boolean isToroidal, int size) {
         this.isToroidal = isToroidal;
-        board = new Board(size);
+        board = new Board(this.isToroidal, size);
+        previousBoardState = board.state();
     }
 
     public MatchImpl(boolean isToroidal, String[] setup) {
         this(isToroidal, setup.length);
         board.setup(setup);
+        previousBoardState = board.state();
     }
 
     @Override public boolean isToroidal() { return isToroidal; }
@@ -48,10 +54,14 @@ public class MatchImpl implements Match {
     public StoneColor other(StoneColor color) {
         return (color == BLACK) ? WHITE : BLACK;
     }
+
     @Override
     public StoneColor stoneAt(int x, int y) {
         return board.stoneAt(x, y);
     }
+
+    @Override public int   blackScore() { return blackCaptures; }
+    @Override public float whiteScore() { return whiteCaptures + KOMI; }
 
 /*
 
@@ -80,7 +90,7 @@ public class MatchImpl implements Match {
 
     private beothorn.github.com.toroidalgo.go.impl.logic.StoneColor nextToPlay = BLACK;
 
-    private float whiteScore = 0;
+    private float whiteCaptures = 0;
 
     private beothorn.github.com.toroidalgo.go.impl.logic.StoneColor winner = null;
     protected Intersection[][] intersections;
@@ -148,7 +158,7 @@ public class MatchImpl implements Match {
         return intersection.stone == null || intersection.stone.equals(BLACKDEAD) || intersection.stone.equals(WHITEDEAD);
     }
 
-    private int blackScore = 0;
+    private int blackCaptures = 0;
 
     public boolean gameHasEnded() {
         return nextToPlay() == null;
@@ -171,17 +181,17 @@ public class MatchImpl implements Match {
 
     public void endMarkingStones(){
         stopAcceptingMoves();
-        winner = blackScore > whiteScore ? BLACK : WHITE;
+        winner = blackCaptures > whiteCaptures ? BLACK : WHITE;
     }
 
 
-    public int blackScore() {
-        return blackScore;
+    public int blackCaptures() {
+        return blackCaptures;
     }
 
 
-    public float whiteScore() {
-        return whiteScore + KOMI;
+    public float whiteCaptures() {
+        return whiteCaptures + KOMI;
     }
 
 
@@ -262,19 +272,19 @@ public class MatchImpl implements Match {
         nextToPlay = null;
         notifyNextToPlay();
 
-        capturedStonesBlack = blackScore;
-        capturedStonesWhite = whiteScore;
+        capturedStonesBlack = blackCaptures;
+        capturedStonesWhite = whiteCaptures;
 
         updateScore();
     }
 
     private void updateScore() {
-        blackScore = capturedStonesBlack;
-        whiteScore = capturedStonesWhite;
+        blackCaptures = capturedStonesBlack;
+        whiteCaptures = capturedStonesWhite;
         countDeadStones();
         countTerritories();
         if(boardListener != null){
-            boardListener.updateScore(blackScore, whiteScore);
+            boardListener.updateScore(blackCaptures, whiteCaptures);
         }
     }
 
@@ -285,10 +295,10 @@ public class MatchImpl implements Match {
             for (int y = 0; y < size; y++) {
                 beothorn.github.com.toroidalgo.go.impl.logic.StoneColor previousStone = previousSituation[x][y].stone;
                 if ( (intersections[x][y].stone == null && BLACK.equals(previousStone) ) || BLACKDEAD.equals(intersections[x][y].stone)){
-                    whiteScore++;
+                    whiteCaptures++;
                 }
                 if ((intersections[x][y].stone == null && WHITE.equals(previousStone) ) || WHITEDEAD.equals(intersections[x][y].stone)){
-                    blackScore++;
+                    blackCaptures++;
                 }
             }
         }
@@ -336,12 +346,12 @@ public class MatchImpl implements Match {
 
         List<List<BoardPosition>> blackTerritories = territoriesOwnership.get(BLACK);
         for(List<BoardPosition> blackTerritory : blackTerritories){
-            blackScore += blackTerritory.size();
+            blackCaptures += blackTerritory.size();
         }
 
         List<List<BoardPosition>> whiteTerritories = territoriesOwnership.get(WHITE);
         for(List<BoardPosition> whiteTerritory : whiteTerritories){
-            whiteScore += whiteTerritory.size();
+            whiteCaptures += whiteTerritory.size();
         }
     }
 

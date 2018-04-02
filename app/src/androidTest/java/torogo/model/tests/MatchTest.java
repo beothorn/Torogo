@@ -46,7 +46,6 @@ public class MatchTest extends InstrumentationTestCase {
 		match.handle(PLAY, x, y);
 	}
 
-	/*
 	public void testSingleStoneCaptureToroidal_shouldNotCapture() {
 		String[] setup = new String[]{
 			    "+ + + + w b + + +",
@@ -76,7 +75,7 @@ public class MatchTest extends InstrumentationTestCase {
 		);
 	}
 
-	
+
 	public void testSingleStoneCaptureToroidal_shouldCapture() {
 		String[] setup = new String[]{
 			    "+ + + b w b + + +",
@@ -88,7 +87,7 @@ public class MatchTest extends InstrumentationTestCase {
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
+		initToroidal(setup);
 		
 		play(4, 8);
 		
@@ -105,7 +104,8 @@ public class MatchTest extends InstrumentationTestCase {
 			match.printOut()
 		);
 	}
-	
+
+/*
 	public void testBigGroupCapture() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -117,10 +117,10 @@ public class MatchTest extends InstrumentationTestCase {
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
-		
-		match.playStone(5, 5);
-		
+		initToroidal(setup);
+
+		play(5, 5);
+
 		assertEquals(
 		    " + + + + + + + + +\n" +
 			" + + + + + + + + +\n" +
@@ -133,10 +133,10 @@ public class MatchTest extends InstrumentationTestCase {
 			" + + + + + + + + +\n",
 			match.printOut()
 		);
-		
+
 		assertScore(3, 6.5f);
 	}
-	
+
 	public void testSuicide() {
 		String[] setup = new String[] {
 			    "+ + + + + + + + +",
@@ -152,7 +152,7 @@ public class MatchTest extends InstrumentationTestCase {
 		assertFalse(match.canPlayStone(5, 4));
 		assertTrue(match.stoneAt(5, 4) == null);
 	}
-	
+
 	public void testKillOtherFirst() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -167,7 +167,7 @@ public class MatchTest extends InstrumentationTestCase {
 		match = new ToroidalGoMatch(setup);
 		assertTrue(match.canPlayStone(4, 3));
 	}
-	
+
 	public void testKo() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -197,7 +197,7 @@ public class MatchTest extends InstrumentationTestCase {
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
 		match = new ToroidalGoMatch(setup);
-		
+
 		match.playStone(4, 3);
 		assertEquals(match.printOut(),
 			 	" + + + + + + + + +\n"+
@@ -228,7 +228,7 @@ public class MatchTest extends InstrumentationTestCase {
 		subject.passTurn();
 		assertNull(subject.nextToPlay());
 	}
-	
+
 	public void testResign() {
 		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
 		subject.resign();
@@ -248,21 +248,21 @@ public class MatchTest extends InstrumentationTestCase {
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
 		match = new ToroidalGoMatch(setup);
-		
+
 		assertTrue(match.stoneAt(4, 3) != null);
 		match.playStone(4,4);
 		assertTrue(match.stoneAt(4, 3) == null);
 		assertScore(1, 6.5f);
-		
+
 		match.playStone(4,5);
 		match.playStone(0,1);
-		
+
 		assertTrue(match.stoneAt(4, 4) != null);
 		match.playStone(4,3);
 		assertTrue(match.stoneAt(4, 4) == null);
 		assertScore(1, 7.5f);
 	}
-	
+
 	public void testScore() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -296,7 +296,7 @@ public class MatchTest extends InstrumentationTestCase {
 		match.passTurn();
 		match.toggleDeadStone(5, 4);
 		assertScore(14, 6.5f);
-		
+
 		setup = new String[]{
 			    "+ + + + + + + + +",
 				"+ + + + b b + + +",
@@ -361,11 +361,11 @@ public class MatchTest extends InstrumentationTestCase {
 		assertTrue(match.stoneAtPositionIsLastPlayedStone(1,1));
 	}
 
+*/
+
 	private void assertScore(int black, float white) {
 		assertEquals(black, match.blackScore(), 0);
 		assertEquals(white, match.whiteScore(), 0);
 	}
-
-*/
 
 }
