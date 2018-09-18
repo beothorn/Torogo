@@ -12,11 +12,12 @@ import android.graphics.Shader;
 import java.util.List;
 import java.util.Map;
 
-import beothorn.github.com.toroidalgo.GoGameController;
-import beothorn.github.com.toroidalgo.go.impl.logic.BoardPosition;
-import beothorn.github.com.toroidalgo.go.impl.logic.StoneColor;
+import torogo.model.Match;
+import torogo.model.StoneColor;
 
-import static beothorn.github.com.toroidalgo.go.impl.logic.StoneColor.*;
+import static torogo.model.StoneColor.BLACK;
+import static torogo.model.StoneColor.WHITE;
+
 
 public class BoardPainter {
 
@@ -60,7 +61,7 @@ public class BoardPainter {
         paint.setAntiAlias(true);
     }
 
-    public void updateBoard(GoGameController controller, int boardSlotsCount, int blockSize) {
+    public void updateBoard(Match match, int boardSlotsCount, int blockSize) {
         int rowSize = blockSize * boardSlotsCount;
         if(boardBitmap == null || boardBitmap.getWidth() < rowSize){
             boardBitmap = Bitmap.createBitmap(rowSize, rowSize, Bitmap.Config.ARGB_8888);
@@ -112,9 +113,9 @@ public class BoardPainter {
         pieceShadowCanvas.drawCircle(radius, radius, radius, shadowPaint);
 
         drawGrid(boardCanvas, boardSlotsCount, blockSize, rowSize);
-        drawPieces(boardCanvas, boardSlotsCount, controller, blockSize);
-        if(controller.gameHasEnded())
-            drawTerritories(boardCanvas, controller, blockSize, boardSlotsCount);
+        drawPieces(boardCanvas, boardSlotsCount, match, blockSize);
+        if(match.hasEnded())
+            drawTerritories(boardCanvas, match, blockSize, boardSlotsCount);
     }
 
     private void drawBlackPiece(int blockSize, int radius) {
@@ -132,27 +133,27 @@ public class BoardPainter {
         whitePieceCanvas.drawCircle(radius, radius, radius, blackPaint);
     }
 
-    private void drawPieces(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize) {
-        paintShadows(canvas, boardSlotsCount, controller, blockSize);
+    private void drawPieces(Canvas canvas, int boardSlotsCount, Match match, int blockSize) {
+        paintShadows(canvas, boardSlotsCount, match, blockSize);
 
         for(int line = 0; line <= boardSlotsCount; line++){
             for(int column = 0; column <= boardSlotsCount; column++){
-                StoneColor pieceAt = controller.getPieceAt(line%boardSlotsCount, column%boardSlotsCount);
+                StoneColor pieceAt = match.stoneAt(line%boardSlotsCount, column%boardSlotsCount);
                 if(pieceAt == null) continue;
 
                 int cx = column * blockSize;
                 int cy = line * blockSize;
                 int radius = blockSize / 2;
                 paintSolidPieces(canvas, pieceAt, cx, cy, radius);
-                if(!controller.gameHasEnded())
-                    paintLastPlayedMark(canvas, boardSlotsCount, controller, blockSize, line, column, pieceAt, cx, cy);
+                if(!match.hasEnded())
+                    paintLastPlayedMark(canvas, boardSlotsCount, match, blockSize, line, column, pieceAt, cx, cy);
                 paintDeadPieces(canvas, pieceAt, cx, cy, radius);
             }
         }
     }
 
-    private void paintLastPlayedMark(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize, int line, int column, StoneColor pieceAt, int cx, int cy) {
-        if(controller.stoneAtPositionIsLastPlayedStone(line % boardSlotsCount, column % boardSlotsCount)){
+    private void paintLastPlayedMark(Canvas canvas, int boardSlotsCount, Match match, int blockSize, int line, int column, StoneColor pieceAt, int cx, int cy) {
+        if(match.isLastPlayedStone(column % boardSlotsCount, line % boardSlotsCount)){
             if(pieceAt.equals(BLACK)){
                 whitePaint.setStyle(Paint.Style.FILL);
                 canvas.drawCircle(cx, cy, blockSize / 4, whitePaint);
@@ -166,11 +167,14 @@ public class BoardPainter {
         }
     }
 
-    private void paintShadows(Canvas canvas, int boardSlotsCount, GoGameController controller, int blockSize) {
+    private void paintShadows(Canvas canvas, int boardSlotsCount, Match match, int blockSize) {
         for(int line = 0; line <= boardSlotsCount; line++){
             for(int column = 0; column <= boardSlotsCount; column++){
-                StoneColor pieceAt = controller.getPieceAt(line % boardSlotsCount, column % boardSlotsCount);
-                if(pieceAt == null || pieceAt.equals(WHITEDEAD) || pieceAt.equals(BLACKDEAD)) continue;
+                StoneColor pieceAt = match.stoneAt(column % boardSlotsCount, line % boardSlotsCount);
+                if(pieceAt == null
+                        // || pieceAt.equals(WHITEDEAD)
+                        // || pieceAt.equals(BLACKDEAD)
+                        ) continue;
 
                 int radius = blockSize / 2;
                 int shadowDistance = 4;
@@ -199,8 +203,8 @@ public class BoardPainter {
         }
     }
 
-    private void drawTerritories(Canvas canvas, GoGameController controller,int blockSize, int boardSlotsCount) {
-
+    private void drawTerritories(Canvas canvas, Match controller,int blockSize, int boardSlotsCount) {
+/*
         Map<StoneColor, List<List<BoardPosition>>> territoriesOwnership = controller.getTerritoriesOwnership();
 
         int radius = blockSize / 2;
@@ -225,6 +229,7 @@ public class BoardPainter {
                     paintTerritory(canvas, BLACK, boardSlotsCount * blockSize, boardSlotsCount * blockSize, radius);
                 }
             }
+
         }
 
         List<List<BoardPosition>> whiteTerritories = territoriesOwnership.get(WHITE);
@@ -248,17 +253,19 @@ public class BoardPainter {
                 }
             }
         }
+*/
     }
 
 
     private void paintDeadPieces(Canvas canvas, StoneColor pieceAt, int cx, int cy, int radiusBig) {
-        int radius = radiusBig;
+/*        int radius = radiusBig;
         if(pieceAt.equals(BLACKDEAD)){
             canvas.drawBitmap(blackPieceBitmap, cx - radius, cy - radius, paint);
         }
         if(pieceAt.equals(WHITEDEAD)){
             canvas.drawBitmap(whitePieceBitmap, cx - radius, cy - radius, paint);
         }
+*/
     }
 
     private void drawGrid(Canvas canvas, int boardSlotsCount, int blockSize, int rowSize) {

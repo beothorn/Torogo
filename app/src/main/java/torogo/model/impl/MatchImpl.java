@@ -1,5 +1,7 @@
 package torogo.model.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import torogo.model.Match;
 import torogo.model.StoneColor;
 
@@ -36,6 +38,11 @@ public class MatchImpl implements Match {
     @Override public boolean isParallel() { return false; }
 
     @Override
+    public int boardSize() {
+        return 0;
+    }
+
+    @Override
     public String printOut() {
         return board.printOut();
     }
@@ -47,7 +54,11 @@ public class MatchImpl implements Match {
 
     private void play(int x, int y) {
         board.setStone(x, y, nextToPlay);
-        board.killSurroundedStones(other(nextToPlay));
+        int stonesCaptured = board.killSurroundedStones(other(nextToPlay));
+        if (nextToPlay == BLACK)
+            blackCaptures += stonesCaptured;
+        else
+            whiteCaptures += stonesCaptured;
         nextToPlay = other(nextToPlay);
     }
 
@@ -63,7 +74,22 @@ public class MatchImpl implements Match {
     @Override public int   blackScore() { return blackCaptures; }
     @Override public float whiteScore() { return whiteCaptures + KOMI; }
 
-/*
+    @Override
+    public boolean hasEnded() {
+        return false;
+    }
+
+    @Override
+    public void initListener(Runnable onStateChanged) {
+
+    }
+
+    @Override
+    public boolean isLastPlayedStone(int x, int y) {
+        return false;
+    }
+
+    /*
 
     private void setup(int size) {
         intersections = createIntersections(size);

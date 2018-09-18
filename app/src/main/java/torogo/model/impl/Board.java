@@ -48,29 +48,31 @@ public class Board {
 		intersections[x][y].setStone(color);
 	}
 
-	boolean killSurroundedStones(StoneColor color) {
-		boolean wereStonesKilled = false;
+	int killSurroundedStones(StoneColor color) {
+		int stonesKilled = 0;
 		for(Intersection[] column : intersections)
 			for(Intersection intersection : column)
-				if (killSurroundedStones(intersection, color))
-					wereStonesKilled = true;
-
-		return wereStonesKilled;
+				stonesKilled += killSurroundedStones(intersection, color);
+		return stonesKilled;
 	}
 
-	private boolean killSurroundedStones(Intersection start, StoneColor color) {
-		if (start.stone != color) return false;
+	private int killSurroundedStones(Intersection start, StoneColor color) {
+		if (start.stone != color) return 0;
 
 		Set<Intersection> groupWithNeighbours = new HashSet<>();
 		accumulateGroupWithNeighbours(color, start, groupWithNeighbours);
 
 		for (Intersection intersection : groupWithNeighbours)
-			if (intersection.isLiberty()) return false;
+			if (intersection.isLiberty()) return 0;
 
+		int stonesKilled = 0;
 		for (Intersection intersection : groupWithNeighbours)
-			if (intersection.stone == color) intersection.stone = null;
+			if (intersection.stone == color) {
+				stonesKilled++;
+				intersection.stone = null;
+			}
 
-		return true;
+		return stonesKilled;
 	}
 
 	private void accumulateGroupWithNeighbours(StoneColor stoneColor, Intersection intersection, Set<Intersection> group) {

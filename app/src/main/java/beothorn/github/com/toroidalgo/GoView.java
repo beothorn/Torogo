@@ -14,6 +14,9 @@ import beothorn.github.com.toroidalgo.go.impl.logging.GoLogger;
 import beothorn.github.com.toroidalgo.painters.BackgroundPainter;
 import beothorn.github.com.toroidalgo.painters.BoardPainter;
 import beothorn.github.com.toroidalgo.painters.TextPainter;
+import torogo.model.Match;
+
+import static torogo.model.Match.Action.PLAY;
 
 public class GoView extends View{
 
@@ -43,7 +46,7 @@ public class GoView extends View{
     private int boardY;
 
 
-    private GoGameController controller;
+    private Match match;
     private long zoomEventEndingTimestamp;
 
     public GoView(Context context, AttributeSet attrs) {
@@ -95,14 +98,14 @@ public class GoView extends View{
         });
     }
 
-    public void setController(GoGameController controller) {
-        boardSlotsCount = controller.getSize();
-        this.controller = controller;
+    public void setMatch(Match match) {
+        this.match = match;
+        boardSlotsCount = this.match.boardSize();
         updateBlockSize((MAX_BLOCK_SIZE+MIN_BLOCK_SIZE)/2);
     }
 
     public void play(int column, int line) {
-        controller.play(line, column);
+        match.handle(PLAY, column, line);
     }
 
     private void updateBlockSize(int newSize) {
@@ -117,7 +120,7 @@ public class GoView extends View{
     }
 
     public void redrawBoard() {
-        boardPainter.updateBoard(controller, boardSlotsCount, blockSize);
+        boardPainter.updateBoard(match, boardSlotsCount, blockSize);
         invalidate();
     }
 
@@ -206,7 +209,7 @@ public class GoView extends View{
                         line = boardSlotsCount + line;
                     }
                     play(column, line);
-                    boardPainter.updateBoard(controller, boardSlotsCount, blockSize);
+                    boardPainter.updateBoard(match, boardSlotsCount, blockSize);
                 }
                 invalidate();
 
@@ -229,13 +232,13 @@ public class GoView extends View{
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(controller == null) return;
+        if(match == null) return;
 
         backgroundPainter.paintOn(canvas, boardX, boardY, blockSize);
         boardPainter.paint(canvas, blockSize, boardSlotsCount, boardX, boardY, getMeasuredWidth(), getMeasuredHeight());
         textPainter.paintText(canvas);
 
-        if (controller.isMyTurn()) drawCrosshair(canvas);
+//        if (match.isMyTurn()) drawCrosshair(canvas);
     }
 
     private void drawCrosshair(Canvas canvas) {
