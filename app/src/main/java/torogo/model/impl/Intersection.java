@@ -1,6 +1,7 @@
 package torogo.model.impl;
 
 
+import torogo.model.InvalidMoveException;
 import torogo.model.StoneColor;
 
 public class Intersection {
@@ -20,8 +21,8 @@ public class Intersection {
 		return stone.equals(other.stone);
 	}
 	
-	void setStone(StoneColor stoneColor) {
-		if (!isLiberty()) throw new IllegalStateException();
+	void setStone(StoneColor stoneColor) throws InvalidMoveException {
+		if (!isLiberty()) throw new InvalidMoveException();
 		stone = stoneColor;
 	}
 
@@ -45,4 +46,5 @@ public class Intersection {
 	boolean isLiberty() {
 		return stone == null;
 	}
+
 }

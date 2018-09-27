@@ -1,9 +1,13 @@
 package torogo.model;
 
+
 import junit.framework.TestCase;
+
+import org.junit.Assert;
 
 import torogo.model.impl.MatchImpl;
 
+import static org.junit.Assert.assertArrayEquals;
 import static torogo.model.Match.Action.PLAY;
 
 public class MatchTest extends TestCase {
@@ -56,17 +60,17 @@ public class MatchTest extends TestCase {
 		
 		play(3, 0);
 		
-		assertEquals(
-		    " + + + b w b + + +\n" +
-			" + + + + b + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n",
-			match.printOut()
+		assertArrayEquals(new String[]{
+		    " + + + b w b + + +",
+			" + + + + b + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +"},
+				match.printOut()
 		);
 	}
 
@@ -86,16 +90,16 @@ public class MatchTest extends TestCase {
 		
 		play(4, 8);
 		
-		assertEquals(
-		    " + + + b + b + + +\n" +
-			" + + + + b + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + b + + + +\n",
+		assertArrayEquals(new String[]{
+		    " + + + b + b + + +",
+			" + + + + b + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + b + + + +"},
 			match.printOut()
 		);
 	}
@@ -116,30 +120,21 @@ public class MatchTest extends TestCase {
 
 		play(5, 5);
 
-		assertEquals(
-		    " + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + b b + + +\n" +
-			" + + + b + + b + +\n" +
-			" + + + + b + b + +\n" +
-			" + + + + + b + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n" +
-			" + + + + + + + + +\n",
+		assertArrayEquals(new String[]{
+		    " + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + b b + + +",
+			" + + + b + + b + +",
+			" + + + + b + b + +",
+			" + + + + + b + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +",
+			" + + + + + + + + +"},
 			match.printOut()
 		);
 
 		assertScore(3, 6.5f);
 	}
-/*
-
-boardSlotsCount is in the match
-
-porque passamos o context para o MatchSimulator
-
-porque o match tem initListener e setStateListener
-
-retirar repositorio do google do gradle para ver o que acontece
 
 	public void testSuicide() {
 		String[] setup = new String[] {
@@ -152,9 +147,10 @@ retirar repositorio do google do gradle para ver o que acontece
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
-		assertFalse(match.canPlayStone(5, 4));
-		assertTrue(match.stoneAt(5, 4) == null);
+		initToroidal(setup);
+
+		assertTrue(match.isValidMove(0, 0));
+		assertFalse(match.isValidMove(5, 4));
 	}
 
 	public void testKillOtherFirst() {
@@ -168,10 +164,12 @@ retirar repositorio do google do gradle para ver o que acontece
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
-		assertTrue(match.canPlayStone(4, 3));
+		initToroidal(setup);
+		assertTrue(match.isValidMove(4, 3));
 	}
 
+
+	/*
 	public void testKo() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -183,10 +181,10 @@ retirar repositorio do google do gradle para ver o que acontece
 				"+ + + + + + + + +",
 				"+ + + + + + + + +",
 				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
-		assertTrue(match.canPlayStone(4, 3));
-		match.playStone(4, 3);
-		assertFalse(match.canPlayStone(4, 2));
+		initToroidal(setup);
+		assertTrue(match.isValidMove(4, 3));
+		play(4, 3);
+		assertFalse(match.isValidMove(4, 2));
 	}
 
 	public void testMultipleGroupKill() {
@@ -365,6 +363,14 @@ retirar repositorio do google do gradle para ver o que acontece
 		assertTrue(match.stoneAtPositionIsLastPlayedStone(1,1));
 	}
 
+
+boardSlotsCount is in the match
+
+porque passamos o context para o MatchSimulator
+
+porque o match tem initListener e setStateListener
+
+retirar repositorio do google do gradle para ver o que acontece
 */
 
 	private void assertScore(int black, float white) {

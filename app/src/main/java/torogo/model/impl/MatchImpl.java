@@ -1,7 +1,6 @@
 package torogo.model.impl;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+import torogo.model.InvalidMoveException;
 import torogo.model.Match;
 import torogo.model.StoneColor;
 
@@ -43,7 +42,7 @@ public class MatchImpl implements Match {
     }
 
     @Override
-    public String printOut() {
+    public String[] printOut() {
         return board.printOut();
     }
 
@@ -53,13 +52,32 @@ public class MatchImpl implements Match {
     }
 
     private void play(int x, int y) {
-        board.setStone(x, y, nextToPlay);
-        int stonesCaptured = board.killSurroundedStones(other(nextToPlay));
+        int stonesCaptured = 0;
+        try {
+            stonesCaptured = tryToPlay(x, y);
+        } catch (InvalidMoveException e) {
+            throw new IllegalStateException(e);
+        }
+
         if (nextToPlay == BLACK)
             blackCaptures += stonesCaptured;
         else
             whiteCaptures += stonesCaptured;
+
         nextToPlay = other(nextToPlay);
+    }
+
+    private int tryToPlay(int x, int y) throws InvalidMoveException {
+        if (nextToPlay == null) throw new IllegalStateException();
+
+        board.setStone(x, y, nextToPlay);
+        
+        int stonesCaptured = board.killSurroundedStones(other(nextToPlay));
+
+        //Suicide
+        if (board.killSurroundedStones(nextToPlay) != 0) throw new InvalidMoveException();
+        
+        return stonesCaptured;
     }
 
     public StoneColor other(StoneColor color) {
@@ -87,6 +105,21 @@ public class MatchImpl implements Match {
     @Override
     public boolean isLastPlayedStone(int x, int y) {
         return false;
+    }
+
+    @Override
+    public boolean isValidMove(int x, int y) {
+
+        String[] situation = board.printOut();
+        try {
+            tryToPlay(x, y);
+        } catch (InvalidMoveException im) {
+            return false;
+        } finally {
+            board.setup(situation);
+        }
+
+        return true;
     }
 
     /*

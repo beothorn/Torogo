@@ -29,6 +29,11 @@ public class MatchSimulator implements Match {
 	}
 
 	@Override
+	public boolean isValidMove(int x, int y) {
+		return (x + y) % 10 == 0;
+	}
+
+	@Override
 	public void handle(Action action, Object... args) {
 		CharSequence text = action.name() + " " + Arrays.toString(args);
 		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
@@ -72,7 +77,7 @@ public class MatchSimulator implements Match {
 	}
 
 	@Override
-	public String printOut() {
+	public String[] printOut() {
 		return null;
 	}
 }

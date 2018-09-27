@@ -1,12 +1,11 @@
 package torogo.model;
 
-import torogo.model.impl.Board;
-
 public interface Match {
 
     void initListener(Runnable onStateChanged);
 
     boolean isLastPlayedStone(int x, int y);
+    boolean isValidMove(int x, int y);
 
 
     enum Action {PLAY, PASS, RESIGN, TOGGLE_DEAD_STONE, ACCEPT_DEAD_STONES;}
@@ -23,5 +22,5 @@ public interface Match {
 
     boolean hasEnded();
 
-    String printOut();
+    String[] printOut();
 }

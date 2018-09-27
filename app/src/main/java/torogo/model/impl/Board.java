@@ -3,6 +3,7 @@ package torogo.model.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import torogo.model.InvalidMoveException;
 import torogo.model.StoneColor;
 
 import static torogo.model.StoneColor.BLACK;
@@ -10,11 +11,14 @@ import static torogo.model.StoneColor.WHITE;
 
 public class Board {
 
-	private Intersection[][] intersections;
+    private Intersection[][] intersections;
 
 	Board(boolean isToroidal, int size) {
-		intersections = createIntersections(size);
-		if (isToroidal) makeToroidal();
+        intersections = createIntersections(size);
+        if (isToroidal) {
+            connectLeftToRight();
+            connectTopToBottom();
+        }
 	}
 
 	StoneColor stoneAt(int x, int y) {
@@ -44,7 +48,7 @@ public class Board {
 		}
 	}
 
-	void setStone(int x, int y, StoneColor color) {
+	void setStone(int x, int y, StoneColor color) throws InvalidMoveException {
 		intersections[x][y].setStone(color);
 	}
 
@@ -108,26 +112,22 @@ public class Board {
 		}
 	}
 
-	public String printOut() {
-		StringBuffer result= new StringBuffer();
+	public String[] printOut() {
+		String[] result = new String[intersections.length];
 		for (int y = 0; y < intersections.length; y++) {
+			String line = "";
 			for (int x = 0; x < intersections[y].length; x++) {
 				StoneColor stone = intersections[x][y].stone;
-				if(stone == WHITE)
-					result.append(" w");
-				else if(stone == BLACK)
-					result.append(" b");
+				if (stone == WHITE)
+					line += " w";
+				else if (stone == BLACK)
+					line += " b";
 				else
-					result.append(" +");
+					line += " +";
 			}
-			result.append("\n");
+			result[y] = line;
 		}
-		return result.toString();
-	}
-
-	private void makeToroidal() {
-		connectTopToBottom();
-		connectLeftToRight();
+		return result;
 	}
 
 	private void connectTopToBottom() {
@@ -149,4 +149,5 @@ public class Board {
 	public StoneColor[][] state() {
 		return null;
 	}
+
 }
