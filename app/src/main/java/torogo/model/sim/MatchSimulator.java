@@ -34,6 +34,16 @@ public class MatchSimulator implements Match {
 	}
 
 	@Override
+	public StoneColor nextToPlay() {
+		return BLACK;
+	}
+
+	@Override
+	public StoneColor winner() {
+		return null;
+	}
+
+	@Override
 	public void handle(Action action, Object... args) {
 		CharSequence text = action.name() + " " + Arrays.toString(args);
 		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();

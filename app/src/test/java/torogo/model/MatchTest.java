@@ -3,12 +3,14 @@ package torogo.model;
 
 import junit.framework.TestCase;
 
-import org.junit.Assert;
-
 import torogo.model.impl.MatchImpl;
 
 import static org.junit.Assert.assertArrayEquals;
+import static torogo.model.Match.Action.PASS;
 import static torogo.model.Match.Action.PLAY;
+import static torogo.model.Match.Action.RESIGN;
+import static torogo.model.StoneColor.BLACK;
+import static torogo.model.StoneColor.WHITE;
 
 public class MatchTest extends TestCase {
 
@@ -37,7 +39,7 @@ public class MatchTest extends TestCase {
 	private void initToroidal(int size) {
 		match = new MatchImpl(true, size);
 	}
-	private void initToroidal(String[] setup) {
+	private void initToroidal(String... setup) {
 		match = new MatchImpl(true, setup);
 	}
 
@@ -46,225 +48,203 @@ public class MatchTest extends TestCase {
 	}
 
 	public void testSingleStoneCaptureToroidal_shouldNotCapture() {
-		String[] setup = new String[]{
-			    "+ + + + w b + + +",
-				"+ + + + b + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
-		
+		initToroidal("+ + + + w b + + +",
+					 "+ + + + b + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +",
+					 "+ + + + + + + + +");
 		play(3, 0);
-		
-		assertArrayEquals(new String[]{
-		    " + + + b w b + + +",
-			" + + + + b + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +"},
-				match.printOut()
-		);
+
+		assertBoard(match.printOut(), 	" + + + b w b + + +",
+									    " + + + + b + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +",
+									    " + + + + + + + + +");
 	}
 
 
 	public void testSingleStoneCaptureToroidal_shouldCapture() {
-		String[] setup = new String[]{
-			    "+ + + b w b + + +",
-				"+ + + + b + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
-		
+		initToroidal(	"+ + + b w b + + +",
+						"+ + + + b + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
+
 		play(4, 8);
-		
-		assertArrayEquals(new String[]{
-		    " + + + b + b + + +",
-			" + + + + b + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + b + + + +"},
-			match.printOut()
-		);
+
+		assertBoard(match.printOut(), 	" + + + b + b + + +",
+										" + + + + b + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + b + + + +");
 	}
 
 
 	public void testBigGroupCapture() {
-		String[] setup = new String[]{
-			    "+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + b b + + +",
-				"+ + + b w w b + +",
-				"+ + + + b w b + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + b b + + +",
+						"+ + + b w w b + +",
+						"+ + + + b w b + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
 
 		play(5, 5);
 
-		assertArrayEquals(new String[]{
-		    " + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + b b + + +",
-			" + + + b + + b + +",
-			" + + + + b + b + +",
-			" + + + + + b + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +",
-			" + + + + + + + + +"},
-			match.printOut()
-		);
+		assertBoard(match.printOut(),	" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + b b + + +",
+										" + + + b + + b + +",
+										" + + + + b + b + +",
+										" + + + + + b + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +");
 
 		assertScore(3, 6.5f);
 	}
 
 	public void testSuicide() {
-		String[] setup = new String[] {
-			    "+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + w w + + +",
-				"+ + + w b b w + +",
-				"+ + + + w + w + +",
-				"+ + + + + w + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + w w + + +",
+						"+ + + w b b w + +",
+						"+ + + + w + w + +",
+						"+ + + + + w + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
 
 		assertTrue(match.isValidMove(0, 0));
 		assertFalse(match.isValidMove(5, 4));
 	}
 
 	public void testKillOtherFirst() {
-		String[] setup = new String[]{
-			    "+ + + + + + + + +",
-				"+ + + + b + + + +",
-				"+ + + b w b + + +",
-				"+ + + w + w + + +",
-				"+ + + + w + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + b + + + +",
+						"+ + + b w b + + +",
+						"+ + + w + w + + +",
+						"+ + + + w + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
 		assertTrue(match.isValidMove(4, 3));
 	}
 
 
-	/*
 	public void testKo() {
-		String[] setup = new String[]{
-			    "+ + + + + + + + +",
-				"+ + + + b + + + +",
-				"+ + + b w b + + +",
-				"+ + + w + w + + +",
-				"+ + + + w + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		initToroidal(setup);
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + b + + + +",
+						"+ + + b w b + + +",
+						"+ + + w + w + + +",
+						"+ + + + w + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
 		assertTrue(match.isValidMove(4, 3));
 		play(4, 3);
 		assertFalse(match.isValidMove(4, 2));
 	}
 
-	public void testMultipleGroupKill() {
-		String[] setup = new String[]{
-			    "+ + + + + + + + +",
-				"+ + + + b + + + +",
-				"+ + + b w b + + +",
-				"+ + b w + + + + +",
-				"+ + + b + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
 
-		match.playStone(4, 3);
-		assertEquals(match.printOut(),
-			 	" + + + + + + + + +\n"+
-				" + + + + b + + + +\n"+
-				" + + + b + b + + +\n"+
-				" + + b + b + + + +\n"+
-				" + + + b + + + + +\n"+
-				" + + + + + + + + +\n"+
-				" + + + + + + + + +\n"+
-				" + + + + + + + + +\n"+
-				" + + + + + + + + +\n"
-		);
+	public void testMultipleGroupKill() {
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + b + + + +",
+						"+ + + b w b + + +",
+						"+ + b w + + + + +",
+						"+ + + b + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
+
+		play(4, 3);
+
+		assertBoard(match.printOut(), 	" + + + + + + + + +",
+										" + + + + b + + + +",
+										" + + + b + b + + +",
+										" + + b + b + + + +",
+										" + + + b + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +",
+										" + + + + + + + + +");
 		assertScore(2, 6.5f);
 	}
 
 	public void testPass() {
-		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
-		assertSame(BLACK, subject.nextToPlay());
-		subject.passTurn();
-		assertSame(WHITE, subject.nextToPlay());
+		initToroidal();
+
+		assertSame(BLACK, match.nextToPlay());
+		match.handle(PASS);
+		assertSame(WHITE, match.nextToPlay());
 	}
 
 	public void testEndByPass() {
-		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
-		assertSame(BLACK, subject.nextToPlay());
-		subject.passTurn();
-		assertSame(WHITE, subject.nextToPlay());
-		subject.passTurn();
-		assertNull(subject.nextToPlay());
+		initToroidal();
+
+		match.handle(PASS);
+		match.handle(PASS);
+		assertNull(match.nextToPlay());
 	}
 
 	public void testResign() {
-		ToroidalGoMatch subject = new ToroidalGoMatch(new String[]{});
-		subject.resign();
-		assertNull(subject.nextToPlay());
-		assertSame(WHITE, subject.winner());
+		initToroidal();
+
+		match.handle(RESIGN);
+		assertNull(match.nextToPlay());
+		assertSame(WHITE, match.winner());
 	}
 
-	public void testSingleStoneCaptureScore() {
-		String[] setup = new String[]{
-			    "+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + b + + + +",
-				"+ + + b w b + + +",
-				"+ + + w + w + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +",
-				"+ + + + + + + + +"};
-		match = new ToroidalGoMatch(setup);
+//	public void testSingleStoneCaptureScore() {
+//		String[] setup = new String[]{
+//			    "+ + + + + + + + +",
+//				"+ + + + + + + + +",
+//				"+ + + + b + + + +",
+//				"+ + + b w b + + +",
+//				"+ + + w + w + + +",
+//				"+ + + + + + + + +",
+//				"+ + + + + + + + +",
+//				"+ + + + + + + + +",
+//				"+ + + + + + + + +"};
+//		initToroidal(new String[]{});
+//		match = new ToroidalGoMatch(setup);
+//
+//		assertTrue(match.stoneAt(4, 3) != null);
+//		match.playStone(4,4);
+//		assertTrue(match.stoneAt(4, 3) == null);
+//		assertScore(1, 6.5f);
+//
+//		match.playStone(4,5);
+//		match.playStone(0,1);
+//
+//		assertTrue(match.stoneAt(4, 4) != null);
+//		match.playStone(4,3);
+//		assertTrue(match.stoneAt(4, 4) == null);
+//		assertScore(1, 7.5f);
+//	}
 
-		assertTrue(match.stoneAt(4, 3) != null);
-		match.playStone(4,4);
-		assertTrue(match.stoneAt(4, 3) == null);
-		assertScore(1, 6.5f);
-
-		match.playStone(4,5);
-		match.playStone(0,1);
-
-		assertTrue(match.stoneAt(4, 4) != null);
-		match.playStone(4,3);
-		assertTrue(match.stoneAt(4, 4) == null);
-		assertScore(1, 7.5f);
-	}
-
+	/*
 	public void testScore() {
 		String[] setup = new String[]{
 			    "+ + + + + + + + +",
@@ -376,6 +356,10 @@ retirar repositorio do google do gradle para ver o que acontece
 	private void assertScore(int black, float white) {
 		assertEquals(black, match.blackScore(), 0);
 		assertEquals(white, match.whiteScore(), 0);
+	}
+
+	private void assertBoard(String[] actualBoard, String... expectedBoard) {
+		assertArrayEquals(expectedBoard, actualBoard);
 	}
 
 }

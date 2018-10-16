@@ -1,5 +1,7 @@
 package torogo.model.impl;
 
+import java.util.Arrays;
+
 import torogo.model.InvalidMoveException;
 import torogo.model.Match;
 import torogo.model.StoneColor;
@@ -14,23 +16,25 @@ public class MatchImpl implements Match {
     private final boolean isToroidal;
 
     private final Board board;
-    private StoneColor[][] previousBoardState; // For KO
+    private String[] previousBoardState; // For KO
 
     private StoneColor nextToPlay = BLACK;
 
     private int blackCaptures;
     private int whiteCaptures;
+    private boolean wasPassed = false;
+    private StoneColor winner;
 
     public MatchImpl(boolean isToroidal, int size) {
         this.isToroidal = isToroidal;
         board = new Board(this.isToroidal, size);
-        previousBoardState = board.state();
+        previousBoardState = board.printOut();
     }
 
     public MatchImpl(boolean isToroidal, String[] setup) {
         this(isToroidal, setup.length);
         board.setup(setup);
-        previousBoardState = board.state();
+        previousBoardState = board.printOut();
     }
 
     @Override public boolean isToroidal() { return isToroidal; }
@@ -49,22 +53,43 @@ public class MatchImpl implements Match {
     @Override
     public void handle(Action action, Object... args) {
         if (action == Action.PLAY) play((int)args[0], (int)args[1]);
+        if (action == Action.PASS) pass();
+        if (action == Action.RESIGN) resign();
+    }
+
+    private void resign() {
+        winner = other(nextToPlay);
+        nextToPlay = null;
+    }
+
+    private void pass() {
+        if (wasPassed) {
+            nextToPlay = null;
+        } else {
+            nextToPlay = other(nextToPlay);
+            wasPassed = true;
+        }
     }
 
     private void play(int x, int y) {
-        int stonesCaptured = 0;
+        previousBoardState = board.printOut();
+
+        int stonesCaptured;
         try {
             stonesCaptured = tryToPlay(x, y);
         } catch (InvalidMoveException e) {
             throw new IllegalStateException(e);
         }
 
-        if (nextToPlay == BLACK)
+        if (nextToPlay == BLACK) {
             blackCaptures += stonesCaptured;
-        else
+        }
+        else {
             whiteCaptures += stonesCaptured;
+        }
 
         nextToPlay = other(nextToPlay);
+        wasPassed = false;
     }
 
     private int tryToPlay(int x, int y) throws InvalidMoveException {
@@ -76,11 +101,14 @@ public class MatchImpl implements Match {
 
         //Suicide
         if (board.killSurroundedStones(nextToPlay) != 0) throw new InvalidMoveException();
-        
+
+        if (Arrays.equals(previousBoardState, board.printOut()))
+            throw new InvalidMoveException();
+
         return stonesCaptured;
     }
 
-    public StoneColor other(StoneColor color) {
+    private StoneColor other(StoneColor color) {
         return (color == BLACK) ? WHITE : BLACK;
     }
 
@@ -109,17 +137,25 @@ public class MatchImpl implements Match {
 
     @Override
     public boolean isValidMove(int x, int y) {
-
-        String[] situation = board.printOut();
         try {
             tryToPlay(x, y);
         } catch (InvalidMoveException im) {
             return false;
         } finally {
-            board.setup(situation);
+            board.setup(previousBoardState);
         }
 
         return true;
+    }
+
+    @Override
+    public StoneColor nextToPlay() {
+        return nextToPlay;
+    }
+
+    @Override
+    public StoneColor winner() {
+        return winner;
     }
 
     /*

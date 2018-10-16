@@ -6,9 +6,10 @@ public interface Match {
 
     boolean isLastPlayedStone(int x, int y);
     boolean isValidMove(int x, int y);
+    StoneColor nextToPlay();
+    StoneColor winner();
 
-
-    enum Action {PLAY, PASS, RESIGN, TOGGLE_DEAD_STONE, ACCEPT_DEAD_STONES;}
+    enum Action {PLAY, PASS, RESIGN, TOGGLE_DEAD_STONE, ACCEPT_DEAD_STONES}
     void handle(Action action, Object... args);
     boolean isToroidal();
 
