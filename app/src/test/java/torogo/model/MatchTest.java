@@ -216,33 +216,30 @@ public class MatchTest extends TestCase {
 		assertSame(WHITE, match.winner());
 	}
 
-//	public void testSingleStoneCaptureScore() {
-//		String[] setup = new String[]{
-//			    "+ + + + + + + + +",
-//				"+ + + + + + + + +",
-//				"+ + + + b + + + +",
-//				"+ + + b w b + + +",
-//				"+ + + w + w + + +",
-//				"+ + + + + + + + +",
-//				"+ + + + + + + + +",
-//				"+ + + + + + + + +",
-//				"+ + + + + + + + +"};
-//		initToroidal(new String[]{});
-//		match = new ToroidalGoMatch(setup);
-//
-//		assertTrue(match.stoneAt(4, 3) != null);
-//		match.playStone(4,4);
-//		assertTrue(match.stoneAt(4, 3) == null);
-//		assertScore(1, 6.5f);
-//
-//		match.playStone(4,5);
-//		match.playStone(0,1);
-//
-//		assertTrue(match.stoneAt(4, 4) != null);
-//		match.playStone(4,3);
-//		assertTrue(match.stoneAt(4, 4) == null);
-//		assertScore(1, 7.5f);
-//	}
+	public void testSingleStoneCaptureScore() {
+		initToroidal(	"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + b + + + +",
+						"+ + + b w b + + +",
+						"+ + + w + w + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +",
+						"+ + + + + + + + +");
+
+		assertNotNull(match.stoneAt(4, 3));
+		play(4, 4);
+		assertNull(match.stoneAt(4, 3));
+		assertScore(1, 6.5f);
+
+		play(4,5);
+		play(0, 1);
+
+		assertNotNull(match.stoneAt(4, 4));
+		play(4, 3);
+		assertNull(match.stoneAt(4, 4));
+		assertScore(1, 7.5f);
+	}
 
 	/*
 	public void testScore() {
